@@ -14,6 +14,7 @@ import Halogen.HTML.Properties as HP
 import Math (cos, sin)
 import Svg.Attributes as SA
 import Svg.Elements as SE
+import Data.Array (snoc, delete)
 
 -- Core Types
 type Distance = Number
@@ -50,6 +51,8 @@ type RotatingShape =
   { shape :: Shape
   , angVel :: AngVelocity3D
   , forward :: Boolean
+  , valspeed :: Number
+  , ids :: Array Int
   }
 
 data Axis = X | Y | Z
@@ -117,12 +120,19 @@ initCube =
       , za: tenDegInRad
       }
   , forward: true
+  , valspeed: 1.0
+  , ids: [0]
   }
 
 -- Events
 data Query a
   = Tick a
   | IncAngVelocity Axis a
+  | AddCube a
+  | RemoveCube a
+  | ReverseDirection a
+  | IncVelocity a
+  | DecVelocity a
 
 -------------------- UPDATE / REDUCERS --------------------
 
@@ -165,11 +175,43 @@ cubes =
         H.modify
           (\c ->
             case axis of
-              X -> c { angVel { xa = xa + accelerateBy } }
-              Y -> c { angVel { ya = ya + accelerateBy } }
-              Z -> c { angVel { za = za + accelerateBy } }
+              X -> c { angVel { xa = xa + getAccelerateBy accelerateBy c.forward c.valspeed} }
+              Y -> c { angVel { ya = ya + getAccelerateBy accelerateBy c.forward c.valspeed} }
+              Z -> c { angVel { za = za + getAccelerateBy accelerateBy c.forward c.valspeed} }
           )
         pure next
+
+      AddCube next -> do
+        H.modify
+          (\c -> c { ids = snoc c.ids 0 }
+          )
+        pure next
+
+      RemoveCube next -> do
+        H.modify
+          (\c ->  c { ids = delete 0 c.ids}
+          )
+        pure next
+
+      ReverseDirection next -> do
+        H.modify
+          (\c -> c { forward = if c.forward == true then false else true }
+          )
+        pure next
+      IncVelocity next -> do
+        H.modify
+          (\c -> c { valspeed = c.valspeed * 1.5 }
+          )
+        pure next
+      DecVelocity next -> do
+        H.modify
+          (\c -> c { valspeed = c.valspeed * 0.5 }
+          )
+        pure next
+
+getAccelerateBy :: Number -> Boolean -> Number -> Number
+getAccelerateBy acc flag valspeed =
+  if flag == true then acc * valspeed else -acc * valspeed
 
 rotateShape :: Array Point3D -> AngVelocity3D -> Array Point3D
 rotateShape vertices ang =
@@ -208,19 +250,40 @@ renderView :: State -> H.ComponentHTML Query
 renderView state = let
     {vertices, edges} = state.shape
     vert2Ds = map project vertices
+    shapes = state.ids
   in
-    HH.div [] $
-      [ renderButton "rotX++" (IncAngVelocity X)
-      , renderButton "rotY++" (IncAngVelocity Y)
-      , renderButton "rotZ++" (IncAngVelocity Z)
+    HH.div_
+      [
+        HH.div_
+        [ 
+          renderButton "rotX++" (IncAngVelocity X)
+          , renderButton "rotY++" (IncAngVelocity Y)
+          , renderButton "rotZ++" (IncAngVelocity Z)
+          , renderButton "Add Cube" (AddCube)
+          , renderButton "Remove Cube" (RemoveCube)
+        ],
+
+        HH.h1_
+          [ HH.text "Click X/Y/Z to rotate along X-axis/Y-axis/Z-axis" ],
+
+        HH.ol_ $ map (\sid -> 
+          HH.div_
+            [
+              HH.div_
+                [
+                  renderButton "Reverse" (ReverseDirection)
+                  , renderButton "vel++" (IncVelocity)
+                  , renderButton "vel--" (DecVelocity)
+                ],
+              SE.svg
+                [ SA.viewBox 0.0 0.0 viewBoxSize viewBoxSize ]
+                [ SE.g []
+                  (drawCube edges vert2Ds)
+                ]
+            ]
+          ) shapes
       ]
-      <>
-      [ SE.svg
-        [ SA.viewBox 0.0 0.0 viewBoxSize viewBoxSize ]
-        [ SE.g []
-          (drawCube edges vert2Ds)
-        ]
-      ]
+ 
   where
     renderButton label query =
       HH.button
