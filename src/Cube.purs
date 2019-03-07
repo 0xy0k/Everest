@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Aff (Aff)
 import Control.Monad.Eff.Console (log, CONSOLE)
-import Data.Array (mapWithIndex, (!!))
+import Data.Array (snoc, dropEnd, length, mapWithIndex, (!!))
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple (Tuple(..))
 import Halogen as H
@@ -14,7 +14,6 @@ import Halogen.HTML.Properties as HP
 import Math (cos, sin)
 import Svg.Attributes as SA
 import Svg.Elements as SE
-import Data.Array (snoc, delete)
 
 -- Core Types
 type Distance = Number
@@ -52,13 +51,15 @@ type RotatingShape =
   , angVel :: AngVelocity3D
   , forward :: Boolean
   , valspeed :: Number
-  , ids :: Array Int
+  , id :: Int
   }
 
 data Axis = X | Y | Z
 
 -- Model / State
-type State = RotatingShape
+type State = {
+  allshapes :: Array RotatingShape
+}
 
 -- Values
 
@@ -88,40 +89,42 @@ dampenPercent = 1.0 - (0.9 / frameRate) -- 10% per second
 
 initCube :: State
 initCube =
-  { shape:
-      { vertices:
-          [ { x:  100.0, y:  100.0, z:  100.0 }
-          , { x: -100.0, y:  100.0, z:  100.0 }
-          , { x:  100.0, y: -100.0, z:  100.0 }
-          , { x: -100.0, y: -100.0, z:  100.0 }
-          , { x:  100.0, y:  100.0, z: -100.0 }
-          , { x: -100.0, y:  100.0, z: -100.0 }
-          , { x:  100.0, y: -100.0, z: -100.0 }
-          , { x: -100.0, y: -100.0, z: -100.0 }
-          ]
-      , edges:
-          [ Tuple 0 1
-          , Tuple 0 2
-          , Tuple 0 4
-          , Tuple 1 5
-          , Tuple 1 3
-          , Tuple 2 3
-          , Tuple 2 6
-          , Tuple 4 5
-          , Tuple 4 6
-          , Tuple 3 7
-          , Tuple 6 7
-          , Tuple 5 7
-          ]
-      }
-  , angVel:
-      { xa: tenDegInRad
-      , ya: tenDegInRad
-      , za: tenDegInRad
-      }
-  , forward: true
-  , valspeed: 1.0
-  , ids: [0]
+  { allshapes:
+    [{ shape:
+        { vertices:
+            [ { x:  100.0, y:  100.0, z:  100.0 }
+            , { x: -100.0, y:  100.0, z:  100.0 }
+            , { x:  100.0, y: -100.0, z:  100.0 }
+            , { x: -100.0, y: -100.0, z:  100.0 }
+            , { x:  100.0, y:  100.0, z: -100.0 }
+            , { x: -100.0, y:  100.0, z: -100.0 }
+            , { x:  100.0, y: -100.0, z: -100.0 }
+            , { x: -100.0, y: -100.0, z: -100.0 }
+            ]
+        , edges:
+            [ Tuple 0 1
+            , Tuple 0 2
+            , Tuple 0 4
+            , Tuple 1 5
+            , Tuple 1 3
+            , Tuple 2 3
+            , Tuple 2 6
+            , Tuple 4 5
+            , Tuple 4 6
+            , Tuple 3 7
+            , Tuple 6 7
+            , Tuple 5 7
+            ]
+        }
+    , angVel:
+        { xa: tenDegInRad
+        , ya: tenDegInRad
+        , za: tenDegInRad
+        }
+    , forward: true
+    , valspeed: 1.0
+    , id: 0
+    }]
   }
 
 -- Events
@@ -130,9 +133,9 @@ data Query a
   | IncAngVelocity Axis a
   | AddCube a
   | RemoveCube a
-  | ReverseDirection a
-  | IncVelocity a
-  | DecVelocity a
+  | ReverseDirection Int a
+  | IncVelocity Int a
+  | DecVelocity Int a
 
 -------------------- UPDATE / REDUCERS --------------------
 
@@ -155,59 +158,161 @@ cubes =
     eval = case _ of
       Tick next -> do
         cube <- H.get
-        let angVel = cube.angVel
-            {vertices, edges} = cube.shape
-            newShape =
-              { edges: edges
-              , vertices: rotateShape vertices (anglePerFrame angVel)
-              }
-            newCube = cube
-              { angVel = dampenAngVelocity angVel
-              , shape = newShape
-              }
+        let newCube = updateCube cube
         H.put newCube
         H.liftEff $ log "tick"
         pure next
 
       IncAngVelocity axis next -> do
         cube <- H.get
-        let {xa, ya, za} = cube.angVel
+        let newCube = updateIncAngVelocity cube axis
         H.modify
-          (\c ->
-            case axis of
-              X -> c { angVel { xa = xa + getAccelerateBy accelerateBy c.forward c.valspeed} }
-              Y -> c { angVel { ya = ya + getAccelerateBy accelerateBy c.forward c.valspeed} }
-              Z -> c { angVel { za = za + getAccelerateBy accelerateBy c.forward c.valspeed} }
-          )
+          (\c -> newCube)
         pure next
 
       AddCube next -> do
+        cube <- H.get
+        let newCube = addNextCube cube
         H.modify
-          (\c -> c { ids = snoc c.ids 0 }
-          )
+          (\c -> newCube)
         pure next
 
       RemoveCube next -> do
+        cube <- H.get
+        let newCube = removeLastCube cube
         H.modify
-          (\c ->  c { ids = delete 0 c.ids}
-          )
+          (\c -> newCube)
         pure next
 
-      ReverseDirection next -> do
+      ReverseDirection curshape next -> do
+        cube <- H.get
+        let newCube = updateReverseDirection cube curshape
         H.modify
-          (\c -> c { forward = if c.forward == true then false else true }
-          )
+          (\c -> newCube)
         pure next
-      IncVelocity next -> do
+      IncVelocity curshape next -> do
+        cube <- H.get
+        let newCube = updateVelocity cube curshape 1.5
         H.modify
-          (\c -> c { valspeed = c.valspeed * 1.5 }
-          )
+          (\c -> newCube)
         pure next
-      DecVelocity next -> do
+      DecVelocity curshape next -> do
+        cube <- H.get
+        let newCube = updateVelocity cube curshape 0.5
         H.modify
-          (\c -> c { valspeed = c.valspeed * 0.5 }
-          )
+          (\c -> newCube)
         pure next
+
+removeLastCube :: State -> State
+removeLastCube cube = newCube
+  where
+    allshapes = dropEnd 1 cube.allshapes
+    newCube = {allshapes: allshapes}
+
+addNextCube :: State -> State
+addNextCube cube = newCube
+  where
+    newshape = { shape:
+        { vertices:
+            [ { x:  100.0, y:  100.0, z:  100.0 }
+            , { x: -100.0, y:  100.0, z:  100.0 }
+            , { x:  100.0, y: -100.0, z:  100.0 }
+            , { x: -100.0, y: -100.0, z:  100.0 }
+            , { x:  100.0, y:  100.0, z: -100.0 }
+            , { x: -100.0, y:  100.0, z: -100.0 }
+            , { x:  100.0, y: -100.0, z: -100.0 }
+            , { x: -100.0, y: -100.0, z: -100.0 }
+            ]
+        , edges:
+            [ Tuple 0 1
+            , Tuple 0 2
+            , Tuple 0 4
+            , Tuple 1 5
+            , Tuple 1 3
+            , Tuple 2 3
+            , Tuple 2 6
+            , Tuple 4 5
+            , Tuple 4 6
+            , Tuple 3 7
+            , Tuple 6 7
+            , Tuple 5 7
+            ]
+        }
+    , angVel:
+        { xa: tenDegInRad
+        , ya: tenDegInRad
+        , za: tenDegInRad
+        }
+    , forward: true
+    , valspeed: 1.0
+    , id: length cube.allshapes
+    }
+    allshapes = snoc cube.allshapes newshape
+    newCube = {allshapes: allshapes}
+
+updateVelocity :: State -> Int ->Number -> State
+updateVelocity cube curshape acc = newCube
+ where
+    allshapes = map (updateShapeVelocity curshape acc) cube.allshapes
+    newCube = {allshapes: allshapes}
+
+updateShapeVelocity :: Int -> Number ->RotatingShape -> RotatingShape
+updateShapeVelocity curshape acc shape = if curshape == shape.id then newshape else shape
+  where
+    newvalspeed = shape.valspeed * acc
+    newshape = {shape: shape.shape, angVel: shape.angVel, forward: shape.forward, valspeed: newvalspeed, id: shape.id}
+
+updateReverseDirection :: State -> Int -> State
+updateReverseDirection cube curshape = newCube
+ where
+    allshapes = map (updateShapeReverseDirection curshape) cube.allshapes
+    newCube = {allshapes: allshapes}
+
+updateShapeReverseDirection :: Int ->RotatingShape -> RotatingShape
+updateShapeReverseDirection curshape shape = if curshape == shape.id then newshape else shape
+  where
+    newforward = if shape.forward == true then false else true
+    newshape = {shape: shape.shape, angVel: shape.angVel, forward: newforward, valspeed: shape.valspeed, id: shape.id}
+
+updateIncAngVelocity :: State -> Axis -> State
+updateIncAngVelocity cube axis = newCube
+  where
+    allshapes = map (updateShapeAngVelocity axis) cube.allshapes
+    newCube = {allshapes: allshapes}
+
+updateShapeAngVelocity :: Axis -> RotatingShape -> RotatingShape
+updateShapeAngVelocity axis shape = case axis of
+    X -> newShapeX
+    Y -> newShapeY
+    Z -> newShapeZ
+    where
+      {xa, ya, za} = shape.angVel
+      newangVelX = {xa: xa + getAccelerateBy accelerateBy shape.forward shape.valspeed, ya: ya, za: za}
+      newangVelY = {xa: xa, ya: ya + getAccelerateBy accelerateBy shape.forward shape.valspeed, za: za}
+      newangVelZ = {xa: xa, ya: ya, za: za + getAccelerateBy accelerateBy shape.forward shape.valspeed}
+      newShapeX = {shape: shape.shape, angVel: newangVelX, forward: shape.forward, valspeed: shape.valspeed, id: shape.id}
+      newShapeY = {shape: shape.shape, angVel: newangVelY, forward: shape.forward, valspeed: shape.valspeed, id: shape.id}
+      newShapeZ = {shape: shape.shape, angVel: newangVelZ, forward: shape.forward, valspeed: shape.valspeed, id: shape.id}
+
+updateCube :: State -> State
+updateCube cube = newCube
+  where
+    allshapes = map updateShapes cube.allshapes
+    newCube = {allshapes: allshapes}
+      
+updateShapes :: RotatingShape -> RotatingShape
+updateShapes shape = updatedShape
+ where
+  angVel = shape.angVel
+  {vertices, edges} = shape.shape
+  newShape =
+    { edges: edges
+    , vertices: rotateShape vertices (anglePerFrame angVel)
+    }
+  updatedShape = shape
+    { angVel = dampenAngVelocity angVel
+    , shape = newShape
+    }
 
 getAccelerateBy :: Number -> Boolean -> Number -> Number
 getAccelerateBy acc flag valspeed =
@@ -248,9 +353,7 @@ dampenAngVelocity {xa, ya, za} =
 -------------------- VIEW --------------------
 renderView :: State -> H.ComponentHTML Query
 renderView state = let
-    {vertices, edges} = state.shape
-    vert2Ds = map project vertices
-    shapes = state.ids
+    shapes = state.allshapes
   in
     HH.div_
       [
@@ -266,19 +369,19 @@ renderView state = let
         HH.h1_
           [ HH.text "Click X/Y/Z to rotate along X-axis/Y-axis/Z-axis" ],
 
-        HH.ol_ $ map (\sid -> 
+        HH.ol_ $ map (\shape -> 
           HH.div_
             [
               HH.div_
                 [
-                  renderButton "Reverse" (ReverseDirection)
-                  , renderButton "vel++" (IncVelocity)
-                  , renderButton "vel--" (DecVelocity)
+                  renderButton "Reverse" (ReverseDirection shape.id)
+                  , renderButton "vel++" (IncVelocity shape.id)
+                  , renderButton "vel--" (DecVelocity shape.id)
                 ],
               SE.svg
                 [ SA.viewBox 0.0 0.0 viewBoxSize viewBoxSize ]
                 [ SE.g []
-                  (drawCube edges vert2Ds)
+                  (drawCubes shape)
                 ]
             ]
           ) shapes
@@ -298,6 +401,12 @@ renderView state = let
       { x: p.x + viewCenter.x
       , y: p.y + viewCenter.y
       }
+
+    drawCubes :: RotatingShape -> Array (H.ComponentHTML Query)
+    drawCubes shape = drawCube edges vert2Ds
+      where
+        {vertices, edges} = shape.shape
+        vert2Ds = map project vertices
 
     drawCube :: Array Edge -> Array Point2D -> Array (H.ComponentHTML Query)
     drawCube edges vert2Ds =
@@ -344,3 +453,4 @@ renderView state = let
           , SA.fill $ Just (SA.RGB 100 100 100)
           ]
       ]
+
