@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Aff (Aff)
 import Control.Monad.Eff.Console (log, CONSOLE)
-import Data.Array (snoc, dropEnd, length, mapWithIndex, (!!))
+import Data.Array (dropEnd, length, mapWithIndex, snoc, (!!))
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple (Tuple(..))
 import Halogen as H
@@ -32,10 +32,20 @@ type Point3D =
   }
 
 type Edge = Tuple Int Int
+type Face =
+  { p1 :: Int
+  , p2 :: Int
+  , p3 :: Int
+  , p4 :: Int
+  , r :: Int
+  , g :: Int
+  , b :: Int
+  }
 
 type Shape =
   { vertices :: Array Point3D
   , edges :: Array Edge
+  , faces :: Array Face
   }
 
 type Angle3D =
@@ -87,10 +97,8 @@ accelerateBy = oneDegInRad * 50.0
 dampenPercent :: Number
 dampenPercent = 1.0 - (0.9 / frameRate) -- 10% per second
 
-initCube :: State
-initCube =
-  { allshapes:
-    [{ shape:
+initShape :: RotatingShape
+initShape = { shape:
         { vertices:
             [ { x:  100.0, y:  100.0, z:  100.0 }
             , { x: -100.0, y:  100.0, z:  100.0 }
@@ -115,6 +123,14 @@ initCube =
             , Tuple 6 7
             , Tuple 5 7
             ]
+        , faces:
+            [ {p1: 1, p2: 5, p3: 7, p4: 3, r: 200, g: 0, b: 0}
+            , {p1: 5, p2: 4, p3: 6, p4: 7, r: 0, g: 200, b: 0}
+            , {p1: 7, p2: 6, p3: 2, p4: 3, r: 0, g: 0, b: 200}
+            , {p1: 1, p2: 3, p3: 2, p4: 0, r: 200, g: 200, b: 0}
+            , {p1: 1, p2: 0, p3: 4, p4: 5, r: 200, g: 0, b: 200}
+            , {p1: 2, p2: 6, p3: 4, p4: 0, r: 0, g: 200, b: 200}
+            ]
         }
     , angVel:
         { xa: tenDegInRad
@@ -124,7 +140,12 @@ initCube =
     , forward: true
     , valspeed: 1.0
     , id: 0
-    }]
+    }
+
+initCube :: State
+initCube = 
+  { 
+    allshapes: [initShape]
   }
 
 -- Events
@@ -212,37 +233,8 @@ removeLastCube cube = newCube
 addNextCube :: State -> State
 addNextCube cube = newCube
   where
-    newshape = { shape:
-        { vertices:
-            [ { x:  100.0, y:  100.0, z:  100.0 }
-            , { x: -100.0, y:  100.0, z:  100.0 }
-            , { x:  100.0, y: -100.0, z:  100.0 }
-            , { x: -100.0, y: -100.0, z:  100.0 }
-            , { x:  100.0, y:  100.0, z: -100.0 }
-            , { x: -100.0, y:  100.0, z: -100.0 }
-            , { x:  100.0, y: -100.0, z: -100.0 }
-            , { x: -100.0, y: -100.0, z: -100.0 }
-            ]
-        , edges:
-            [ Tuple 0 1
-            , Tuple 0 2
-            , Tuple 0 4
-            , Tuple 1 5
-            , Tuple 1 3
-            , Tuple 2 3
-            , Tuple 2 6
-            , Tuple 4 5
-            , Tuple 4 6
-            , Tuple 3 7
-            , Tuple 6 7
-            , Tuple 5 7
-            ]
-        }
-    , angVel:
-        { xa: tenDegInRad
-        , ya: tenDegInRad
-        , za: tenDegInRad
-        }
+    newshape = { shape: initShape.shape
+    , angVel: initShape.angVel
     , forward: true
     , valspeed: 1.0
     , id: length cube.allshapes
@@ -304,9 +296,10 @@ updateShapes :: RotatingShape -> RotatingShape
 updateShapes shape = updatedShape
  where
   angVel = shape.angVel
-  {vertices, edges} = shape.shape
+  {vertices, edges, faces} = shape.shape
   newShape =
     { edges: edges
+    , faces: faces
     , vertices: rotateShape vertices (anglePerFrame angVel)
     }
   updatedShape = shape
@@ -403,14 +396,38 @@ renderView state = let
       }
 
     drawCubes :: RotatingShape -> Array (H.ComponentHTML Query)
-    drawCubes shape = drawCube edges vert2Ds
+    drawCubes shape = drawCube edges faces vert2Ds
       where
-        {vertices, edges} = shape.shape
+        {vertices, edges, faces} = shape.shape
         vert2Ds = map project vertices
 
-    drawCube :: Array Edge -> Array Point2D -> Array (H.ComponentHTML Query)
-    drawCube edges vert2Ds =
-      drawEdges edges vert2Ds <> drawVertices vert2Ds
+    drawCube :: Array Edge -> Array Face -> Array Point2D -> Array (H.ComponentHTML Query)
+    drawCube edges faces vert2Ds =
+      drawEdges edges vert2Ds <> drawFaces faces vert2Ds <> drawVertices vert2Ds
+      -- drawEdges edges vert2Ds
+
+    drawFaces :: Array Face -> Array Point2D -> Array (H.ComponentHTML Query)
+    drawFaces faces verts =
+        map (\face -> drawFace (getPoint (verts !! face.p1)) (getPoint (verts !! face.p2)) (getPoint (verts !! face.p3)) (getPoint (verts !! face.p4)) face.r face.g face.b) faces
+
+    drawFace :: Point2D -> Point2D -> Point2D -> Point2D -> Int -> Int -> Int -> H.ComponentHTML Query
+    drawFace p1 p2 p3 p4 r g b = if visible then
+        SE.path
+          [ SA.d
+            [ SA.Abs (SA.M p1.x p1.y)
+            , SA.Abs (SA.L p2.x p2.y)
+            , SA.Abs (SA.L p3.x p3.y)
+            , SA.Abs (SA.L p4.x p4.y)
+            , SA.Abs (SA.L p1.x p1.y)
+            ]
+          , SA.fill $ Just (SA.RGB r g b)
+          , SA.stroke $ Just (SA.RGB 50 50 50)
+          ]
+      else
+        SE.path []
+      where
+        square = p1.x * p2.y - p2.x * p1.y + p2.x * p3.y - p3.x * p2.y + p3.x * p4.y - p4.x * p3.y + p4.x * p1.y - p1.x * p4.y
+        visible = if square > 0.0 then true else false
 
     drawEdges :: Array Edge -> Array Point2D -> Array (H.ComponentHTML Query)
     drawEdges edges verts = let
