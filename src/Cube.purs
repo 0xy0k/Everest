@@ -14,6 +14,7 @@ import Halogen.HTML.Properties as HP
 import Math (cos, sin)
 import Svg.Attributes as SA
 import Svg.Elements as SE
+import Global as G
 
 -- Core Types
 type Distance = Number
@@ -68,7 +69,8 @@ data Axis = X | Y | Z
 
 -- Model / State
 type State = {
-  allshapes :: Array RotatingShape
+  allshapes :: Array RotatingShape,
+  cuberate :: Number
 }
 
 -- Values
@@ -145,7 +147,8 @@ initShape = { shape:
 initCube :: State
 initCube = 
   { 
-    allshapes: [initShape]
+    allshapes: [initShape],
+    cuberate: 1.0
   }
 
 -- Events
@@ -157,6 +160,7 @@ data Query a
   | ReverseDirection Int a
   | IncVelocity Int a
   | DecVelocity Int a
+  | AdjustCubeSize String a
 
 -------------------- UPDATE / REDUCERS --------------------
 
@@ -211,12 +215,14 @@ cubes =
         H.modify
           (\c -> newCube)
         pure next
+
       IncVelocity curshape next -> do
         cube <- H.get
         let newCube = updateVelocity cube curshape 1.5
         H.modify
           (\c -> newCube)
         pure next
+
       DecVelocity curshape next -> do
         cube <- H.get
         let newCube = updateVelocity cube curshape 0.5
@@ -224,29 +230,65 @@ cubes =
           (\c -> newCube)
         pure next
 
+      AdjustCubeSize rate next -> do
+        cube <- H.get
+        let newCube = updateCubeSize cube rate
+        H.modify
+          (\c -> newCube)
+        pure next
+
+fromString ∷ String → Number
+fromString = G.readFloat >>> check
+  where
+    check num = num
+
+updateCubeSize :: State -> String -> State
+updateCubeSize cube newsize = newCube
+  where
+    numcubesize = (fromString newsize) / 50.0
+    allshapes = map (updateShapeSize cube.cuberate numcubesize) cube.allshapes
+    newCube = {allshapes: allshapes, cuberate: numcubesize}
+
+updateShapeSize :: Number -> Number -> RotatingShape -> RotatingShape
+updateShapeSize orgrate newrate orgshape = newshape
+  where
+    {shape, angVel, forward, valspeed, id} = orgshape
+    {vertices, edges, faces} = shape
+    newvertices = map (updatevertices orgrate newrate) vertices
+    newshape = {shape: {vertices: newvertices, edges: edges, faces: faces}, angVel: angVel, forward: forward, valspeed: valspeed, id: id}
+
+updatevertices :: Number -> Number -> Point3D -> Point3D
+updatevertices orgrate newrate {x, y, z} = {x: newx, y: newy, z:newz}
+  where
+    newx = x / orgrate * newrate
+    newy = y / orgrate * newrate
+    newz = z / orgrate * newrate
+
 removeLastCube :: State -> State
 removeLastCube cube = newCube
   where
     allshapes = dropEnd 1 cube.allshapes
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
 
 addNextCube :: State -> State
 addNextCube cube = newCube
   where
-    newshape = { shape: initShape.shape
+    {vertices, edges, faces} = initShape.shape
+    newvertices = map (updatevertices 1.0 cube.cuberate) vertices
+    newshape = { shape: {vertices: newvertices, edges: edges, faces: faces}
     , angVel: initShape.angVel
     , forward: true
     , valspeed: 1.0
     , id: length cube.allshapes
     }
     allshapes = snoc cube.allshapes newshape
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
 
 updateVelocity :: State -> Int ->Number -> State
 updateVelocity cube curshape acc = newCube
  where
     allshapes = map (updateShapeVelocity curshape acc) cube.allshapes
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
 
 updateShapeVelocity :: Int -> Number ->RotatingShape -> RotatingShape
 updateShapeVelocity curshape acc shape = if curshape == shape.id then newshape else shape
@@ -258,7 +300,7 @@ updateReverseDirection :: State -> Int -> State
 updateReverseDirection cube curshape = newCube
  where
     allshapes = map (updateShapeReverseDirection curshape) cube.allshapes
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
 
 updateShapeReverseDirection :: Int ->RotatingShape -> RotatingShape
 updateShapeReverseDirection curshape shape = if curshape == shape.id then newshape else shape
@@ -270,7 +312,7 @@ updateIncAngVelocity :: State -> Axis -> State
 updateIncAngVelocity cube axis = newCube
   where
     allshapes = map (updateShapeAngVelocity axis) cube.allshapes
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
 
 updateShapeAngVelocity :: Axis -> RotatingShape -> RotatingShape
 updateShapeAngVelocity axis shape = case axis of
@@ -290,7 +332,7 @@ updateCube :: State -> State
 updateCube cube = newCube
   where
     allshapes = map updateShapes cube.allshapes
-    newCube = {allshapes: allshapes}
+    newCube = {allshapes: allshapes, cuberate: cube.cuberate}
       
 updateShapes :: RotatingShape -> RotatingShape
 updateShapes shape = updatedShape
@@ -350,6 +392,19 @@ renderView state = let
   in
     HH.div_
       [
+        HH.div_
+        [
+          HH.text "Adjust Cube Size: ",
+          HH.input
+          [
+            HP.type_ HP.InputRange
+          , HP.min 0.0
+          , HP.max 100.0
+          , HP.value "50"
+          , HE.onValueChange $ HE.input AdjustCubeSize
+          ]
+        ],
+
         HH.div_
         [ 
           renderButton "rotX++" (IncAngVelocity X)
