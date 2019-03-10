@@ -3,18 +3,25 @@ module Cube where
 import Prelude
 
 import Control.Monad.Aff (Aff)
+import Control.Monad.Aff.AVar (AVAR)
 import Control.Monad.Eff.Console (log, CONSOLE)
+import DOM (DOM)
+import DOM.HTML (window) as DOM
+import DOM.HTML.Types (htmlDocumentToDocument) as DOM
+import DOM.HTML.Window (document) as DOM
 import Data.Array (dropEnd, length, mapWithIndex, snoc, (!!))
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple (Tuple(..))
+import Global as G
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Halogen.Query.EventSource as ES
+import Keyboard as K
 import Math (cos, sin)
 import Svg.Attributes as SA
 import Svg.Elements as SE
-import Global as G
 
 -- Core Types
 type Distance = Number
@@ -161,10 +168,12 @@ data Query a
   | IncVelocity Int a
   | DecVelocity Int a
   | AdjustCubeSize String a
+  | Init a
+  | HandleKey K.KeyboardEvent (H.SubscribeStatus -> a)
 
 -------------------- UPDATE / REDUCERS --------------------
 
-cubes :: forall eff. H.Component HH.HTML Query Unit Unit (Aff (console :: CONSOLE | eff))
+cubes :: forall eff. H.Component HH.HTML Query Unit Unit (Aff (console :: CONSOLE, dom :: DOM, avar :: AVAR, keyboard :: K.KEYBOARD | eff))
 cubes =
   H.component
     { initialState: const initialState
@@ -179,7 +188,7 @@ cubes =
     render :: State -> H.ComponentHTML Query
     render = renderView
 
-    eval :: Query ~> H.ComponentDSL State Query Unit (Aff (console :: CONSOLE | eff))
+    eval :: Query ~> H.ComponentDSL State Query Unit (Aff (console :: CONSOLE, dom :: DOM, avar :: AVAR, keyboard :: K.KEYBOARD | eff))
     eval = case _ of
       Tick next -> do
         cube <- H.get
@@ -236,6 +245,38 @@ cubes =
         H.modify
           (\c -> newCube)
         pure next
+      
+      Init next -> do
+        H.liftEff $ log "shortcut init"
+        document <- H.liftEff $ DOM.window >>= DOM.document <#> DOM.htmlDocumentToDocument
+        H.subscribe $ ES.eventSource' (K.onKeyUp document) (Just <<< H.request <<< HandleKey)
+        pure next
+      
+      HandleKey e reply -> do
+        case K.readKeyboardEvent e of
+          info
+            | info.keyCode == 88 -> do
+                cube <- H.get
+                H.modify (\c -> updateIncAngVelocity cube X)
+                pure (reply H.Listening)
+            | info.keyCode == 89 -> do
+                cube <- H.get
+                H.modify (\c -> updateIncAngVelocity cube Y)
+                pure (reply H.Listening)
+            | info.keyCode == 90 -> do
+                cube <- H.get
+                H.modify (\c -> updateIncAngVelocity cube Z)
+                pure (reply H.Listening)
+            | info.keyCode == 65 -> do
+                cube <- H.get
+                H.modify (\c -> addNextCube cube)
+                pure (reply H.Listening)
+            | info.keyCode == 82 -> do
+                cube <- H.get
+                H.modify (\c -> removeLastCube cube)
+                pure (reply H.Listening)
+            | otherwise -> do
+                pure (reply H.Listening)
 
 fromString ∷ String → Number
 fromString = G.readFloat >>> check
