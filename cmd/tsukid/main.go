@@ -13,7 +13,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/tsuki/hub/app"
+	"github.com/TsukiCore/tsuki/app"
 
 	"github.com/TsukiCore/cosmos-sdk/baseapp"
 	"github.com/TsukiCore/cosmos-sdk/client/debug"

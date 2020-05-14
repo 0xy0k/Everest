@@ -1,4 +1,4 @@
-module github.com/TsukiCore/playground/hub
+module github.com/TsukiCore/tsuki
 
 go 1.14
 

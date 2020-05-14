@@ -5,7 +5,7 @@ import (
 	errors "github.com/TsukiCore/cosmos-sdk/types/errors"
 	"github.com/asaskevich/govalidator"
 
-	"github.com/TsukiCore/playground/hub/x/tsukiHub/constants"
+	"github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 )
 
 type Message struct {
