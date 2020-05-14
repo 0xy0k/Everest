@@ -1,10 +1,5 @@
 package createorderboook
 
-import (
-	"github.com/tsuki/tsukiHub/x/createorderboook/internal/keeper"
-	"github.com/tsuki/tsukiHub/x/createorderboook/internal/types"
-)
-
 const (
 	// TODO: define constants that you would like exposed from the internal package
 
