@@ -5,7 +5,7 @@ import (
 	errors "github.com/TsukiCore/cosmos-sdk/types/errors"
 	"github.com/asaskevich/govalidator"
 
-	"github.com/TsukiCore/tsuki/x/tsukiHub/constants"
+	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 )
 
 type Message struct {
@@ -19,7 +19,7 @@ type Message struct {
 var _ sdk.Msg = Message{}
 
 func (message Message) Route() string { return constants.ModuleName }
-func (message Message) Type() string  { return constants.createOrderBook }
+func (message Message) Type() string  { return constants.CreateOrderBookTransaction }
 
 func (message Message) ValidateBasic() error {
 	var _, Error = govalidator.ValidateStruct(message)

@@ -1,4 +1,4 @@
-package types
+package tsukiHub
 
 import (
 	"github.com/TsukiCore/cosmos-sdk/codec"

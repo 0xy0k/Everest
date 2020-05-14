@@ -1,22 +1,19 @@
-package types
+package tsukiHub
 
-
-// Query endpoints supported by the createorderboook querier
-const (
-	// TODO: Describe query parameters, update <action> with your query
-	// Query<Action>    = "<action>"
+import (
+	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
+	"github.com/TsukiCore/cosmos-sdk/types/errors"
+	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
-/* 
-Below you will be able how to set your own queries:
+func NewQuerier(keeper Keeper) sdk.Querier {
+	return func(context sdk.Context, path []string, requestQuery abciTypes.RequestQuery) ([]byte, error) {
+		switch path[0] {
 
 
-// QueryResList Queries Result Payload for a query
-type QueryResList []string
-
-// implement fmt.Stringer
-func (n QueryResList) String() string {
-	return strings.Join(n[:], "\n")
+		default:
+			return nil, errors.Wrapf(constants.UnknownQueryCode, "%v", path[0])
+		}
+	}
 }
-
-*/
