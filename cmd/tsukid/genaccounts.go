@@ -10,15 +10,15 @@ import (
 
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/server"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
-	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/TsukiCore/cosmos-sdk/client/flags"
+	"github.com/TsukiCore/cosmos-sdk/crypto/keys"
+	"github.com/TsukiCore/cosmos-sdk/codec"
+	"github.com/TsukiCore/cosmos-sdk/server"
+	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/TsukiCore/cosmos-sdk/x/auth"
+	authexported "github.com/TsukiCore/cosmos-sdk/x/auth/exported"
+	authvesting "github.com/TsukiCore/cosmos-sdk/x/auth/vesting"
+	"github.com/TsukiCore/cosmos-sdk/x/genutil"
 )
 
 const (

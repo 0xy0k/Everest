@@ -15,15 +15,15 @@ import (
 
 	"github.com/tsuki/hub/app"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/client/debug"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/store"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/TsukiCore/cosmos-sdk/baseapp"
+	"github.com/TsukiCore/cosmos-sdk/client/debug"
+	"github.com/TsukiCore/cosmos-sdk/client/flags"
+	"github.com/TsukiCore/cosmos-sdk/server"
+	"github.com/TsukiCore/cosmos-sdk/store"
+	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/TsukiCore/cosmos-sdk/x/auth"
+	genutilcli "github.com/TsukiCore/cosmos-sdk/x/genutil/client/cli"
+	"github.com/TsukiCore/cosmos-sdk/x/staking"
 )
 
 const flagInvCheckPeriod = "inv-check-period"
