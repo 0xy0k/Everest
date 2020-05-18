@@ -3,12 +3,12 @@ package listOrderBooks
 import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/TsukiCore/cosmos-sdk/x/mint"
+	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrderBook"
 	"github.com/TsukiCore/tsuki/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func QueryGetOrderBooks(ctx sdk.Context, path []string, req abci.RequestQuery, keeper mint.Keeper) ([]byte, error) {
+func QueryGetOrderBooks(ctx sdk.Context, path []string, req abci.RequestQuery, keeper createOrderBook.Keeper) ([]byte, error) {
 
 	var queryOutput []types.OrderBook
 
@@ -22,19 +22,19 @@ func QueryGetOrderBooks(ctx sdk.Context, path []string, req abci.RequestQuery, k
 
 	} else if path[0] == "Quote" {
 
-		queryOutput = keeper.GetOrderBooksByQuote(ctx, path[1])
+		queryOutput = keeper.GetOrderBookByQuote(ctx, path[1])
 
 	} else if path[0] == "Base" {
 
-		queryOutput = keeper.GetOrderBooksByBase(ctx, path[1])
+		queryOutput = keeper.GetOrderBookByBase(ctx, path[1])
 
 	} else if path[0] == "Trading_Pair" {
 
-		queryOutput = keeper.GetOrderBooksByTP(ctx, path[1])
+		queryOutput = keeper.GetOrderBookByTP(ctx, path[1])
 
 	} else if path[0] == "Curator" {
 
-		queryOutput = keeper.GetOrderBooksByCurator(ctx, path[1])
+		queryOutput = keeper.GetOrderBookByCurator(ctx, path[1])
 	}
 
 	res, marshalJSONIndentError := codec.MarshalJSONIndent(packageCodec, queryOutput)
