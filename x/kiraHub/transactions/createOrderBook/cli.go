@@ -6,7 +6,7 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
 	"github.com/TsukiCore/cosmos-sdk/x/auth"
-	"github.com/TsukiCore/cosmos-sdk/x/auth/client/"
+	"github.com/TsukiCore/cosmos-sdk/x/auth/client"
 	"github.com/spf13/cobra"
 )
 
