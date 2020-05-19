@@ -2,11 +2,13 @@ package tsukiHub
 
 import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
+
+	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrderBook"
 )
 
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
-	// TODO: Register the modules msgs
+	createOrderBook.RegisterCodec(cdc)
 }
 
 // ModuleCdc defines the module codec
