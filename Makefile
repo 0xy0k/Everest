@@ -1,10 +1,10 @@
 PACKAGES=$(shell go list ./... | grep -v '/simulation')
 
-VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+VERSION = 1.0.0
 COMMIT := $(shell git log -1 --format='%H')
 
 # TODO: Update the ldflags with the app, client & server names
-ldflags = -X github.com/TsukiCore/cosmos-sdk/version.Name=NewApp \
+ldflags = -X github.com/TsukiCore/cosmos-sdk/version.Name=tsuki \
 	-X github.com/TsukiCore/cosmos-sdk/version.ServerName=tsukid \
 	-X github.com/TsukiCore/cosmos-sdk/version.ClientName=tsukicli \
 	-X github.com/TsukiCore/cosmos-sdk/version.Version=$(VERSION) \
