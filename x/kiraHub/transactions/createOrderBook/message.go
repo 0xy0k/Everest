@@ -2,7 +2,7 @@ package createOrderBook
 
 import (
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	errors "github.com/TsukiCore/cosmos-sdk/types/errors"
+	"github.com/TsukiCore/cosmos-sdk/types/errors"
 	"github.com/asaskevich/govalidator"
 
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
