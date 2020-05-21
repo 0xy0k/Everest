@@ -1,8 +1,5 @@
 package createOrderBook
 
-<<<<<<< HEAD
-
-=======
 //import (
 //	"bufio"
 //	"github.com/TsukiCore/cosmos-sdk/client/context"
@@ -11,5 +8,3 @@ package createOrderBook
 //	"github.com/spf13/cobra"
 //	"github.com/TsukiCore/cosmos-sdk/codec"
 //)
->>>>>>> dev
-
