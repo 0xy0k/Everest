@@ -6,7 +6,7 @@ import (
 
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(OrderBook{}, "tsukiHub/OrderBook", nil)
-	cdc.RegisterConcrete(LimitOrder{}, "tsukiHub/OrderBook", nil)
+	cdc.RegisterConcrete(LimitOrder{}, "tsukiHub/LimitOrder", nil)
 }
 
 var PackageCodec = codec.New()
