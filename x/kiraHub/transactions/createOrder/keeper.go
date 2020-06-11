@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"math/rand"
 
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
@@ -250,8 +251,14 @@ func (k Keeper) handleOrders (ctx sdk.Context, orderBookID string) {
 	}
 
 	// Generate Seed
+	blockHeader := ctx.BlockHeader().LastBlockId.Hash
+	blockIDHex := hex.EncodeToString(blockHeader[:])
+	blockIDInt, _ := strconv.Atoi(blockIDHex[:])
 
-	// Randomize Orders By
+	rand.Seed(int64(blockIDInt))
+
+	// Randomize Orders
+	// Need to shuffle by fisher yates algo
 
 	// Pick Orders
 	for _, buy := range limitBuy {
