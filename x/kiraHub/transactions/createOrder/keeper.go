@@ -12,7 +12,6 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
 	"github.com/TsukiCore/tsuki/types"
-	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrder"
 )
 
 type Keeper struct {
@@ -26,7 +25,7 @@ func (k Keeper) GetOrders(ctx sdk.Context, id string, maxOrders int, minAmount i
 	bz := store.Get([]byte(id))
 
 	// Just testing need to put logic for filtering later
-	_ := maxOrders + minAmount
+	//testVar := maxOrders + minAmount
 
 	var orders types.LimitOrder
 	k.cdc.MustUnmarshalBinaryBare(bz, &orders)
@@ -274,8 +273,8 @@ func (k Keeper) handleOrders (ctx sdk.Context, orderBookID string) {
 	rand.Seed(int64(blockIDInt))
 
 	// Randomize Orders
-	newBuy := fisheryatesShuffle(limitBuy)
-	newSell := fisheryatesShuffle(limitSell)
+	//newBuy := fisheryatesShuffle(limitBuy)
+	//newSell := fisheryatesShuffle(limitSell)
 
 	// Pick Orders
 	for _, buy := range limitBuy {
