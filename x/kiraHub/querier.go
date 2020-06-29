@@ -5,11 +5,13 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/types/errors"
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	"github.com/TsukiCore/tsuki/x/tsukiHub/queries/listOrderBooks"
+	"github.com/TsukiCore/tsuki/x/tsukiHub/queries/listOrders"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 )
 
 const (
 	QueryListOrderBooks = "listOrderBooks"
+	QueryListOrders = "listOrders"
 )
 
 func NewQuerier(keeper Keeper) sdk.Querier {
