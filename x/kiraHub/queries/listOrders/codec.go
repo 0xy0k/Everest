@@ -1,4 +1,4 @@
-package listOrderBooks
+package listOrders
 
 import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
@@ -6,8 +6,7 @@ import (
 
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(QueryListOrderBooks{}, "tsukiHub/queryOrderBooks", nil)
-	cdc.RegisterConcrete(QueryListOrderBooksByTP{}, "tsukiHub/queryOrderBooksByTP", nil)
+	cdc.RegisterConcrete(QueryListOrders{}, "tsukiHub/queryOrders", nil)
 }
 
 var packageCodec = codec.New()

@@ -5,7 +5,7 @@ import (
 )
 
 func RegisterCodec(codec *codec.Codec) {
-	codec.RegisterConcrete(Message{}, "tsukiHub/createOrderBook", nil)
+	codec.RegisterConcrete(Message{}, "tsukiHub/createOrder", nil)
 }
 
 var PackageCodec = codec.New()

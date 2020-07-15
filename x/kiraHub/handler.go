@@ -2,6 +2,7 @@ package tsukiHub
 
 import (
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
+	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrder"
 	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrderBook"
 	"github.com/pkg/errors"
 
@@ -16,6 +17,9 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		switch message := msg.(type) {
 		case createOrderBook.Message:
 			return createOrderBook.HandleMessage(context, keeper.getCreateOrderBookKeeper(), message)
+
+		case createOrder.Message:
+			return createOrder.HandleMessage(context, keeper.getCreateOrderKeeper(), message)
 
 		default:
 			return nil, errors.Wrapf(constants.UnknownMessageCode, "%T", msg)
