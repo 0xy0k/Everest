@@ -2,15 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/TsukiCore/cosmos-sdk/std"
-	"github.com/TsukiCore/cosmos-sdk/x/auth/ante"
-	"github.com/TsukiCore/cosmos-sdk/x/crisis"
-	"github.com/TsukiCore/cosmos-sdk/x/gov"
-	port "github.com/TsukiCore/cosmos-sdk/x/ibc/05-port"
-	transfer "github.com/TsukiCore/cosmos-sdk/x/ibc/20-transfer"
-	"github.com/TsukiCore/cosmos-sdk/x/upgrade"
-	"github.com/TsukiCore/tsuki/x/tsukiHub"
-	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	"io"
 	"os"
 
@@ -23,24 +14,34 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	cdctypes "github.com/TsukiCore/cosmos-sdk/codec/types"
 	"github.com/TsukiCore/cosmos-sdk/simapp"
+	"github.com/TsukiCore/cosmos-sdk/std"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
 	"github.com/TsukiCore/cosmos-sdk/types/module"
 	"github.com/TsukiCore/cosmos-sdk/version"
 	"github.com/TsukiCore/cosmos-sdk/x/auth"
+	"github.com/TsukiCore/cosmos-sdk/x/auth/ante"
 	"github.com/TsukiCore/cosmos-sdk/x/bank"
 	"github.com/TsukiCore/cosmos-sdk/x/capability"
+	"github.com/TsukiCore/cosmos-sdk/x/crisis"
 	distr "github.com/TsukiCore/cosmos-sdk/x/distribution"
 	"github.com/TsukiCore/cosmos-sdk/x/evidence"
 	"github.com/TsukiCore/cosmos-sdk/x/genutil"
+	"github.com/TsukiCore/cosmos-sdk/x/gov"
 	"github.com/TsukiCore/cosmos-sdk/x/ibc"
-	"github.com/TsukiCore/cosmos-sdk/x/params"
-	"github.com/TsukiCore/cosmos-sdk/x/slashing"
-	"github.com/TsukiCore/cosmos-sdk/x/staking"
-
 	ibcclient "github.com/TsukiCore/cosmos-sdk/x/ibc/02-client"
+	port "github.com/TsukiCore/cosmos-sdk/x/ibc/05-port"
+	transfer "github.com/TsukiCore/cosmos-sdk/x/ibc/20-transfer"
+	"github.com/TsukiCore/cosmos-sdk/x/params"
 	paramsclient "github.com/TsukiCore/cosmos-sdk/x/params/client"
 	paramproposal "github.com/TsukiCore/cosmos-sdk/x/params/types/proposal"
+	"github.com/TsukiCore/cosmos-sdk/x/slashing"
+	"github.com/TsukiCore/cosmos-sdk/x/staking"
+	"github.com/TsukiCore/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/TsukiCore/cosmos-sdk/x/upgrade/client"
+
+	"github.com/TsukiCore/tsuki/x/tsukiHub"
+	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
+	customstaking "github.com/TsukiCore/tsuki/x/staking"
 )
 
 const appName = "Tsuki"
@@ -79,11 +80,11 @@ var (
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
-		distr.ModuleName:          nil,
-		staking.BondedPoolName:    {auth.Burner, auth.Staking},
-		staking.NotBondedPoolName: {auth.Burner, auth.Staking},
-		gov.ModuleName:            {auth.Burner},
+		auth.FeeCollectorName:           nil,
+		distr.ModuleName:                nil,
+		staking.BondedPoolName:          {auth.Burner, auth.Staking},
+		staking.NotBondedPoolName:       {auth.Burner, auth.Staking},
+		gov.ModuleName:                  {auth.Burner},
 		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
 	}
 
@@ -113,8 +114,8 @@ type TsukiApp struct {
 	invCheckPeriod uint
 
 	// keys to access the substores
-	keys  map[string]*sdk.KVStoreKey
-	tKeys map[string]*sdk.TransientStoreKey
+	keys    map[string]*sdk.KVStoreKey
+	tKeys   map[string]*sdk.TransientStoreKey
 	memKeys map[string]*sdk.MemoryStoreKey
 
 	// subspaces
@@ -185,7 +186,6 @@ func NewInitApp(
 		memKeys:        memKeys,
 		subspaces:      make(map[string]params.Subspace),
 	}
-
 
 	// Set specific supspaces
 	app.paramsKeeper = params.NewKeeper(appCodec, keys[params.StoreKey], tKeys[params.TStoreKey])
@@ -284,7 +284,7 @@ func NewInitApp(
 		gov.NewAppModule(appCodec, app.govKeeper, app.accountKeeper, app.bankKeeper),
 		slashing.NewAppModule(appCodec, app.slashingKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
 		distr.NewAppModule(appCodec, app.distrKeeper, app.accountKeeper, app.bankKeeper, app.stakingKeeper),
-		staking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
+		customstaking.NewAppModule(appCodec, app.stakingKeeper, app.accountKeeper, app.bankKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		ibc.NewAppModule(app.ibcKeeper),
