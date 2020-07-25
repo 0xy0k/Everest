@@ -7,6 +7,7 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/x/auth"
 	"github.com/TsukiCore/cosmos-sdk/x/staking"
 	"github.com/TsukiCore/cosmos-sdk/x/staking/types"
+	"github.com/TsukiCore/tsuki/x/staking/keeper"
 )
 
 var (
@@ -17,12 +18,13 @@ var (
 type AppModule struct {
 	staking.AppModule
 
-	stakingKeeper staking.Keeper
+	stakingKeeper       staking.Keeper
+	customStakingKeeper keeper.Keeper
 }
 
 // NewHandler returns an sdk.Handler for the staking module.
 func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.stakingKeeper)
+	return NewHandler(am.stakingKeeper, am.customStakingKeeper)
 }
 
 // NewAppModule returns a new Custom Staking module.
