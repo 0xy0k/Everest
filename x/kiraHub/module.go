@@ -3,13 +3,14 @@ package tsukiHub
 import (
 	"encoding/json"
 
+	"github.com/TsukiCore/cosmos-sdk/client"
+
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	abciTypes "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/TsukiCore/cosmos-sdk/client/context"
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	sdkTypes "github.com/TsukiCore/cosmos-sdk/types"
 	"github.com/TsukiCore/cosmos-sdk/types/module"
@@ -40,7 +41,7 @@ func (AppModuleBasic) ValidateGenesis(jsonMarshaler codec.JSONMarshaler, rawMess
 	}
 	return ValidateGenesis(genesisState)
 }
-func (AppModuleBasic) RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func (AppModuleBasic) RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	RegisterRESTRoutes(cliContext, router)
 }
 func (AppModuleBasic) GetTxCmd(codec *codec.Codec) *cobra.Command {
