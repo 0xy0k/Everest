@@ -2,15 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/TsukiCore/cosmos-sdk/std"
-	"github.com/TsukiCore/cosmos-sdk/x/auth/ante"
-	"github.com/TsukiCore/cosmos-sdk/x/crisis"
-	"github.com/TsukiCore/cosmos-sdk/x/gov"
-	port "github.com/TsukiCore/cosmos-sdk/x/ibc/05-port"
-	transfer "github.com/TsukiCore/cosmos-sdk/x/ibc/20-transfer"
-	"github.com/TsukiCore/cosmos-sdk/x/upgrade"
-	"github.com/TsukiCore/tsuki/x/tsukiHub"
-	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	"io"
 	"os"
 
@@ -23,24 +14,61 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/codec"
 	cdctypes "github.com/TsukiCore/cosmos-sdk/codec/types"
 	"github.com/TsukiCore/cosmos-sdk/simapp"
+	"github.com/TsukiCore/cosmos-sdk/std"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
 	"github.com/TsukiCore/cosmos-sdk/types/module"
 	"github.com/TsukiCore/cosmos-sdk/version"
 	"github.com/TsukiCore/cosmos-sdk/x/auth"
+	"github.com/TsukiCore/cosmos-sdk/x/auth/ante"
+	authkeeper "github.com/TsukiCore/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/TsukiCore/cosmos-sdk/x/auth/types"
 	"github.com/TsukiCore/cosmos-sdk/x/bank"
+	bankkeeper "github.com/TsukiCore/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/TsukiCore/cosmos-sdk/x/bank/types"
 	"github.com/TsukiCore/cosmos-sdk/x/capability"
+	capabilitykeeper "github.com/TsukiCore/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/TsukiCore/cosmos-sdk/x/capability/types"
+	"github.com/TsukiCore/cosmos-sdk/x/crisis"
+	crisiskeeper "github.com/TsukiCore/cosmos-sdk/x/crisis/keeper"
+	crisistypes "github.com/TsukiCore/cosmos-sdk/x/crisis/types"
 	distr "github.com/TsukiCore/cosmos-sdk/x/distribution"
+	distrclient "github.com/TsukiCore/cosmos-sdk/x/distribution/client"
+	distrkeeper "github.com/TsukiCore/cosmos-sdk/x/distribution/keeper"
+	distrtypes "github.com/TsukiCore/cosmos-sdk/x/distribution/types"
 	"github.com/TsukiCore/cosmos-sdk/x/evidence"
+	evidencekeeper "github.com/TsukiCore/cosmos-sdk/x/evidence/keeper"
+	evidencetypes "github.com/TsukiCore/cosmos-sdk/x/evidence/types"
 	"github.com/TsukiCore/cosmos-sdk/x/genutil"
+	"github.com/TsukiCore/cosmos-sdk/x/gov"
+	govkeeper "github.com/TsukiCore/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/TsukiCore/cosmos-sdk/x/gov/types"
 	"github.com/TsukiCore/cosmos-sdk/x/ibc"
-	"github.com/TsukiCore/cosmos-sdk/x/params"
-	"github.com/TsukiCore/cosmos-sdk/x/slashing"
-	"github.com/TsukiCore/cosmos-sdk/x/staking"
-
+	ibctransferkeeper "github.com/TsukiCore/cosmos-sdk/x/ibc-transfer/keeper"
+	ibctransfertypes "github.com/TsukiCore/cosmos-sdk/x/ibc-transfer/types"
 	ibcclient "github.com/TsukiCore/cosmos-sdk/x/ibc/02-client"
+	ibchost "github.com/TsukiCore/cosmos-sdk/x/ibc/24-host"
+	ibckeeper "github.com/TsukiCore/cosmos-sdk/x/ibc/keeper"
+	minttypes "github.com/TsukiCore/cosmos-sdk/x/mint/types"
+	"github.com/TsukiCore/cosmos-sdk/x/params"
 	paramsclient "github.com/TsukiCore/cosmos-sdk/x/params/client"
+	paramskeeper "github.com/TsukiCore/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/TsukiCore/cosmos-sdk/x/params/types"
 	paramproposal "github.com/TsukiCore/cosmos-sdk/x/params/types/proposal"
+	"github.com/TsukiCore/cosmos-sdk/x/slashing"
+	slashingkeeper "github.com/TsukiCore/cosmos-sdk/x/slashing/keeper"
+	slashingtypes "github.com/TsukiCore/cosmos-sdk/x/slashing/types"
+	"github.com/TsukiCore/cosmos-sdk/x/staking"
+	stakingkeeper "github.com/TsukiCore/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/TsukiCore/cosmos-sdk/x/staking/types"
+	"github.com/TsukiCore/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/TsukiCore/cosmos-sdk/x/upgrade/client"
+	upgradekeeper "github.com/TsukiCore/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/TsukiCore/cosmos-sdk/x/upgrade/types"
+	port "github.com/cosmos/cosmos-sdk/x/ibc/05-port"
+	transfer "github.com/cosmos/cosmos-sdk/x/ibc/20-transfer"
+
+	"github.com/TsukiCore/tsuki/x/tsukiHub"
+	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 )
 
 const appName = "Tsuki"
@@ -64,7 +92,7 @@ var (
 		staking.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
-			paramsclient.ProposalHandler, distr.ProposalHandler, upgradeclient.ProposalHandler,
+			paramsclient.ProposalHandler, distrclient.ProposalHandler, upgradeclient.ProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -73,21 +101,22 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 
-		tsukiHub.AppModuleBasic{},
+		//tsukiHub.AppModuleBasic{},
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
-		distr.ModuleName:          nil,
-		staking.BondedPoolName:    {auth.Burner, auth.Staking},
-		staking.NotBondedPoolName: {auth.Burner, auth.Staking},
-		gov.ModuleName:            {auth.Burner},
-		transfer.GetModuleAccountName(): {auth.Minter, auth.Burner},
+		authtypes.FeeCollectorName:     nil,
+		distrtypes.ModuleName:          nil,
+		minttypes.ModuleName:           {authtypes.Minter},
+		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:            {authtypes.Burner},
+		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	}
 
 	allowedReceivingModAcc = map[string]bool{
-		distr.ModuleName: true,
+		distrtypes.ModuleName: true,
 	}
 )
 
@@ -112,32 +141,29 @@ type TsukiApp struct {
 	invCheckPeriod uint
 
 	// keys to access the substores
-	keys  map[string]*sdk.KVStoreKey
-	tKeys map[string]*sdk.TransientStoreKey
+	keys    map[string]*sdk.KVStoreKey
+	tKeys   map[string]*sdk.TransientStoreKey
 	memKeys map[string]*sdk.MemoryStoreKey
 
-	// subspaces
-	subspaces map[string]params.Subspace
-
 	// keepers
-	accountKeeper    auth.AccountKeeper
-	bankKeeper       bank.Keeper
+	accountKeeper    authkeeper.AccountKeeper
+	bankKeeper       bankkeeper.Keeper
 	tsukiHubKeeper    tsukiHub.Keeper
-	capabilityKeeper *capability.Keeper
-	stakingKeeper    staking.Keeper
-	slashingKeeper   slashing.Keeper
-	distrKeeper      distr.Keeper
-	govKeeper        gov.Keeper
-	crisisKeeper     crisis.Keeper
-	upgradeKeeper    upgrade.Keeper
-	paramsKeeper     params.Keeper
-	ibcKeeper        *ibc.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	evidenceKeeper   evidence.Keeper
-	transferKeeper   transfer.Keeper
+	capabilityKeeper *capabilitykeeper.Keeper
+	stakingKeeper    stakingkeeper.Keeper
+	slashingKeeper   slashingkeeper.Keeper
+	distrKeeper      distrkeeper.Keeper
+	govKeeper        govkeeper.Keeper
+	crisisKeeper     crisiskeeper.Keeper
+	upgradeKeeper    upgradekeeper.Keeper
+	paramsKeeper     paramskeeper.Keeper
+	ibcKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	evidenceKeeper   evidencekeeper.Keeper
+	transferKeeper   ibctransferkeeper.Keeper
 
 	// make scoped keepers public for test purposes
-	scopedIBCKeeper      capability.ScopedKeeper
-	scopedTransferKeeper capability.ScopedKeeper
+	scopedIBCKeeper      capabilitykeeper.ScopedKeeper
+	scopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// Module Manager
 	mm *module.Manager
@@ -156,23 +182,26 @@ func NewInitApp(
 	baseAppOptions ...func(*bam.BaseApp),
 
 ) *TsukiApp {
-	// First define the top level codec that will be shared by the different modules
-	appCodec, cdc := MakeCodec()
+	// TODO: Remove cdc in favor of appCodec once all modules are migrated.
+	encodingConfig := MakeEncodingConfig()
+	appCodec := encodingConfig.Marshaler
+	cdc := encodingConfig.Amino
+	interfaceRegistry := encodingConfig.InterfaceRegistry
 
 	// BaseApp handles interactions with Tendermint through the ABCI protocol
-	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
+	bApp := bam.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetAppVersion(version.Version)
+	bApp.GRPCQueryRouter().SetAnyUnpacker(interfaceRegistry)
 
 	// TODO: Add the keys that module requires
-	keys := sdk.NewKVStoreKeys(auth.StoreKey, bank.StoreKey, staking.StoreKey,
-		distr.StoreKey, slashing.StoreKey,
-		gov.StoreKey, params.StoreKey, ibc.StoreKey, upgrade.StoreKey,
-		evidence.StoreKey, transfer.StoreKey, capability.StoreKey, constants.StoreKey,
+	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
+		distrtypes.StoreKey, slashingtypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
+		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, constants.StoreKey,
 	)
-
-	tKeys := sdk.NewTransientStoreKeys(params.TStoreKey)
-	memKeys := sdk.NewMemoryStoreKeys(capability.MemStoreKey)
+	tKeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// Here you initialize your application with the store keys it requires
 	app := &TsukiApp{
@@ -182,63 +211,53 @@ func NewInitApp(
 		keys:           keys,
 		tKeys:          tKeys,
 		memKeys:        memKeys,
-		subspaces:      make(map[string]params.Subspace),
 	}
 
-
-	// Set specific supspaces
-	app.paramsKeeper = params.NewKeeper(appCodec, keys[params.StoreKey], tKeys[params.TStoreKey])
-	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
-	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
-	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
-	app.subspaces[slashing.ModuleName] = app.paramsKeeper.Subspace(slashing.DefaultParamspace)
-	app.subspaces[gov.ModuleName] = app.paramsKeeper.Subspace(gov.DefaultParamspace).WithKeyTable(gov.ParamKeyTable())
-	app.subspaces[crisis.ModuleName] = app.paramsKeeper.Subspace(crisis.DefaultParamspace)
+	app.paramsKeeper = initParamsKeeper(appCodec, keys[paramstypes.StoreKey], tKeys[paramstypes.TStoreKey])
 
 	bApp.SetParamStore(app.paramsKeeper.Subspace(bam.Paramspace).WithKeyTable(std.ConsensusParamsKeyTable()))
 
-	app.capabilityKeeper = capability.NewKeeper(appCodec, keys[capability.StoreKey], memKeys[capability.MemStoreKey])
-	scopedIBCKeeper := app.capabilityKeeper.ScopeToModule(ibc.ModuleName)
-	scopedTransferKeeper := app.capabilityKeeper.ScopeToModule(transfer.ModuleName)
+	app.capabilityKeeper = capabilitykeeper.NewKeeper(appCodec, keys[capabilitytypes.StoreKey], memKeys[capabilitytypes.MemStoreKey])
+	scopedIBCKeeper := app.capabilityKeeper.ScopeToModule(ibchost.ModuleName)
+	scopedTransferKeeper := app.capabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 
 	// The AccountKeeper handles address -> account lookups
-	app.accountKeeper = auth.NewAccountKeeper(
-		appCodec, keys[auth.StoreKey], app.subspaces[auth.ModuleName], auth.ProtoBaseAccount, maccPerms,
+	app.accountKeeper = authkeeper.NewAccountKeeper(
+		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
 	)
-	app.bankKeeper = bank.NewBaseKeeper(
-		appCodec, keys[bank.StoreKey], app.accountKeeper, app.subspaces[bank.ModuleName], app.BlacklistedAccAddrs(),
+	app.bankKeeper = bankkeeper.NewBaseKeeper(
+		appCodec, keys[banktypes.StoreKey], app.accountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlacklistedAccAddrs(),
 	)
-	stakingKeeper := staking.NewKeeper(
-		appCodec, keys[staking.StoreKey], app.accountKeeper, app.bankKeeper, app.subspaces[staking.ModuleName],
+	stakingKeeper := stakingkeeper.NewKeeper(
+		appCodec, keys[stakingtypes.StoreKey], app.accountKeeper, app.bankKeeper, app.GetSubspace(stakingtypes.ModuleName),
 	)
-	app.distrKeeper = distr.NewKeeper(
-		appCodec, keys[distr.StoreKey], app.subspaces[distr.ModuleName], app.accountKeeper, app.bankKeeper,
-		&stakingKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
+	app.distrKeeper = distrkeeper.NewKeeper(
+		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.accountKeeper, app.bankKeeper,
+		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
-	app.slashingKeeper = slashing.NewKeeper(
-		appCodec, keys[slashing.StoreKey], &stakingKeeper, app.subspaces[slashing.ModuleName],
+	app.slashingKeeper = slashingkeeper.NewKeeper(
+		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
 	)
-	app.crisisKeeper = crisis.NewKeeper(
-		app.subspaces[crisis.ModuleName], invCheckPeriod, app.bankKeeper, auth.FeeCollectorName,
+	app.crisisKeeper = crisiskeeper.NewKeeper(
+		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.bankKeeper, authtypes.FeeCollectorName,
 	)
-	app.upgradeKeeper = upgrade.NewKeeper(skipUpgradeHeights, keys[upgrade.StoreKey], appCodec, home)
+	app.upgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, home)
 
 	// register the proposal types
-	govRouter := gov.NewRouter()
-	govRouter.AddRoute(gov.RouterKey, gov.ProposalHandler).
+	govRouter := govtypes.NewRouter()
+	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-		AddRoute(distr.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
-		AddRoute(upgrade.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
-	app.govKeeper = gov.NewKeeper(
-		appCodec, keys[gov.StoreKey], app.subspaces[gov.ModuleName], app.accountKeeper, app.bankKeeper,
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.distrKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.upgradeKeeper))
+	app.govKeeper = govkeeper.NewKeeper(
+		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.accountKeeper, app.bankKeeper,
 		&stakingKeeper, govRouter,
 	)
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(app.distrKeeper.Hooks(), app.slashingKeeper.Hooks()),
 	)
 
 	app.ibcKeeper = ibc.NewKeeper(
@@ -403,6 +422,14 @@ func (app *TsukiApp) Codec() *codec.Codec {
 	return app.cdc
 }
 
+// GetSubspace returns a param subspace for a given module name.
+//
+// NOTE: This is solely to be used for testing purposes.
+func (app *TsukiApp) GetSubspace(moduleName string) paramstypes.Subspace {
+	subspace, _ := app.paramsKeeper.GetSubspace(moduleName)
+	return subspace
+}
+
 // SimulationManager implements the SimulationApp interface
 func (app *TsukiApp) SimulationManager() *module.SimulationManager {
 	return app.sm
@@ -425,4 +452,20 @@ func (app *TsukiApp) BlacklistedAccAddrs() map[string]bool {
 	}
 
 	return blacklistedAddrs
+}
+
+// initParamsKeeper init params keeper and its subspaces
+func initParamsKeeper(appCodec codec.Marshaler, key, tkey sdk.StoreKey) paramskeeper.Keeper {
+	paramsKeeper := paramskeeper.NewKeeper(appCodec, key, tkey)
+
+	paramsKeeper.Subspace(authtypes.ModuleName)
+	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(stakingtypes.ModuleName)
+	paramsKeeper.Subspace(minttypes.ModuleName)
+	paramsKeeper.Subspace(distrtypes.ModuleName)
+	paramsKeeper.Subspace(slashingtypes.ModuleName)
+	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
+	paramsKeeper.Subspace(crisistypes.ModuleName)
+
+	return paramsKeeper
 }
