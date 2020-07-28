@@ -2,11 +2,12 @@ package app
 
 import (
 	"encoding/json"
+	"io"
+	"os"
+
 	"github.com/TsukiCore/cosmos-sdk/client/rpc"
 	"github.com/TsukiCore/cosmos-sdk/server/api"
 	authrest "github.com/TsukiCore/cosmos-sdk/x/auth/client/rest"
-	"io"
-	"os"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -78,10 +79,6 @@ import (
 const appName = "Tsuki"
 
 var (
-
-	// DefaultCLIHome default home directories for the application CLI
-	DefaultCLIHome = os.ExpandEnv("$HOME/.tsukicli")
-
 	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored
 	DefaultNodeHome = os.ExpandEnv("$HOME/.tsukid")
 
@@ -286,7 +283,7 @@ func NewInitApp(
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx, encodingConfig.TxConfig),
 		auth.NewAppModule(appCodec, app.accountKeeper),
-		tsukiHub.NewAppModule(app.tsukiHubKeeper),
+		//tsukiHub.NewAppModule(app.tsukiHubKeeper),
 		bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper),
 		capability.NewAppModule(appCodec, *app.capabilityKeeper),
 		crisis.NewAppModule(&app.crisisKeeper),
