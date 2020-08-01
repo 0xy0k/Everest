@@ -1,9 +1,10 @@
 package tsukiHub
 
 import (
-	"github.com/TsukiCore/cosmos-sdk/client/context"
-	"github.com/gorilla/mux"
 	"strings"
+
+	"github.com/TsukiCore/cosmos-sdk/client"
+	"github.com/gorilla/mux"
 
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	"github.com/TsukiCore/tsuki/x/tsukiHub/queries/listOrderBooks"
@@ -12,7 +13,7 @@ import (
 	"github.com/TsukiCore/tsuki/x/tsukiHub/transactions/createOrderBook"
 )
 
-func RegisterRESTRoutes(cliContext context.CLIContext, router *mux.Router) {
+func RegisterRESTRoutes(cliContext client.Context, router *mux.Router) {
 	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.CreateOrderBookTransaction}, "/"), createOrderBook.RestRequestHandler(cliContext)).Methods("POST")
 	router.HandleFunc(strings.Join([]string{"", TransactionRoute, constants.CreateOrderTransaction}, "/"), createOrder.RestRequestHandler(cliContext)).Methods("POST")
 
