@@ -8,11 +8,22 @@ import (
 	stakingkeeper "github.com/TsukiCore/cosmos-sdk/x/staking/keeper"
 	"github.com/TsukiCore/cosmos-sdk/x/staking/types"
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
+	cumstomtypes "github.com/TsukiCore/tsuki/x/staking/types"
 )
 
 var (
-	_ module.AppModule = AppModule{}
+	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModuleBasic{}
 )
+
+type AppModuleBasic struct {
+	staking.AppModuleBasic
+}
+
+// RegisterCodec registers the staking module's types for the given codec.
+func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
+	cumstomtypes.RegisterCodec(cdc)
+}
 
 // AppModule extends the cosmos SDK staking.
 type AppModule struct {
