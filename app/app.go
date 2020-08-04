@@ -106,6 +106,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 
+		//customstaking.AppModuleBasic{},
 		//tsukiHub.AppModuleBasic{},
 	)
 

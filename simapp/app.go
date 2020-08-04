@@ -4,9 +4,9 @@ import (
 	"io"
 	"os"
 
-	types2 "github.com/TsukiCore/tsuki/x/staking/types"
+	customstaking "github.com/TsukiCore/tsuki/x/staking"
 
-	"github.com/TsukiCore/tsuki/x/staking/keeper"
+	"github.com/TsukiCore/cosmos-sdk/simapp"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -76,6 +76,9 @@ import (
 	upgradeclient "github.com/TsukiCore/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/TsukiCore/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/TsukiCore/cosmos-sdk/x/upgrade/types"
+
+	"github.com/TsukiCore/tsuki/x/staking/keeper"
+	types2 "github.com/TsukiCore/tsuki/x/staking/types"
 )
 
 const appName = "TsukiSimApp"
@@ -105,6 +108,8 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
+
+		customstaking.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -124,7 +129,7 @@ var (
 	}
 )
 
-var _ App = (*SimApp)(nil)
+var _ simapp.App = (*SimApp)(nil)
 
 // SimApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
