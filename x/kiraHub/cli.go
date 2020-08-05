@@ -1,6 +1,5 @@
 package tsukiHub
 
-
 import (
 	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 	"github.com/TsukiCore/tsuki/x/tsukiHub/queries/listOrderBooks"
@@ -10,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/client/flags"
 	"github.com/TsukiCore/cosmos-sdk/codec"
 )
 
@@ -22,10 +20,10 @@ func GetCLIRootTransactionCommand(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	rootTransactionCommand.AddCommand(flags.PostCommands(
+	rootTransactionCommand.AddCommand(
 		createOrderBook.TransactionCommand(codec),
 		createOrder.TransactionCommand(codec),
-	)...)
+	)
 	return rootTransactionCommand
 }
 
@@ -37,10 +35,10 @@ func GetCLIRootQueryCommand(codec *codec.Codec) *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	rootQueryCommand.AddCommand(flags.GetCommands(
+	rootQueryCommand.AddCommand(
 		listOrderBooks.GetOrderBooksCmd(codec),
 		listOrderBooks.GetOrderBooksByTPCmd(codec),
 		listOrders.GetOrdersCmd(codec),
-	)...)
+	)
 	return rootQueryCommand
 }
