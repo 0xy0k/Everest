@@ -30,6 +30,5 @@ lint:
 	@go mod verify
 
 proto-gen:
-	@protoc -I "./x/staking/types/" -I "third_party/proto"  --gocosmos_out=plugins=interfacetype+grpc,\
-	Mgoogle/protobuf/any.proto=github.com/TsukiCore/cosmos-sdk/codec/types:. \
-	./x/staking/types/msg.proto
+	./scripts/protocgen.sh
+
