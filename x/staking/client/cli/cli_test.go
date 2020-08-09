@@ -5,28 +5,22 @@ import (
 	"fmt"
 	"testing"
 
-	types3 "github.com/TsukiCore/cosmos-sdk/types"
-
-	types2 "github.com/TsukiCore/tsuki/x/staking/types"
-
-	"github.com/TsukiCore/tsuki/x/staking/client/cli"
-
-	"github.com/TsukiCore/tsuki/app"
-
-	"github.com/TsukiCore/tsuki/simapp"
-
-	"github.com/TsukiCore/cosmos-sdk/client/flags"
-
-	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/testutil"
-
-	"github.com/TsukiCore/cosmos-sdk/baseapp"
-	servertypes "github.com/TsukiCore/cosmos-sdk/server/types"
-	"github.com/TsukiCore/cosmos-sdk/store/types"
 	"github.com/stretchr/testify/suite"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/TsukiCore/cosmos-sdk/baseapp"
+	"github.com/TsukiCore/cosmos-sdk/client"
+	"github.com/TsukiCore/cosmos-sdk/client/flags"
+	servertypes "github.com/TsukiCore/cosmos-sdk/server/types"
+	"github.com/TsukiCore/cosmos-sdk/store/types"
+	"github.com/TsukiCore/cosmos-sdk/testutil"
 	"github.com/TsukiCore/cosmos-sdk/testutil/network"
+	sdk "github.com/TsukiCore/cosmos-sdk/types"
+
+	"github.com/TsukiCore/tsuki/app"
+	"github.com/TsukiCore/tsuki/simapp"
+	"github.com/TsukiCore/tsuki/x/staking/client/cli"
+	customtypes "github.com/TsukiCore/tsuki/x/staking/types"
 )
 
 type IntegrationTestSuite struct {
@@ -114,14 +108,14 @@ func (s *IntegrationTestSuite) TestClaimValidatorSet() {
 	err = query.ExecuteContext(ctx)
 	s.Require().NoError(err)
 
-	var respValidator types2.Validator
+	var respValidator customtypes.Validator
 	clientCtx.JSONMarshaler.MustUnmarshalJSON(out.Bytes(), &respValidator)
 
 	s.Require().Equal("Moniker", respValidator.Moniker)
 	s.Require().Equal("Website", respValidator.Website)
 	s.Require().Equal("Social", respValidator.Social)
 	s.Require().Equal("Identity", respValidator.Identity)
-	s.Require().Equal(types3.NewDec(10), respValidator.Commission)
+	s.Require().Equal(sdk.NewDec(10), respValidator.Commission)
 	s.Require().Equal(val.ValAddress, respValidator.ValKey)
 	s.Require().Equal(pubKey, respValidator.PubKey)
 }
