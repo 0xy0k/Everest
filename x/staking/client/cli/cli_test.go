@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/TsukiCore/tsuki/testutil/network"
+
 	"github.com/stretchr/testify/suite"
 	dbm "github.com/tendermint/tm-db"
 
@@ -14,7 +16,6 @@ import (
 	servertypes "github.com/TsukiCore/cosmos-sdk/server/types"
 	"github.com/TsukiCore/cosmos-sdk/store/types"
 	"github.com/TsukiCore/cosmos-sdk/testutil"
-	"github.com/TsukiCore/cosmos-sdk/testutil/network"
 	sdk "github.com/TsukiCore/cosmos-sdk/types"
 
 	"github.com/TsukiCore/tsuki/app"
@@ -31,7 +32,6 @@ type IntegrationTestSuite struct {
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
-	s.T().SkipNow()
 	s.T().Log("setting up integration test suite")
 
 	cfg := network.DefaultConfig()
