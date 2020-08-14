@@ -2,9 +2,13 @@ syntax = "proto3";
 package tsuki.staking;
 
 import "staking.proto";
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/TsukiCore/cosmos-sdk/x/staking/types";
 
 message GenesisState {
-  repeated Validator validators = 1;
+  repeated Validator validators = 1 [
+    (gogoproto.casttype) = "Validator",
+    (gogoproto.nullable) = false
+  ];
 }
