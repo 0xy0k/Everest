@@ -6,6 +6,8 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/x/staking/client/cli"
 )
 
+const FlagMoniker = "moniker"
+
 // AddValidatorFlags adds the flags needed to create a validator.
 func AddValidatorFlags(cmd *cobra.Command) {
 	cmd.Flags().String(FlagMoniker, "", "the Moniker")
