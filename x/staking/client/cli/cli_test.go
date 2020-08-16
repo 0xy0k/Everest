@@ -3,10 +3,7 @@ package cli_test
 import (
 	"context"
 	"fmt"
-	"github.com/TsukiCore/cosmos-sdk/client/keys"
 	"testing"
-
-	"github.com/TsukiCore/tsuki/testutil/network"
 
 	"github.com/stretchr/testify/suite"
 	dbm "github.com/tendermint/tm-db"
@@ -14,6 +11,7 @@ import (
 	"github.com/TsukiCore/cosmos-sdk/baseapp"
 	"github.com/TsukiCore/cosmos-sdk/client"
 	"github.com/TsukiCore/cosmos-sdk/client/flags"
+	"github.com/TsukiCore/cosmos-sdk/client/keys"
 	servertypes "github.com/TsukiCore/cosmos-sdk/server/types"
 	"github.com/TsukiCore/cosmos-sdk/store/types"
 	"github.com/TsukiCore/cosmos-sdk/testutil"
@@ -21,6 +19,7 @@ import (
 
 	"github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/simapp"
+	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/staking/client/cli"
 	customtypes "github.com/TsukiCore/tsuki/x/staking/types"
 )
@@ -62,7 +61,7 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 	s.network.Cleanup()
 }
 
-func (s *IntegrationTestSuite) TestClaimValidatorSet() {
+func (s *IntegrationTestSuite) TestClaimValidatorSet_AndQueriers() {
 	val := s.network.Validators[0]
 
 	cmd := cli.GetTxClaimValidatorCmd()
@@ -100,7 +99,7 @@ func (s *IntegrationTestSuite) TestClaimValidatorSet() {
 	query := cli.GetCmdQueryValidatorByAddress()
 	query.SetArgs(
 		[]string{
-			val.ValAddress.String(),
+			fmt.Sprintf("--%s=%s", cli.FlagValAddr, val.ValAddress.String()),
 		},
 	)
 
