@@ -4,10 +4,10 @@ VERSION = 1.0.0
 COMMIT := $(shell git log -1 --format='%H')
 
 # TODO: Update the ldflags with the app, client & server names
-ldflags = -X github.com/TsukiCore/cosmos-sdk/version.Name=tsuki \
-	-X github.com/TsukiCore/cosmos-sdk/version.ServerName=tsukid \
-	-X github.com/TsukiCore/cosmos-sdk/version.Version=$(VERSION) \
-	-X github.com/TsukiCore/cosmos-sdk/version.Commit=$(COMMIT)
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=tsuki \
+	-X github.com/cosmos/cosmos-sdk/version.ServerName=tsukid \
+	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
+	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 

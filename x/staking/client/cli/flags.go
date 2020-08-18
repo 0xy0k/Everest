@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/TsukiCore/cosmos-sdk/x/staking/client/cli"
+	"github.com/cosmos/cosmos-sdk/x/staking/client/cli"
 )
 
 const FlagMoniker = "moniker"
