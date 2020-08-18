@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"log"
 
-	slashingtypes "github.com/TsukiCore/cosmos-sdk/x/slashing/types"
-	stakingtypes "github.com/TsukiCore/cosmos-sdk/x/staking/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/TsukiCore/cosmos-sdk/x/staking/exported"
+	"github.com/cosmos/cosmos-sdk/x/staking/exported"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/TsukiCore/cosmos-sdk/x/staking"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 )
 
 // ExportAppStateAndValidators export the state of Tsuki for a genesis file

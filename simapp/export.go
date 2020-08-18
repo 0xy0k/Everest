@@ -7,12 +7,12 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	slashingtypes "github.com/TsukiCore/cosmos-sdk/x/slashing/types"
-	"github.com/TsukiCore/cosmos-sdk/x/staking"
-	"github.com/TsukiCore/cosmos-sdk/x/staking/exported"
-	stakingtypes "github.com/TsukiCore/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/cosmos/cosmos-sdk/x/staking/exported"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // ExportAppStateAndValidators exports the state of the application for a genesis

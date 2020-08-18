@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestNewValidator_Errors(t *testing.T) {

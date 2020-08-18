@@ -16,14 +16,14 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	bam "github.com/TsukiCore/cosmos-sdk/baseapp"
-	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	"github.com/TsukiCore/cosmos-sdk/simapp/helpers"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	authtypes "github.com/TsukiCore/cosmos-sdk/x/auth/types"
-	banktypes "github.com/TsukiCore/cosmos-sdk/x/bank/types"
-	stakingtypes "github.com/TsukiCore/cosmos-sdk/x/staking/types"
+	bam "github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp/helpers"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in

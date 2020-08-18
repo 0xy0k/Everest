@@ -10,9 +10,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/client/flags"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	cumstomtypes "github.com/TsukiCore/tsuki/x/staking/types"
 )

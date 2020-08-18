@@ -7,7 +7,7 @@ import (
 
 	types2 "github.com/TsukiCore/tsuki/x/staking/types"
 
-	"github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"

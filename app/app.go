@@ -5,86 +5,85 @@ import (
 	"io"
 	"os"
 
-	"github.com/TsukiCore/cosmos-sdk/x/crisis"
-	crisiskeeper "github.com/TsukiCore/cosmos-sdk/x/crisis/keeper"
+	"github.com/cosmos/cosmos-sdk/x/crisis"
+	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 
-	"github.com/TsukiCore/tsuki/x/staking/keeper"
+	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	cumstomtypes "github.com/TsukiCore/tsuki/x/staking/types"
 
 	customstaking "github.com/TsukiCore/tsuki/x/staking"
 
-	"github.com/TsukiCore/cosmos-sdk/testutil/testdata"
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 
-	"github.com/TsukiCore/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/codec/types"
 
-	"github.com/TsukiCore/cosmos-sdk/client/rpc"
-	"github.com/TsukiCore/cosmos-sdk/server/api"
-	authrest "github.com/TsukiCore/cosmos-sdk/x/auth/client/rest"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	bam "github.com/TsukiCore/cosmos-sdk/baseapp"
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	"github.com/TsukiCore/cosmos-sdk/simapp"
-	"github.com/TsukiCore/cosmos-sdk/std"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/TsukiCore/cosmos-sdk/types/module"
-	"github.com/TsukiCore/cosmos-sdk/version"
-	"github.com/TsukiCore/cosmos-sdk/x/auth"
-	"github.com/TsukiCore/cosmos-sdk/x/auth/ante"
-	authkeeper "github.com/TsukiCore/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/TsukiCore/cosmos-sdk/x/auth/types"
-	"github.com/TsukiCore/cosmos-sdk/x/bank"
-	bankkeeper "github.com/TsukiCore/cosmos-sdk/x/bank/keeper"
-	banktypes "github.com/TsukiCore/cosmos-sdk/x/bank/types"
-	"github.com/TsukiCore/cosmos-sdk/x/capability"
-	capabilitykeeper "github.com/TsukiCore/cosmos-sdk/x/capability/keeper"
-	capabilitytypes "github.com/TsukiCore/cosmos-sdk/x/capability/types"
-	crisistypes "github.com/TsukiCore/cosmos-sdk/x/crisis/types"
-	distr "github.com/TsukiCore/cosmos-sdk/x/distribution"
-	distrclient "github.com/TsukiCore/cosmos-sdk/x/distribution/client"
-	distrkeeper "github.com/TsukiCore/cosmos-sdk/x/distribution/keeper"
-	distrtypes "github.com/TsukiCore/cosmos-sdk/x/distribution/types"
-	"github.com/TsukiCore/cosmos-sdk/x/evidence"
-	evidencekeeper "github.com/TsukiCore/cosmos-sdk/x/evidence/keeper"
-	evidencetypes "github.com/TsukiCore/cosmos-sdk/x/evidence/types"
-	"github.com/TsukiCore/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/TsukiCore/cosmos-sdk/x/genutil/types"
-	"github.com/TsukiCore/cosmos-sdk/x/gov"
-	govkeeper "github.com/TsukiCore/cosmos-sdk/x/gov/keeper"
-	govtypes "github.com/TsukiCore/cosmos-sdk/x/gov/types"
-	"github.com/TsukiCore/cosmos-sdk/x/ibc"
-	transfer "github.com/TsukiCore/cosmos-sdk/x/ibc-transfer"
-	ibctransferkeeper "github.com/TsukiCore/cosmos-sdk/x/ibc-transfer/keeper"
-	ibctransfertypes "github.com/TsukiCore/cosmos-sdk/x/ibc-transfer/types"
-	ibcclient "github.com/TsukiCore/cosmos-sdk/x/ibc/02-client"
-	ibcclienttypes "github.com/TsukiCore/cosmos-sdk/x/ibc/02-client/types"
-	porttypes "github.com/TsukiCore/cosmos-sdk/x/ibc/05-port/types"
-	ibchost "github.com/TsukiCore/cosmos-sdk/x/ibc/24-host"
-	ibckeeper "github.com/TsukiCore/cosmos-sdk/x/ibc/keeper"
-	minttypes "github.com/TsukiCore/cosmos-sdk/x/mint/types"
-	"github.com/TsukiCore/cosmos-sdk/x/params"
-	paramsclient "github.com/TsukiCore/cosmos-sdk/x/params/client"
-	paramskeeper "github.com/TsukiCore/cosmos-sdk/x/params/keeper"
-	paramstypes "github.com/TsukiCore/cosmos-sdk/x/params/types"
-	paramproposal "github.com/TsukiCore/cosmos-sdk/x/params/types/proposal"
-	"github.com/TsukiCore/cosmos-sdk/x/slashing"
-	slashingkeeper "github.com/TsukiCore/cosmos-sdk/x/slashing/keeper"
-	slashingtypes "github.com/TsukiCore/cosmos-sdk/x/slashing/types"
-	"github.com/TsukiCore/cosmos-sdk/x/staking"
-	stakingkeeper "github.com/TsukiCore/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/TsukiCore/cosmos-sdk/x/staking/types"
-	"github.com/TsukiCore/cosmos-sdk/x/upgrade"
-	upgradeclient "github.com/TsukiCore/cosmos-sdk/x/upgrade/client"
-	upgradekeeper "github.com/TsukiCore/cosmos-sdk/x/upgrade/keeper"
-	upgradetypes "github.com/TsukiCore/cosmos-sdk/x/upgrade/types"
-
-	"github.com/TsukiCore/tsuki/x/tsukiHub"
-	constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
+	bam "github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/std"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/cosmos/cosmos-sdk/x/capability"
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	distrclient "github.com/cosmos/cosmos-sdk/x/distribution/client"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"github.com/cosmos/cosmos-sdk/x/evidence"
+	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
+	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/cosmos/cosmos-sdk/x/gov"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/cosmos/cosmos-sdk/x/ibc"
+	transfer "github.com/cosmos/cosmos-sdk/x/ibc-transfer"
+	ibctransferkeeper "github.com/cosmos/cosmos-sdk/x/ibc-transfer/keeper"
+	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc-transfer/types"
+	ibcclient "github.com/cosmos/cosmos-sdk/x/ibc/02-client"
+	ibcclienttypes "github.com/cosmos/cosmos-sdk/x/ibc/02-client/types"
+	porttypes "github.com/cosmos/cosmos-sdk/x/ibc/05-port/types"
+	ibchost "github.com/cosmos/cosmos-sdk/x/ibc/24-host"
+	ibckeeper "github.com/cosmos/cosmos-sdk/x/ibc/keeper"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+	"github.com/cosmos/cosmos-sdk/x/slashing"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	"github.com/cosmos/cosmos-sdk/x/staking"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	//"github.com/TsukiCore/tsuki/x/tsukiHub"
+	//constants "github.com/TsukiCore/tsuki/x/tsukiHub/constants"
 )
 
 const appName = "Tsuki"
@@ -148,9 +147,9 @@ type TsukiApp struct {
 	memKeys map[string]*sdk.MemoryStoreKey
 
 	// keepers
-	accountKeeper    authkeeper.AccountKeeper
-	bankKeeper       bankkeeper.Keeper
-	tsukiHubKeeper    tsukiHub.Keeper
+	accountKeeper authkeeper.AccountKeeper
+	bankKeeper    bankkeeper.Keeper
+	//tsukiHubKeeper    tsukiHub.Keeper
 	capabilityKeeper *capabilitykeeper.Keeper
 	stakingKeeper    stakingkeeper.Keeper
 	slashingKeeper   slashingkeeper.Keeper
@@ -279,7 +278,7 @@ func NewInitApp(
 	)
 	transferModule := transfer.NewAppModule(app.transferKeeper)
 
-	app.tsukiHubKeeper = tsukiHub.NewKeeper(app.cdc, keys[constants.StoreKey])
+	//app.tsukiHubKeeper = tsukiHub.NewKeeper(app.cdc, keys[constants.StoreKey])
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()

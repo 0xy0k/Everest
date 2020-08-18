@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	types2 "github.com/TsukiCore/cosmos-sdk/types"
+	types2 "github.com/cosmos/cosmos-sdk/types"
 
 	tmos "github.com/tendermint/tendermint/libs/os"
 	"github.com/tendermint/tendermint/node"
@@ -17,13 +17,13 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	"github.com/TsukiCore/cosmos-sdk/server/api"
-	servergrpc "github.com/TsukiCore/cosmos-sdk/server/grpc"
-	authtypes "github.com/TsukiCore/cosmos-sdk/x/auth/types"
-	banktypes "github.com/TsukiCore/cosmos-sdk/x/bank/types"
-	"github.com/TsukiCore/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/TsukiCore/cosmos-sdk/x/genutil/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/server/api"
+	servergrpc "github.com/cosmos/cosmos-sdk/server/grpc"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	customtypes "github.com/TsukiCore/tsuki/x/staking/types"
 )
 

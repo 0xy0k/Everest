@@ -1,8 +1,8 @@
 package staking
 
 import (
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/TsukiCore/cosmos-sdk/types/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	customkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"

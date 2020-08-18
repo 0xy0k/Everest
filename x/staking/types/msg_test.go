@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 

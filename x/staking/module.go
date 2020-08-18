@@ -5,11 +5,11 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/codec"
-	types2 "github.com/TsukiCore/cosmos-sdk/codec/types"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/TsukiCore/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	types2 "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/gogo/protobuf/grpc"
