@@ -3,15 +3,20 @@ package staking_test
 import (
 	"testing"
 
-	"github.com/TsukiCore/tsuki/x/staking"
+	"github.com/TsukiCore/tsuki/app"
 
-	"github.com/TsukiCore/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/TsukiCore/tsuki/x/staking"
 
 	"github.com/TsukiCore/tsuki/simapp"
 	types2 "github.com/TsukiCore/tsuki/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
+
+func TestMain(m *testing.M) {
+	app.SetConfig()
+}
 
 func TestNewHandler_MsgClaimValidator_HappyPath(t *testing.T) {
 	valAddr1, err := types.ValAddressFromBech32("tsukivaloper15ky9du8a2wlstz6fpx3p4mqpjyrm5cgq38f2fp")
@@ -21,7 +26,7 @@ func TestNewHandler_MsgClaimValidator_HappyPath(t *testing.T) {
 	require.NoError(t, err)
 
 	app := simapp.Setup(false)
-	ctx := app.NewContext(false, abci.Header{})
+	ctx := app.NewContext(false, tmproto.Header{})
 
 	handler := staking.NewHandler(app.CustomStakingKeeper)
 

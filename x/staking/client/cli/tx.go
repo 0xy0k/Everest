@@ -5,18 +5,18 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/TsukiCore/cosmos-sdk/server"
+	"github.com/cosmos/cosmos-sdk/server"
 
-	"github.com/TsukiCore/cosmos-sdk/x/genutil"
-	"github.com/TsukiCore/cosmos-sdk/x/staking/client/cli"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/cosmos/cosmos-sdk/x/staking/client/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/TsukiCore/cosmos-sdk/client"
-	"github.com/TsukiCore/cosmos-sdk/client/flags"
-	"github.com/TsukiCore/cosmos-sdk/client/tx"
-	"github.com/TsukiCore/cosmos-sdk/types"
 	cumstomtypes "github.com/TsukiCore/tsuki/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -63,7 +63,7 @@ func GetTxClaimValidatorCmd() *cobra.Command {
 			comm, err := types.NewDecFromStr(comission)
 			val, err := types.ValAddressFromBech32(valKeyStr)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "--validator-key param error")
 			}
 
 			msg, err := cumstomtypes.NewMsgClaimValidator(moniker, website, social, identity, comm, val, valPubKey)

@@ -3,7 +3,7 @@ package staking
 import (
 	"context"
 
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"
