@@ -4,8 +4,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TsukiCore/tsuki/app"
-
 	types2 "github.com/TsukiCore/tsuki/x/staking/types"
 
 	"github.com/stretchr/testify/require"
@@ -14,7 +12,6 @@ import (
 )
 
 func TestNewValidator_Errors(t *testing.T) {
-	app.SetConfig()
 	valAddr, err := types.ValAddressFromBech32("tsukivaloper1q24436yrnettd6v4eu6r4t9gycnnddac9nwqv0")
 	require.NoError(t, err)
 
