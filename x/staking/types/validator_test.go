@@ -1,9 +1,10 @@
 package types_test
 
 import (
-	"github.com/TsukiCore/tsuki/app"
 	"strings"
 	"testing"
+
+	"github.com/TsukiCore/tsuki/app"
 
 	types2 "github.com/TsukiCore/tsuki/x/staking/types"
 
@@ -12,9 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 )
 
-var _ = app.SetConfig()
-
 func TestNewValidator_Errors(t *testing.T) {
+	app.SetConfig()
 	valAddr, err := types.ValAddressFromBech32("tsukivaloper1q24436yrnettd6v4eu6r4t9gycnnddac9nwqv0")
 	require.NoError(t, err)
 
