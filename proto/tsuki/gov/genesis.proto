@@ -1,0 +1,11 @@
+syntax = "proto3";
+package tsuki.gov;
+
+import "gov.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
+
+message GenesisState {
+  map<string, Permissions> permissions = 1 [ (gogoproto.nullable)   = false ];
+}
