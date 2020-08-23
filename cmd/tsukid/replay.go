@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/store/types"
+
 	cpm "github.com/otiai10/copy"
 	"github.com/spf13/cobra"
 
@@ -19,10 +21,9 @@ import (
 
 	"github.com/TsukiCore/tsuki/app"
 
-	"github.com/TsukiCore/cosmos-sdk/baseapp"
-	"github.com/TsukiCore/cosmos-sdk/server"
-	"github.com/TsukiCore/cosmos-sdk/store"
-	sdk "github.com/TsukiCore/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/server"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func replayCmd() *cobra.Command {
@@ -95,8 +96,9 @@ func replayTxs(rootDir string) error {
 	// Application
 	fmt.Fprintln(os.Stderr, "Creating application")
 	tsukiapp := app.NewInitApp(
-		ctx.Logger, appDB, traceStoreWriter, true, uint(1), map[int64]bool{}, "",
-		baseapp.SetPruning(store.PruneEverything), // nothing
+		ctx.Logger, appDB, traceStoreWriter, true, map[int64]bool{}, "", uint(1),
+		app.MakeEncodingConfig(),                  // Ideally, we would reuse the one created by NewRootCmd.
+		baseapp.SetPruning(types.PruneEverything), // nothing
 	)
 
 	// Genesis
