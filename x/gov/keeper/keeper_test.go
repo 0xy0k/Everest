@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	types2 "github.com/cosmos/cosmos-sdk/types"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/x/gov/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestKeeper_SaveGetPermissionsForRole(t *testing.T) {
@@ -47,4 +47,7 @@ func TestNewKeeper_SaveNetworkActor(t *testing.T) {
 	savedActor := app.CustomGovKeeper.GetNetworkActorByAddress(ctx, networkActor.Address)
 
 	require.Equal(t, networkActor, savedActor)
+}
+
+func TestUpdatingNetworkActorPermissions(t *testing.T) {
 }
