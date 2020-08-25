@@ -5,11 +5,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/TsukiCore/tsuki/x/gov/types"
-
-	"github.com/TsukiCore/tsuki/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/TsukiCore/tsuki/simapp"
+	"github.com/TsukiCore/tsuki/x/gov/types"
 )
 
 func TestQuerier_PermissionsByAddress(t *testing.T) {
