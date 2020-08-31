@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 
 	"github.com/TsukiCore/tsuki/INTERX/insecure"
-	pbExample "github.com/TsukiCore/tsuki/INTERX/proto-gen"
+	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
 
 	// Static files
 	_ "github.com/TsukiCore/tsuki/INTERX/statik"
@@ -62,7 +62,7 @@ func Run(dialAddr string) error {
 	}
 
 	gwmux := runtime.NewServeMux()
-	err = pbExample.RegisterExampleServiceHandler(context.Background(), gwmux, conn)
+	err = cosmosBank.RegisterQueryHandler(context.Background(), gwmux, conn)
 	if err != nil {
 		return fmt.Errorf("failed to register gateway: %w", err)
 	}
