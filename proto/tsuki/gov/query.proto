@@ -10,6 +10,8 @@ option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
 service Query {
   // Validators queries a validator by address.
   rpc PermissionsByAddress (PermissionsByAddressRequest) returns (PermissionsResponse) {}
+  rpc GetNetworkProperties (Empty) returns (tsuki.gov.NetworkProperties) {}
+  rpc SetNetworkProperties (tsuki.gov.NetworkProperties) returns (Empty) {}
 }
 
 message PermissionsByAddressRequest {
@@ -22,3 +24,5 @@ message PermissionsByAddressRequest {
 message PermissionsResponse {
   tsuki.gov.Permissions permissions = 1;
 }
+
+message Empty {}
