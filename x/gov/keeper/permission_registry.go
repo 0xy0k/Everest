@@ -1,9 +1,10 @@
 package keeper
 
 import (
-	"github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/TsukiCore/tsuki/x/gov/types"
 )
 
 // SetPermissionsForRole adds permissions to role in the  permission Registry.
