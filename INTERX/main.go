@@ -4,14 +4,12 @@ import (
 	"flag"
 	"io/ioutil"
 	"os"
-
-	"google.golang.org/grpc/grpclog"
+	// Static files
 
 	"github.com/TsukiCore/tsuki/INTERX/gateway"
-	config "github.com/TsukiCore/tsuki/INTERX/config"
-
-	// Static files
 	_ "github.com/TsukiCore/tsuki/INTERX/statik"
+	tsukiapp "github.com/TsukiCore/tsuki/app"
+	"google.golang.org/grpc/grpclog"
 )
 
 var serverGRPCAddress = flag.String(
@@ -33,13 +31,13 @@ func main() {
 	log := grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
 	grpclog.SetLoggerV2(log)
 
-	config.SetConfig();
-	
+	tsukiapp.SetConfig()
+
 	grpcAddr := os.Getenv("GRPC")
 	if len(grpcAddr) == 0 {
 		grpcAddr = *serverGRPCAddress
 	}
-	
+
 	rpcAddr := os.Getenv("RPC")
 	if len(rpcAddr) == 0 {
 		rpcAddr = *serverRPCAddress
