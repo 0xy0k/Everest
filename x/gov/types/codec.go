@@ -11,6 +11,10 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
 	cdc.RegisterConcrete(&MsgSetNetworkProperties{}, "tsukiHub/MsgSetNetworkProperties", nil)
 	cdc.RegisterConcrete(&MsgSetExecutionFee{}, "tsukiHub/MsgSetExecutionFee", nil)
+	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
+	cdc.RegisterConcrete(&MsgWhitelistRolePermission{}, "tsukiHub/MsgWhitelistRolePermission", nil)
+	cdc.RegisterConcrete(&MsgBlacklistRolePermission{}, "tsukiHub/MsgBlacklistRolePermission", nil)
+	cdc.RegisterConcrete(&MsgRemoveWhitelistRolePermission{}, "tsukiHub/MsgRemoveWhitelistRolePermission", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -19,11 +23,15 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgBlacklistPermissions{},
 		&MsgSetNetworkProperties{},
 		&MsgSetExecutionFee{},
+		&MsgClaimCouncilor{},
+		&MsgWhitelistRolePermission{},
+		&MsgBlacklistRolePermission{},
+		&MsgRemoveWhitelistRolePermission{},
 	)
 }
 
 var (
-	amino = codec.New()
+	amino = codec.NewLegacyAmino()
 
 	// ModuleCdc references the global x/staking module codec. Note, the codec should
 	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
