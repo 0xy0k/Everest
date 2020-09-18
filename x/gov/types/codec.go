@@ -9,20 +9,26 @@ import (
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgWhitelistPermissions{}, "tsukiHub/MsgWhitelistPermissions", nil)
 	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
+
 	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
+
 	cdc.RegisterConcrete(&MsgWhitelistRolePermission{}, "tsukiHub/MsgWhitelistRolePermission", nil)
 	cdc.RegisterConcrete(&MsgBlacklistRolePermission{}, "tsukiHub/MsgBlacklistRolePermission", nil)
 	cdc.RegisterConcrete(&MsgRemoveWhitelistRolePermission{}, "tsukiHub/MsgRemoveWhitelistRolePermission", nil)
+	cdc.RegisterConcrete(&MsgRemoveBlacklistRolePermission{}, "tsukiHub/MsgRemoveBlacklistRolePermission", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgWhitelistPermissions{},
 		&MsgBlacklistPermissions{},
+
 		&MsgClaimCouncilor{},
+
 		&MsgWhitelistRolePermission{},
 		&MsgBlacklistRolePermission{},
 		&MsgRemoveWhitelistRolePermission{},
+		&MsgRemoveBlacklistRolePermission{},
 	)
 }
 
