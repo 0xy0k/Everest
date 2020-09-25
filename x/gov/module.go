@@ -9,6 +9,7 @@ import (
 	keeper2 "github.com/TsukiCore/tsuki/x/gov/keeper"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 
+	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	types2 "github.com/cosmos/cosmos-sdk/codec/types"
@@ -131,7 +132,7 @@ func (am AppModule) Name() string {
 
 // Route returns the message routing key for the staking module.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(customgovtypes.ModuleName, NewHandler(am.customGovKeeper))
+	return middleware.NewRoute(customgovtypes.ModuleName, NewHandler(am.customGovKeeper))
 }
 
 // RegisterQueryService registers a GRPC query service to respond to the
