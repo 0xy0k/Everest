@@ -25,7 +25,7 @@ whitelist:
 ```sh
 
 # command with fee set
-tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="2000" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 
 confirm transaction before signing and broadcasting [y/N]: y
 
@@ -36,7 +36,7 @@ confirm transaction before signing and broadcasting [y/N]: y
 {"height":"3","txhash":"032EF37E996A9D9060A70F74F2C78956FA95F39EDE6A91E1C8BC27EE75C62826","codespace":"customgov","code":5,"data":"","raw_log":"failed to execute message; message index: 0: PermChangeTxFee: not enough permissions","logs":[],"info":"","gas_wanted":"200000","gas_used":"52429","tx":null,"timestamp":""}
 
 # command without fee set
-tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="2000" --keyring-backend=test --chain-id=testing --home=$HOME/.tsukid
+tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --home=$HOME/.tsukid
 
 # response
 confirm transaction before signing and broadcasting [y/N]: y
@@ -67,17 +67,37 @@ confirm transaction before signing and broadcasting [y/N]: y
 ## Set execution fee validation test
 ```sh
 # command for setting execution fee
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-execution-fee" --transaction_type="B" --execution_fee=10000 --failure_fee=1 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=10000ukex --home=$HOME/.tsukid
+tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="B" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 
-Here, the value should be looked at is `--execution_name="set-execution-fee"` and `--execution_fee=10000`
+Here, the value should be looked at is `--execution_name="set-network-properties"`, `--execution_fee=10000` and `--failure_fee=1000`.
 
 # check execution fee validation
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-execution-fee" --transaction_type="B" --execution_fee=10000 --failure_fee=1 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 
 confirm transaction before signing and broadcasting [y/N]: y
 {"height":"0","txhash":"25F990EEC9E56141BA729A2B1AB83036D4A1A96DEB6D14B78C789349C1FB0B31","codespace":"sdk","code":18,"data":"","raw_log":"fee is less than execution fee 10000: invalid request","logs":[],"info":"","gas_wanted":"200000","gas_used":"15450","tx":null,"timestamp":""}
 
 Here, the value should be looked at is `"fee is less than execution fee 10000: invalid request"`.
+
+# preparation for networks
+tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=4 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="B" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+
+# init user1 with 100000ukex
+tsukid keys add user1 --keyring-backend=test --home=$HOME/.tsukid
+tsukid tx bank send validator $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) 100000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) <<< y
+
+# try changing set-network-properties with user1 that does not have ChangeTxFee permission
+tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_tx_fee="25000" --keyring-backend=test --chain-id=testing --fees=1000ukex --home=$HOME/.tsukid <<< y
+# this should fail and balance should be (previousBalance - failureFee)
+tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
+
+# whitelist user1's permission for ChangeTxFee and try again
+tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=4 --addr=$(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_tx_fee="25000" --keyring-backend=test --chain-id=testing --fees=1000ukex --home=$HOME/.tsukid
+# this should fail and balance should be (previousBalance - successFee)
+tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
 ```
 
 ## Query execution fee
