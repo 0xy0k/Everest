@@ -10,6 +10,7 @@ import (
 	"github.com/TsukiCore/tsuki/middleware"
 	gov2 "github.com/TsukiCore/tsuki/x/gov"
 
+	customante "github.com/TsukiCore/tsuki/app/ante"
 	customstaking "github.com/TsukiCore/tsuki/x/staking"
 	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 
@@ -409,7 +410,7 @@ func NewSimApp(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetAnteHandler(
-		NewAnteHandler(
+		customante.NewAnteHandler(
 			app.CustomStakingKeeper, app.CustomGovKeeper, app.AccountKeeper, app.BankKeeper, ante.DefaultSigVerificationGasConsumer,
 			encodingConfig.TxConfig.SignModeHandler(),
 		),

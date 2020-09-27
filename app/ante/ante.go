@@ -1,4 +1,4 @@
-package simapp
+package ante
 
 import (
 	"fmt"
@@ -124,8 +124,8 @@ func (svd ValidateFeeRangeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simu
 // 		executionName := msg.Type()
 // 		fee := sgcd.cgk.GetExecutionFee(ctx, executionName)
 // 		if fee != nil { // execution fee exist
-// 			// TODO should check failure case and in that case should consume failure fee
 // 			ctx.GasMeter().ConsumeGas(fee.ExecutionFee, "consume execution fee")
+// 			// On failure case, fee modifier is running on middleware package.
 // 		}
 // 	}
 
