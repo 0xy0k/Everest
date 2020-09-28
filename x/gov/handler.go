@@ -3,7 +3,6 @@ package gov
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
-	types2 "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/TsukiCore/tsuki/x/gov/keeper"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
@@ -63,7 +62,7 @@ func handleMsgProposalAssignPermission(
 	}
 
 	return &sdk.Result{
-		Data: types2.GetProposalIDBytes(proposalID),
+		Data: keeper.GetProposalIDBytes(proposalID),
 	}, nil
 }
 
