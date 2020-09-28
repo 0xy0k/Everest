@@ -7,11 +7,21 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
+	registerPermissionsCodec(cdc)
+	registerRolesCodec(cdc)
+	registerCouncilorCodec(cdc)
+}
+
+func registerCouncilorCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
+}
+
+func registerPermissionsCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgWhitelistPermissions{}, "tsukiHub/MsgWhitelistPermissions", nil)
 	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
+}
 
-	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
-
+func registerRolesCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateRole{}, "tsukiHub/MsgCreateRole", nil)
 	cdc.RegisterConcrete(&MsgAssignRole{}, "tsukiHub/MsgAssignRole", nil)
 	cdc.RegisterConcrete(&MsgRemoveRole{}, "tsukiHub/MsgRemoveRole", nil)
