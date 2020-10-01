@@ -4,11 +4,9 @@ import (
 	"flag"
 	"io/ioutil"
 	"os"
-	// Static files
 
 	"github.com/TsukiCore/tsuki/INTERX/gateway"
 	_ "github.com/TsukiCore/tsuki/INTERX/statik"
-	tsukiapp "github.com/TsukiCore/tsuki/app"
 	"google.golang.org/grpc/grpclog"
 )
 
@@ -30,8 +28,6 @@ func main() {
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
 	log := grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
 	grpclog.SetLoggerV2(log)
-
-	tsukiapp.SetConfig()
 
 	grpcAddr := os.Getenv("GRPC")
 	if len(grpcAddr) == 0 {
