@@ -101,6 +101,7 @@ tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --
 
 ## Query execution fee
 ```sh
+tsukid query customgov execution-fee <msg_type>
 # command
 tsukid query customgov execution-fee ABC
 # response
