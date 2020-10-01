@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"errors"
-
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	customstakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,17 +19,6 @@ func SetKeepers(cgk customgovkeeper.Keeper, csk customstakingkeeper.Keeper, bk b
 	customGovKeeper = cgk
 	customStakingKeeper = csk
 	bankKeeper = bk
-}
-
-// combineTwoErrors combines two error into one to show two errors in a single error text
-func combineTwoErrors(hErr, err error) error {
-	if hErr == nil {
-		return err
-	}
-	if err == nil {
-		return hErr
-	}
-	return errors.New(hErr.Error() + ";" + err.Error())
 }
 
 // NewRoute returns an instance of Route.
