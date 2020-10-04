@@ -5,17 +5,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
-	"github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/TsukiCore/tsuki/x/tokens/keeper"
-	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
+	"github.com/TsukiCore/tsuki/x/tokens/types"
 )
 
-func NewHandler(ck keeper.Keeper, cgk tokenstypes.CustomGovKeeper) sdk.Handler {
+func NewHandler(ck keeper.Keeper, cgk types.CustomGovKeeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *tokenstypes.MsgUpsertTokenAlias:
+		case *types.MsgUpsertTokenAlias:
 			return handleUpsertTokenAlias(ctx, ck, cgk, msg)
 		default:
 			return nil, errors.Wrapf(errors.ErrUnknownRequest, "unrecognized %s message type: %T", types.ModuleName, msg)
@@ -23,12 +22,22 @@ func NewHandler(ck keeper.Keeper, cgk tokenstypes.CustomGovKeeper) sdk.Handler {
 	}
 }
 
-func handleUpsertTokenAlias(ctx sdk.Context, ck keeper.Keeper, cgk tokenstypes.CustomGovKeeper, msg *tokenstypes.MsgUpsertTokenAlias) (*sdk.Result, error) {
+func handleUpsertTokenAlias(ctx sdk.Context, ck keeper.Keeper, cgk types.CustomGovKeeper, msg *types.MsgUpsertTokenAlias) (*sdk.Result, error) {
 	isAllowed := cgk.CheckIfAllowedPermission(ctx, msg.Proposer, customgovtypes.PermUpsertTokenAlias)
 	if !isAllowed {
 		return nil, errors.Wrap(customgovtypes.ErrNotEnoughPermissions, "PermUpsertTokenAlias")
 	}
 
-	ck.UpsertTokenAlias(ctx, msg.Address)
+	ck.UpsertTokenAlias(ctx, *types.NewTokenAlias(
+		msg.Expiration,
+		msg.Enactment,
+		msg.AllowedVoteTypes,
+		msg.Symbol,
+		msg.Name,
+		msg.Icon,
+		msg.Decimals,
+		msg.Denoms,
+		msg.Status,
+	))
 	return &sdk.Result{}, nil
 }
