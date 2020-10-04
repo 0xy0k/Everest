@@ -2,6 +2,7 @@ syntax = "proto3";
 package tsuki.gov;
 
 import "gogoproto/gogo.proto";
+import "alias.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
 
@@ -12,7 +13,9 @@ service Query {
 }
 
 message TokenAliasRequest {
+  string symbol = 1;
 }
 
 message TokenAliasResponse {
+  tsuki.tokens.TokenAlias data = 1;
 }
