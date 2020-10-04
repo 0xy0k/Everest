@@ -2,6 +2,7 @@ syntax = "proto3";
 package tsuki.gov;
 
 import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
 
@@ -64,4 +65,7 @@ message ProposalAssignPermission {
   ];
 
   uint32 permission = 2;
+
+  google.protobuf.Timestamp submit_time = 3
+  [(gogoproto.stdtime) = true, (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"submit_time\""];
 }
