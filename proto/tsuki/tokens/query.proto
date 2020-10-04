@@ -1,7 +1,6 @@
 syntax = "proto3";
-package tsuki.gov;
+package tsuki.tokens;
 
-import "gogoproto/gogo.proto";
 import "alias.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
