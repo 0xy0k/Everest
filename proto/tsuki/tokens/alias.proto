@@ -1,6 +1,8 @@
 syntax = "proto3";
 package tsuki.tokens;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
 
 enum VoteType {
