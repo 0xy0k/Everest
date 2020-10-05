@@ -11,10 +11,17 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
 	cdc.RegisterConcrete(&MsgSetNetworkProperties{}, "tsukiHub/MsgSetNetworkProperties", nil)
 	cdc.RegisterConcrete(&MsgSetExecutionFee{}, "tsukiHub/MsgSetExecutionFee", nil)
+
 	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
+
+	cdc.RegisterConcrete(&MsgCreateRole{}, "tsukiHub/MsgCreateRole", nil)
+	cdc.RegisterConcrete(&MsgAssignRole{}, "tsukiHub/MsgAssignRole", nil)
+	cdc.RegisterConcrete(&MsgRemoveRole{}, "tsukiHub/MsgRemoveRole", nil)
+
 	cdc.RegisterConcrete(&MsgWhitelistRolePermission{}, "tsukiHub/MsgWhitelistRolePermission", nil)
 	cdc.RegisterConcrete(&MsgBlacklistRolePermission{}, "tsukiHub/MsgBlacklistRolePermission", nil)
 	cdc.RegisterConcrete(&MsgRemoveWhitelistRolePermission{}, "tsukiHub/MsgRemoveWhitelistRolePermission", nil)
+	cdc.RegisterConcrete(&MsgRemoveBlacklistRolePermission{}, "tsukiHub/MsgRemoveBlacklistRolePermission", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
@@ -23,10 +30,17 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgBlacklistPermissions{},
 		&MsgSetNetworkProperties{},
 		&MsgSetExecutionFee{},
+
 		&MsgClaimCouncilor{},
+
+		&MsgAssignRole{},
+		&MsgCreateRole{},
+		&MsgRemoveRole{},
+
 		&MsgWhitelistRolePermission{},
 		&MsgBlacklistRolePermission{},
 		&MsgRemoveWhitelistRolePermission{},
+		&MsgRemoveBlacklistRolePermission{},
 	)
 }
 
