@@ -1,7 +1,7 @@
 package config
 
 import (
-	tsukiapp "github.com/TsukiCore/tsuki/app"
+	tsukiapp "github.com/TsukiCore/tsuki/simapp"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/sr25519"
 )
