@@ -1,12 +1,13 @@
 package types
 
 import (
+	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Msg types
 const (
-	UpsertTokenAlias = "upsert-token-alias"
+	UpsertTokenAlias = customgovtypes.UpsertTokenAlias
 )
 
 var (
