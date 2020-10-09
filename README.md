@@ -124,5 +124,9 @@ fee:
   transaction_type: A
 ```
 
+## Upsert token alias
+```sh
+tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="KEX" --name="Tsuki" --icon="myiconurl" --decimals=6 --denoms="ukex" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+```
 ---
 `dev` branch
