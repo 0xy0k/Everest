@@ -126,6 +126,9 @@ fee:
 
 ## Upsert token alias
 ```sh
+# set PermUpsertTokenAlias(10) permission to validator address
+tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=10 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+# run upsert alias
 tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="KEX" --name="Tsuki" --icon="myiconurl" --decimals=6 --denoms="ukex" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 ```
 ---
