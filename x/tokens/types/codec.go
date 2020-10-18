@@ -8,11 +8,12 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpsertTokenAlias{}, "tsukiHub/MsgUpsertTokenAlias", nil)
+	cdc.RegisterConcrete(&MsgUpsertTokenRate{}, "tsukiHub/MsgUpsertTokenRate", nil)
 }
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgUpsertTokenAlias{},
+		&MsgUpsertTokenRate{},
 	)
 }
 
