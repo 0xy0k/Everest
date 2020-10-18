@@ -53,7 +53,7 @@ properties:
 ## Set Execution Fee
 ```sh
 # command
-tsukid tx customgov set-execution-fee --from validator --execution_name="ABC" --transaction_type="B" --execution_fee=10 --failure_fee=1 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=10ukex --home=$HOME/.tsukid
+tsukid tx customgov set-execution-fee --from validator --execution_name="B" --transaction_type="B" --execution_fee=10 --failure_fee=1 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=10ukex --home=$HOME/.tsukid
 
 # response
 "[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"set-execution-fee\"}]}]}]"
@@ -62,7 +62,7 @@ tsukid tx customgov set-execution-fee --from validator --execution_name="ABC" --
 ## Set execution fee validation test
 ```sh
 # command for setting execution fee
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="B" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 
 Here, the value should be looked at is `--execution_name="set-network-properties"`, `--execution_fee=10000` and `--failure_fee=1000`.
 
@@ -76,11 +76,11 @@ In this case, issue is found on ante step and fee is not being paid at all.
 
 # preparation for networks (v1) failure=1000, execution=10000
 tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=4 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="B" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 
 # preparation for networks (v2) failure=1000, execution=500
 tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=4 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="B" --execution_fee=500 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=500 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 
 # init user1 with 100000ukex
 tsukid keys add user1 --keyring-backend=test --home=$HOME/.tsukid
@@ -103,7 +103,7 @@ tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --
 ```sh
 tsukid query customgov execution-fee <msg_type>
 # command
-tsukid query customgov execution-fee ABC
+tsukid query customgov execution-fee "B"
 # response
 fee:
   default_parameters: "0"
@@ -114,7 +114,7 @@ fee:
   transaction_type: B
 
 # genesis fee configuration test
-tsukid query customgov execution-fee "Claim Validator Seat"
+tsukid query customgov execution-fee "A"
 fee:
   default_parameters: "0"
   execution_fee: "10"
@@ -122,6 +122,74 @@ fee:
   name: Claim Validator Seat
   timeout: "10"
   transaction_type: A
+```
+
+## Upsert token alias
+```sh
+# set PermUpsertTokenAlias(10) permission to validator address
+tsukid tx customgov set-whitelist-permissions --from validator --keyring-backend=test --permission=10 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+# run upsert alias
+tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  <<< y
+```
+# Query token alias
+```sh
+# command
+tsukid query tokens alias KEX
+# response
+allowed_vote_types:
+- "yes"
+- "no"
+decimals: 6
+denoms:
+- ukex
+enactment: 0
+expiration: 0
+icon: myiconurl
+name: Tsuki
+status: undefined
+symbol: KEX
+```
+```sh
+# command
+tsukid query tokens alias KE
+# response
+Error: KE symbol does not exist
+```
+```sh
+# command
+tsukid query tokens all-aliases --chain-id=testing --home=$HOME/.tsukid
+# response
+data:
+- allowed_vote_types:
+  - "yes"
+  - "no"
+  decimals: 6
+  denoms:
+  - ukex
+  enactment: 0
+  expiration: 0
+  icon: myiconurl
+  name: Tsuki
+  status: undefined
+  symbol: KEX
+
+# command
+tsukid query tokens aliases-by-denom ukex --chain-id=testing --home=$HOME/.tsukid
+# response
+data:
+  ukex:
+    allowed_vote_types:
+    - "yes"
+    - "no"
+    decimals: 6
+    denoms:
+    - ukex
+    enactment: 0
+    expiration: 0
+    icon: myiconurl
+    name: Tsuki
+    status: undefined
+    symbol: KEX
 ```
 ---
 `dev` branch

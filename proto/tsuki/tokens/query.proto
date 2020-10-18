@@ -1,0 +1,36 @@
+syntax = "proto3";
+package tsuki.tokens;
+
+import "alias.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Returns the token alias
+  rpc GetTokenAlias (TokenAliasRequest) returns (TokenAliasResponse) {}
+  rpc GetAllTokenAliases (AllTokenAliasesRequest) returns (AllTokenAliasesResponse) {}
+  rpc GetTokenAliasesByDenom (TokenAliasesByDenomRequest) returns (TokenAliasesByDenomResponse) {}
+}
+
+message TokenAliasRequest {
+  string symbol = 1;
+}
+
+message TokenAliasResponse {
+  tsuki.tokens.TokenAlias data = 1;
+}
+
+message AllTokenAliasesRequest {}
+
+message AllTokenAliasesResponse {
+  repeated tsuki.tokens.TokenAlias data = 1;
+}
+
+message TokenAliasesByDenomRequest {
+  repeated string denoms = 1;
+}
+  
+message TokenAliasesByDenomResponse {
+  map<string, tsuki.tokens.TokenAlias> data = 1;
+}

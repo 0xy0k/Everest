@@ -1,0 +1,10 @@
+syntax = "proto3";
+package tsuki.tokens;
+
+import "alias.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
+
+message GenesisState {
+  map<string, tsuki.tokens.TokenAlias> aliases = 1;
+}
