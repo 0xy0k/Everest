@@ -7,13 +7,29 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgWhitelistPermissions{}, "tsukiHub/MsgWhitelistPermissions", nil)
-	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
+	registerPermissionsCodec(cdc)
+	registerRolesCodec(cdc)
+	registerCouncilorCodec(cdc)
+	registerProposalCodec(cdc)
+
 	cdc.RegisterConcrete(&MsgSetNetworkProperties{}, "tsukiHub/MsgSetNetworkProperties", nil)
 	cdc.RegisterConcrete(&MsgSetExecutionFee{}, "tsukiHub/MsgSetExecutionFee", nil)
+}
 
+func registerProposalCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgProposalAssignPermission{}, "tsukiHub/MsgProposalAssignPermission", nil)
+}
+
+func registerCouncilorCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgClaimCouncilor{}, "tsukiHub/MsgClaimCouncilor", nil)
+}
 
+func registerPermissionsCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgWhitelistPermissions{}, "tsukiHub/MsgWhitelistPermissions", nil)
+	cdc.RegisterConcrete(&MsgBlacklistPermissions{}, "tsukiHub/MsgBlacklistPermissions", nil)
+}
+
+func registerRolesCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateRole{}, "tsukiHub/MsgCreateRole", nil)
 	cdc.RegisterConcrete(&MsgAssignRole{}, "tsukiHub/MsgAssignRole", nil)
 	cdc.RegisterConcrete(&MsgRemoveRole{}, "tsukiHub/MsgRemoveRole", nil)
@@ -28,6 +44,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgWhitelistPermissions{},
 		&MsgBlacklistPermissions{},
+
 		&MsgSetNetworkProperties{},
 		&MsgSetExecutionFee{},
 
@@ -41,6 +58,8 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgBlacklistRolePermission{},
 		&MsgRemoveWhitelistRolePermission{},
 		&MsgRemoveBlacklistRolePermission{},
+
+		&MsgProposalAssignPermission{},
 	)
 }
 
