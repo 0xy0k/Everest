@@ -1,10 +1,24 @@
 # tsuki
 Tsuki Hub
 
+## Set permission environment variables
+
+```sh
+export PermZero=0
+export PermSetPermissions=1
+export PermClaimValidator=2
+export PermClaimCouncilor=3
+export PermCreateSetPermissionsProposal=4
+export PermVoteSetPermissionProposal=5
+export PermUpsertTokenAlias=6
+export PermChangeTxFee=7
+export PermUpsertTokenRate=8
+```
+
 ## Set ChangeTxFee permission
 ```sh
-# command to set PermChangeTxFee(8) permission
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=8 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
+# command to set PermChangeTxFee permission
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
 # good response
 "[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"whitelist-permissions\"}]}]}]"
 ```
@@ -75,11 +89,11 @@ Here, the value should be looked at is `"fee is less than failure fee 1000: inva
 In this case, issue is found on ante step and fee is not being paid at all.
 
 # preparation for networks (v1) failure=1000, execution=10000
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=8 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 
 # preparation for networks (v2) failure=1000, execution=500
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=8 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=500 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 
 # init user1 with 100000ukex
@@ -93,7 +107,7 @@ tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_t
 tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
 
 # whitelist user1's permission for ChangeTxFee and try again
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=8 --addr=$(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_tx_fee="25000" --keyring-backend=test --chain-id=testing --fees=1000ukex --home=$HOME/.tsukid <<< y
 # this should fail and balance should be (previousBalance - successFee)
 tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
@@ -126,8 +140,8 @@ fee:
 
 ## Upsert token alias
 ```sh
-# set PermUpsertTokenAlias(6) permission to validator address
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=6 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+# set PermUpsertTokenAlias permission to validator address
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenAlias --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 # run upsert alias
 tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  <<< y
 ```
@@ -194,8 +208,8 @@ data:
 
 ## Upsert token rates
 ```sh
-# set PermUpsertTokenRate(7) permission to validator address
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+# set PermUpsertTokenRate permission to validator address
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
 # run upsert rate
 tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  <<< y
 ```
