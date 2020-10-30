@@ -3,6 +3,7 @@ package ante
 import (
 	"fmt"
 
+	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	customstakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
@@ -22,6 +23,7 @@ func NewAnteHandler(
 	sk customstakingkeeper.Keeper,
 	cgk customgovkeeper.Keeper,
 	tk tokenskeeper.Keeper,
+	fk feeprocessingkeeper.Keeper,
 	ak keeper.AccountKeeper,
 	bankKeeper types.BankKeeper,
 	sigGasConsumer ante.SignatureVerificationGasConsumer,
@@ -39,7 +41,7 @@ func NewAnteHandler(
 		NewValidateFeeRangeDecorator(sk, cgk, tk, ak),
 		ante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewValidateSigCountDecorator(ak),
-		ante.NewDeductFeeDecorator(ak, bankKeeper),
+		ante.NewDeductFeeDecorator(ak, fk),
 		ante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		// custom execution fee consume decorator
 		// NewCustomExecutionFeeConsumeDecorator(ak, cgk),
