@@ -265,5 +265,26 @@ tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="va
 # try to spend unregistered token (validatortoken) as fee
 tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.03" --fee_payments=true --chain-id=testing --fees=1000validatortoken --home=$HOME/.tsukid  <<< y
 ```
+
+# Fee payment in foreign currency returning failure - execution fee in foreign currency
+```sh
+# register stake token as 1ukex=100stake
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="stake" --rate="0.01" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  <<< y
+tsukid query tokens rate stake
+
+# set execution fee and failure fee for upsert-rate transaction
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+
+tsukid tx customgov set-execution-fee --from validator --execution_name="upsert-token-rate" --transaction_type="upsert-token-rate" --execution_fee=1000 --failure_fee=5000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid <<< y
+
+# check current balance
+tsukid query bank balances $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
+# try upsert-rate failure in foreign currency
+tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.000000000000001" --fee_payments=true --chain-id=testing --fees=5000stake --home=$HOME/.tsukid  <<< y
+# try upsert-rate success in foreign currency
+tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.1" --fee_payments=true --chain-id=testing --fees=5000stake --home=$HOME/.tsukid  <<< y
+```
 ---
 `dev` branch
