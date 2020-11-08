@@ -18,6 +18,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func registerProposalCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgProposalAssignPermission{}, "tsukiHub/MsgProposalAssignPermission", nil)
+	cdc.RegisterConcrete(&MsgVoteProposal{}, "tsukiHub/MsgVoteProposal", nil)
 }
 
 func registerCouncilorCodec(cdc *codec.LegacyAmino) {
@@ -60,6 +61,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRemoveBlacklistRolePermission{},
 
 		&MsgProposalAssignPermission{},
+		&MsgVoteProposal{},
 	)
 }
 
