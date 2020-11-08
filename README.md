@@ -292,5 +292,11 @@ tsukid tx customgov permission whitelist-permission --from validator --keyring-b
 # try upsert-token-alias success in foreign currency
 tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=500000stake --home=$HOME/.tsukid  <<< y
 ```
+
+# Query validator account
+```sh
+# query validator account
+tsukid query validator --addr  $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+```
 ---
 `dev` branch
