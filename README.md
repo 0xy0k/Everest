@@ -298,5 +298,24 @@ tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expirati
 # query validator account
 tsukid query validator --addr  $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 ```
+
+# Custom governance module commands
+
+```
+tsukid tx customgov councilor claim-seat --from validator --keyring-backend=test --home=$HOME/.tsukid
+
+tsukid tx customgov permission blacklist-permission
+tsukid tx customgov permission whitelist-permission
+
+tsukid tx customgov proposal assign-permission
+tsukid tx customgov proposal vote
+
+tsukid tx customgov role blacklist-permission
+tsukid tx customgov role create
+tsukid tx customgov role remove
+tsukid tx customgov role remove-blacklist-permission
+tsukid tx customgov role remove-whitelist-permission
+tsukid tx customgov role whitelist-permission
+```
 ---
 `dev` branch
