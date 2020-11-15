@@ -20,6 +20,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func registerProposalCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgProposalAssignPermission{}, "tsukiHub/MsgProposalAssignPermission", nil)
+	cdc.RegisterConcrete(&MsgProposalSetNetworkProperty{}, "tsukiHub/MsgProposalSetNetworkProperty", nil)
 	cdc.RegisterConcrete(&MsgProposalUpsertDataRegistry{}, "tsukiHub/MsgProposalUpsertDataRegistry", nil)
 	cdc.RegisterConcrete(&MsgVoteProposal{}, "tsukiHub/MsgVoteProposal", nil)
 }
@@ -64,6 +65,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgRemoveBlacklistRolePermission{},
 
 		&MsgProposalAssignPermission{},
+		&MsgProposalSetNetworkProperty{},
 		&MsgProposalUpsertDataRegistry{},
 		&MsgVoteProposal{},
 	)
@@ -72,6 +74,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		"tsuki.gov.Content",
 		(*Content)(nil),
 		&AssignPermissionProposal{},
+		&SetNetworkPropertyProposal{},
 		&UpsertDataRegistryProposal{},
 	)
 
