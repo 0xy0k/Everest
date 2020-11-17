@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 
 	tsukiapp "github.com/TsukiCore/tsuki/app"
-	middleware "github.com/TsukiCore/tsuki/middleware"
+	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bytesize "github.com/inhies/go-bytesize"
@@ -17,7 +17,7 @@ import (
 
 func readConfig() InterxConfig {
 	tsukiapp.SetConfig()
-	middleware.RegisterStdMsgs()
+	functionmeta.RegisterStdMsgs()
 
 	type ConfigFromFile struct {
 		Mnemonic        string `json:"mnemonic"`
