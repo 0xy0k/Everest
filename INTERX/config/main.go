@@ -16,8 +16,8 @@ import (
 )
 
 func readConfig() InterxConfig {
-	tsukiapp.SetConfig()
 	functionmeta.RegisterStdMsgs()
+	tsukiapp.SetConfig()
 
 	type ConfigFromFile struct {
 		Mnemonic        string `json:"mnemonic"`
