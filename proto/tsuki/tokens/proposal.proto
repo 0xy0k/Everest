@@ -1,0 +1,13 @@
+syntax = "proto3";
+package tsuki.tokens;
+
+option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
+
+message MsgProposalUpsertTokenAlias {
+  string symbol = 1;// Ticker (eg. ATOM, KEX, BTC)
+  string name = 2; // Token Name (e.g. Cosmos, Tsuki, Bitcoin)
+  string icon = 3; // Graphical Symbol (url link to graphics)
+  uint32 decimals = 4; // Integer number of max decimals
+  repeated string denoms = 5; // An array of token denoms to be aliased
+}
+
