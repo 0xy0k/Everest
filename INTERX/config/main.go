@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	functions "github.com/TsukiCore/tsuki/INTERX/functions"
 	tsukiapp "github.com/TsukiCore/tsuki/app"
 	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -16,6 +17,7 @@ import (
 )
 
 func readConfig() InterxConfig {
+	functions.RegisterInterxFunctions()
 	functionmeta.RegisterStdMsgs()
 	tsukiapp.SetConfig()
 

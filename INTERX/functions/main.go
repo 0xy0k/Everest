@@ -5,7 +5,12 @@ import (
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 )
 
-// GetAllFunctions is a function to get all functions registered
-func GetAllFunctions() tsukitypes.FunctionList {
+// GetTsukiFunctions is a function to get all tsuki functions registered
+func GetTsukiFunctions() tsukitypes.FunctionList {
 	return functionmeta.GetFunctionList()
+}
+
+// GetInterxFunctions is a function to get all interx functions registered
+func GetInterxFunctions() tsukitypes.FunctionList {
+	return interxFunctions
 }
