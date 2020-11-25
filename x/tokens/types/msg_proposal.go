@@ -1,14 +1,12 @@
 package types
 
 import (
-	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
 	_ sdk.Msg       = &MsgProposalUpsertTokenAlias{}
 	_ sdk.Msg       = &MsgProposalUpsertTokenRates{}
-	_ types.Content = &ProposalUpsertTokenAlias{}
 )
 
 const (
