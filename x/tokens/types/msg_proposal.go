@@ -1,11 +1,14 @@
 package types
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
+	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var (
 	_ sdk.Msg       = &MsgProposalUpsertTokenAlias{}
+	_ types.Content = &ProposalUpsertTokenAlias{}
 	_ sdk.Msg       = &MsgProposalUpsertTokenRates{}
 )
 
@@ -37,7 +40,7 @@ func (m *MsgProposalUpsertTokenAlias) Route() string {
 }
 
 func (m *MsgProposalUpsertTokenAlias) Type() string {
-	return MsgProposalUpsertTokenAliasType
+	return tsukitypes.MsgTypeProposalUpsertTokenAlias
 }
 
 func (m *MsgProposalUpsertTokenAlias) ValidateBasic() error {
