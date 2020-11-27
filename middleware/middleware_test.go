@@ -12,6 +12,7 @@ import (
 	"github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/TsukiCore/tsuki/simapp"
+	"github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 )
@@ -85,8 +86,8 @@ func TestNewHandler_SetNetworkProperties(t *testing.T) {
 			// set execution fee
 			_, err = handler(ctx, &customgovtypes.MsgSetExecutionFee{
 				Proposer:          changeFeeAddr,
-				Name:              customgovtypes.SetNetworkProperties,
-				TransactionType:   customgovtypes.SetNetworkProperties,
+				Name:              types.MsgTypeSetNetworkProperties,
+				TransactionType:   types.MsgTypeSetNetworkProperties,
 				ExecutionFee:      10000,
 				FailureFee:        1000,
 				Timeout:           1,
