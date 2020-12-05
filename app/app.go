@@ -1,6 +1,10 @@
 package app
 
 import (
+	"github.com/TsukiCore/tsuki/x/feeprocessing"
+	customgov "github.com/TsukiCore/tsuki/x/gov"
+	customstaking "github.com/TsukiCore/tsuki/x/staking"
+	"github.com/TsukiCore/tsuki/x/tokens"
 	"io"
 	"net/http"
 	"os"
@@ -13,15 +17,12 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/simulation"
 
-	customgov "github.com/TsukiCore/tsuki/x/gov"
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 
-	"github.com/TsukiCore/tsuki/x/tokens"
 	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
 
-	"github.com/TsukiCore/tsuki/x/feeprocessing"
 	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
 	feeprocessingtypes "github.com/TsukiCore/tsuki/x/feeprocessing/types"
 
@@ -41,8 +42,6 @@ import (
 	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 
 	customante "github.com/TsukiCore/tsuki/app/ante"
-	customstaking "github.com/TsukiCore/tsuki/x/staking"
-
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -127,7 +126,6 @@ var (
 		bank.AppModuleBasic{},
 		capability.AppModuleBasic{},
 		staking.AppModuleBasic{},
-		//distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler, distrclient.ProposalHandler, upgradeclient.ProposalHandler, upgradeclient.CancelProposalHandler,
 		),
