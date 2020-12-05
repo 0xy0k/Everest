@@ -1,14 +1,15 @@
 package app
 
 import (
-	"github.com/TsukiCore/tsuki/x/feeprocessing"
-	customgov "github.com/TsukiCore/tsuki/x/gov"
-	customstaking "github.com/TsukiCore/tsuki/x/staking"
-	"github.com/TsukiCore/tsuki/x/tokens"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/TsukiCore/tsuki/x/feeprocessing"
+	customgov "github.com/TsukiCore/tsuki/x/gov"
+	customstaking "github.com/TsukiCore/tsuki/x/staking"
+	"github.com/TsukiCore/tsuki/x/tokens"
 
 	ibc "github.com/cosmos/cosmos-sdk/x/ibc/core"
 	"github.com/gorilla/mux"
@@ -230,7 +231,7 @@ func NewInitApp(
 	bApp := bam.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetAppVersion(version.Version)
-	bApp.GRPCQueryRouter().SetInterfaceRegistry(interfaceRegistry)
+	bApp.SetInterfaceRegistry(interfaceRegistry)
 
 	// TODO: Add the keys that module requires
 	keys := sdk.NewKVStoreKeys(authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
