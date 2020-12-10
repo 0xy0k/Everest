@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	types2 "github.com/cosmos/cosmos-sdk/x/gov/types"
-
 	"github.com/TsukiCore/tsuki/app"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,6 +20,7 @@ import (
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	tokens "github.com/TsukiCore/tsuki/x/tokens"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 func TestMain(m *testing.M) {
@@ -277,7 +276,8 @@ func TestHandler_CreateProposalUpsertTokenAliases(t *testing.T) {
 		),
 	)
 	require.NoError(t, err)
-	require.Equal(t, types2.GetProposalIDBytes(1), res.Data)
+	expData, _ := proto.Marshal(&tokenstypes.MsgProposalUpsertTokenAliasResponse{ProposalID: 1})
+	require.Equal(t, expData, res.Data)
 
 	savedProposal, found := app.CustomGovKeeper.GetProposal(ctx, 1)
 	require.True(t, found)
@@ -381,7 +381,8 @@ func TestHandler_CreateProposalUpsertTokenRates(t *testing.T) {
 		),
 	)
 	require.NoError(t, err)
-	require.Equal(t, types2.GetProposalIDBytes(1), res.Data)
+	expData, _ := proto.Marshal(&tokenstypes.MsgProposalUpsertTokenRatesResponse{ProposalID: 1})
+	require.Equal(t, expData, res.Data)
 
 	savedProposal, found := app.CustomGovKeeper.GetProposal(ctx, 1)
 	require.True(t, found)
