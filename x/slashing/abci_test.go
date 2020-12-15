@@ -9,11 +9,11 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/TsukiCore/tsuki/x/slashing"
+	"github.com/TsukiCore/tsuki/x/staking"
+	"github.com/TsukiCore/tsuki/x/staking/teststaking"
+	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 func TestBeginBlocker(t *testing.T) {

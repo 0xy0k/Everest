@@ -3,8 +3,8 @@ package slashing
 import (
 	"github.com/TsukiCore/tsuki/x/slashing/keeper"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
+	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // InitGenesis initialize default parameters
