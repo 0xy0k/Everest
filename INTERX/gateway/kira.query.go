@@ -10,7 +10,7 @@ import (
 
 const (
 	queryTsukiFunctions = "/api/tsuki/metadata"
-	queryStatus        = "/api/tsuki/status"
+	queryStatus        = "/api/cosmos/status"
 )
 
 // RegisterTsukiQueryRoutes registers tx query routers.
