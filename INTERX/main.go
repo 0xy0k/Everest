@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/TsukiCore/tsuki/INTERX/gateway"
+	"github.com/TsukiCore/tsuki/INTERX/hosting"
 	_ "github.com/TsukiCore/tsuki/INTERX/statik"
 	"google.golang.org/grpc/grpclog"
 )
@@ -38,6 +39,8 @@ func main() {
 	if len(rpcAddr) == 0 {
 		rpcAddr = *serverRPCAddress
 	}
+
+	go hosting.Run(log)
 
 	err := gateway.Run(grpcAddr, rpcAddr, log)
 	log.Fatalln(err)
