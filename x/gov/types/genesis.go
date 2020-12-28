@@ -1,9 +1,7 @@
 package types
 
-// special messages managed by governance
-const (
-	UpsertTokenAlias = "upsert-token-alias"
-	UpsertTokenRate  = "upsert-token-rate"
+import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 )
 
 // DefaultGenesis returns the default CustomGo genesis state
@@ -88,9 +86,33 @@ func DefaultGenesis() *GenesisState {
 			},
 			{
 				Name:              "Upsert Token Alias Execution Fee",
-				TransactionType:   UpsertTokenAlias,
+				TransactionType:   tsukitypes.MsgTypeUpsertTokenAlias,
 				ExecutionFee:      10,
 				FailureFee:        1,
+				Timeout:           10,
+				DefaultParameters: 0,
+			},
+			{
+				Name:              "Activate a validator",
+				TransactionType:   tsukitypes.MsgTypeActivate,
+				ExecutionFee:      100,
+				FailureFee:        1000,
+				Timeout:           10,
+				DefaultParameters: 0,
+			},
+			{
+				Name:              "Pause a validator",
+				TransactionType:   tsukitypes.MsgTypePause,
+				ExecutionFee:      10,
+				FailureFee:        100,
+				Timeout:           10,
+				DefaultParameters: 0,
+			},
+			{
+				Name:              "Unpause a validator",
+				TransactionType:   tsukitypes.MsgTypeUnpause,
+				ExecutionFee:      10,
+				FailureFee:        100,
 				Timeout:           10,
 				DefaultParameters: 0,
 			},
