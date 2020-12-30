@@ -1,0 +1,63 @@
+syntax = "proto3";
+package tsuki.tokens;
+
+import "alias.proto";
+import "rate.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Returns the token alias
+  rpc GetTokenAlias (TokenAliasRequest) returns (TokenAliasResponse) {}
+  rpc GetAllTokenAliases (AllTokenAliasesRequest) returns (AllTokenAliasesResponse) {}
+  rpc GetTokenAliasesByDenom (TokenAliasesByDenomRequest) returns (TokenAliasesByDenomResponse) {}
+  // Returns the token rates
+  rpc GetTokenRate (TokenRateRequest) returns (TokenRateResponse) {}
+  rpc GetAllTokenRates (AllTokenRatesRequest) returns (AllTokenRatesResponse) {}
+  rpc GetTokenRatesByDenom (TokenRatesByDenomRequest) returns (TokenRatesByDenomResponse) {}
+}
+
+message TokenAliasRequest {
+  string symbol = 1;
+}
+
+message TokenAliasResponse {
+  tsuki.tokens.TokenAlias data = 1;
+}
+
+message AllTokenAliasesRequest {}
+
+message AllTokenAliasesResponse {
+  repeated tsuki.tokens.TokenAlias data = 1;
+}
+
+message TokenAliasesByDenomRequest {
+  repeated string denoms = 1;
+}
+  
+message TokenAliasesByDenomResponse {
+  map<string, tsuki.tokens.TokenAlias> data = 1;
+}
+
+message TokenRateRequest {
+  string denom = 1;
+}
+
+message TokenRateResponse {
+  tsuki.tokens.TokenRate data = 1;
+}
+
+message AllTokenRatesRequest {}
+
+message AllTokenRatesResponse {
+  repeated tsuki.tokens.TokenRate data = 1;
+}
+
+message TokenRatesByDenomRequest {
+  repeated string denoms = 1;
+}
+  
+message TokenRatesByDenomResponse {
+  map<string, tsuki.tokens.TokenRate> data = 1;
+}
