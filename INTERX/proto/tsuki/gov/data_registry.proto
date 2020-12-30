@@ -1,0 +1,11 @@
+syntax = "proto3";
+package tsuki.gov;
+
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+
+message DataRegistryEntry {
+  string hash = 1;
+  string reference = 2;
+  string encoding = 3;
+  uint64 size = 4;
+}

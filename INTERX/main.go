@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
 	"os"
 
+	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/gateway"
 	_ "github.com/TsukiCore/tsuki/INTERX/statik"
 	"google.golang.org/grpc/grpclog"
@@ -26,7 +26,7 @@ func main() {
 	flag.Parse()
 
 	// Adds gRPC internal logs. This is quite verbose, so adjust as desired!
-	log := grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
+	log := common.GetLogger()
 	grpclog.SetLoggerV2(log)
 
 	grpcAddr := os.Getenv("GRPC")
