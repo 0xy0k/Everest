@@ -18,5 +18,5 @@ const (
 	QueryTsukiFunctions     = "/api/tsuki/metadata"
 	Download               = "/download"
 	DataReferenceRegistry  = "DRR"
-	QueryValidators        = "/api/validators"
+	QueryValidators        = "/api/valopers"
 )
