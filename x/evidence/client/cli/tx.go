@@ -1,8 +1,8 @@
 package cli
 
 import (
+	"github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/x/evidence/types"
 
 	"github.com/spf13/cobra"
 )

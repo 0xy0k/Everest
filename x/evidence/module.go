@@ -13,18 +13,18 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
+	eviclient "github.com/TsukiCore/tsuki/x/evidence/client"
+	"github.com/TsukiCore/tsuki/x/evidence/client/cli"
+	"github.com/TsukiCore/tsuki/x/evidence/client/rest"
+	"github.com/TsukiCore/tsuki/x/evidence/keeper"
+	"github.com/TsukiCore/tsuki/x/evidence/simulation"
+	"github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	eviclient "github.com/cosmos/cosmos-sdk/x/evidence/client"
-	"github.com/cosmos/cosmos-sdk/x/evidence/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/evidence/client/rest"
-	"github.com/cosmos/cosmos-sdk/x/evidence/keeper"
-	"github.com/cosmos/cosmos-sdk/x/evidence/simulation"
-	"github.com/cosmos/cosmos-sdk/x/evidence/types"
 )
 
 var (

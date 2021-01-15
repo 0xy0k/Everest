@@ -66,9 +66,9 @@ import (
 	"github.com/TsukiCore/tsuki/x/tokens"
 	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
-	"github.com/cosmos/cosmos-sdk/x/evidence"
-	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
-	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	"github.com/TsukiCore/tsuki/x/evidence"
+	evidencekeeper "github.com/TsukiCore/tsuki/x/evidence/keeper"
+	evidencetypes "github.com/TsukiCore/tsuki/x/evidence/types"
 )
 
 const appName = "TsukiSimApp"
@@ -216,7 +216,7 @@ func NewSimApp(
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
-		appCodec, keys[evidencetypes.StoreKey], &app.StakingKeeper, app.SlashingKeeper,
+		appCodec, keys[evidencetypes.StoreKey], &app.CustomStakingKeeper, app.CustomSlashingKeeper,
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
