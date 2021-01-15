@@ -12,10 +12,12 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/insecure"
 	cosmosAuth "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/auth"
 	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
+	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
 	tasks "github.com/TsukiCore/tsuki/INTERX/tasks"
 	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/rakyll/statik/fs"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	grpclog "google.golang.org/grpc/grpclog"
@@ -66,6 +68,11 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 		return nil, fmt.Errorf("failed to register gateway: %w", err)
 	}
 
+	err = tsukiGov.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
 	return gwCosmosmux, nil
 }
 
@@ -91,10 +98,15 @@ func Run(grpcAddr string, rpcAddr string, log grpclog.LoggerV2) error {
 
 	router.PathPrefix("/").Handler(oaHander)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{"*"},
+	})
+
 	gatewayAddr := "0.0.0.0:" + port
 	gwServer := &http.Server{
 		Addr:    gatewayAddr,
-		Handler: router,
+		Handler: c.Handler(router),
 	}
 
 	// SERVE_HTTP: Empty parameters mean use the TLS Config specified with the server.
