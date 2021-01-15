@@ -1,12 +1,14 @@
 package gov
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	cli2 "github.com/TsukiCore/tsuki/x/gov/client/cli"
 	keeper2 "github.com/TsukiCore/tsuki/x/gov/keeper"
+	"github.com/TsukiCore/tsuki/x/gov/types"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 
 	"github.com/TsukiCore/tsuki/middleware"
@@ -49,7 +51,9 @@ func (b AppModuleBasic) ValidateGenesis(marshaler codec.JSONMarshaler, config cl
 
 func (b AppModuleBasic) RegisterRESTRoutes(context client.Context, router *mux.Router) {}
 
-func (b AppModuleBasic) RegisterGRPCRoutes(context client.Context, serveMux *runtime.ServeMux) {}
+func (b AppModuleBasic) RegisterGRPCRoutes(clientCtx client.Context, serveMux *runtime.ServeMux) {
+	customgovtypes.RegisterQueryHandlerClient(context.Background(), serveMux, types.NewQueryClient(clientCtx))
+}
 
 func (b AppModuleBasic) RegisterLegacyAminoCodec(amino *codec.LegacyAmino) {}
 
