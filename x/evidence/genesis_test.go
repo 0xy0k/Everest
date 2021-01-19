@@ -8,12 +8,12 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	"github.com/tendermint/tendermint/types/time"
 
+	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/x/evidence"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

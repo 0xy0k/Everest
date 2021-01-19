@@ -6,7 +6,6 @@ import (
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
 
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 )
@@ -105,7 +104,7 @@ func (suite *KeeperTestSuite) TestQueryAllEvidence() {
 			func() {
 				numEvidence := 100
 				_ = suite.populateEvidence(suite.ctx, numEvidence)
-				pageReq := &query.PageRequest{
+				pageReq := &types.PageRequest{
 					Key:        nil,
 					Limit:      50,
 					CountTotal: false,

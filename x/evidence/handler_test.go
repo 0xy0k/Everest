@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/x/evidence"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -55,7 +55,7 @@ func (suite *HandlerTestSuite) SetupTest() {
 
 	// recreate keeper in order to use custom testing types
 	evidenceKeeper := keeper.NewKeeper(
-		app.AppCodec(), app.GetKey(types.StoreKey), app.StakingKeeper, app.SlashingKeeper,
+		app.AppCodec(), app.GetKey(types.StoreKey), app.CustomStakingKeeper, app.CustomSlashingKeeper,
 	)
 	router := types.NewRouter()
 	router = router.AddRoute(types.RouteEquivocation, testEquivocationHandler(*evidenceKeeper))
