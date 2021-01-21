@@ -17,6 +17,9 @@ const (
 	QueryDataReference     = "/api/tsuki/gov/data"
 	QueryTsukiFunctions     = "/api/tsuki/metadata"
 	Download               = "/download"
-	DataReferenceRegistry  = "DRR"
 	QueryValidators        = "/api/valopers"
+	QueryGenesis           = "/api/genesis"
+	QueryGenesisSum        = "/api/gensum"
+
+	DataReferenceRegistry = "DRR"
 )
