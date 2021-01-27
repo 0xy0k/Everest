@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	interx "github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
 	"github.com/TsukiCore/tsuki/INTERX/types"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -57,7 +57,7 @@ func GetResponseSignature(response types.ProxyResponse) (string, string) {
 	}
 
 	// Get Signature
-	signature, err := interx.Config.PrivKey.Sign(signBytes)
+	signature, err := config.Config.PrivKey.Sign(signBytes)
 	if err != nil {
 		return "", responseHash
 	}

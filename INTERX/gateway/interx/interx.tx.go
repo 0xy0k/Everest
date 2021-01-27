@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/TsukiCore/tsuki/INTERX/common"
-	interx "github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -241,7 +241,7 @@ func queryTransactionsHandler(rpcAddr string, r *http.Request, isWithdraw bool) 
 	var response = make(map[string]types.TransactionResult)
 
 	for _, transaction := range transactions {
-		tx, err := interx.EncodingCg.TxConfig.TxDecoder()(transaction.Tx)
+		tx, err := config.EncodingCg.TxConfig.TxDecoder()(transaction.Tx)
 		if err != nil {
 			common.GetLogger().Error("[query-transactions] Failed to decode transaction: ", err)
 			return common.ServeError(0, "", err.Error(), http.StatusInternalServerError)

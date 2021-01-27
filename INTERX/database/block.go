@@ -1,7 +1,7 @@
 package database
 
 import (
-	interx "github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/sonyarouje/simdb/db"
 )
 
@@ -19,7 +19,7 @@ func (c BlockData) ID() (jsonField string, value interface{}) {
 }
 
 func getBlockDbDriver() *db.Driver {
-	driver, err := db.New(interx.GetDbCacheDir() + "block")
+	driver, err := db.New(config.GetDbCacheDir() + "block")
 	if err != nil {
 		return nil
 	}
