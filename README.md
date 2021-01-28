@@ -373,6 +373,15 @@ tsukid query customgov votes 1
 tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 ```
 
+# Commands for poor network management
+```sh
+# create proposal for setting poor network msgs
+tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+# vote on the proposal
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# query poor network messages
+tsukid query customgov poor-network-messages
+```
 # Commands for adding more validators
 
 ```sh
