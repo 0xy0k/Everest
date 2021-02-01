@@ -51,6 +51,9 @@ import (
 
 	customante "github.com/TsukiCore/tsuki/app/ante"
 	"github.com/TsukiCore/tsuki/middleware"
+	"github.com/TsukiCore/tsuki/x/evidence"
+	evidencekeeper "github.com/TsukiCore/tsuki/x/evidence/keeper"
+	evidencetypes "github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/TsukiCore/tsuki/x/feeprocessing"
 	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
 	feeprocessingtypes "github.com/TsukiCore/tsuki/x/feeprocessing/types"
@@ -66,9 +69,6 @@ import (
 	"github.com/TsukiCore/tsuki/x/tokens"
 	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
-	"github.com/TsukiCore/tsuki/x/evidence"
-	evidencekeeper "github.com/TsukiCore/tsuki/x/evidence/keeper"
-	evidencetypes "github.com/TsukiCore/tsuki/x/evidence/types"
 )
 
 const appName = "TsukiSimApp"
@@ -232,6 +232,7 @@ func NewSimApp(
 			customgov.NewApplyUpsertDataRegistryProposalHandler(app.CustomGovKeeper),
 			tokens.NewApplyUpsertTokenAliasProposalHandler(app.TokensKeeper),
 			tokens.NewApplyUpsertTokenRatesProposalHandler(app.TokensKeeper),
+			customstaking.NewApplyUnjailValidatorProposalHandler(app.CustomStakingKeeper),
 		},
 	)
 	app.mm = module.NewManager(
