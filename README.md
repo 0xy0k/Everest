@@ -377,8 +377,16 @@ tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=
 ```sh
 # create proposal for setting poor network msgs
 tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+# query for proposals
+tsukid query customgov proposals
+# set permission to vote on proposal
+tsukid tx customgov permission whitelist-permission --permission=19 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 # vote on the proposal
 tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# check votes
+tsukid query customgov votes 1 
+# wait until vote end time finish
+tsukid query customgov proposals
 # query poor network messages
 tsukid query customgov poor-network-messages
 ```
