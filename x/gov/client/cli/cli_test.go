@@ -8,15 +8,14 @@ import (
 	"github.com/TsukiCore/tsuki/x/gov/client/cli"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/testutil"
-
 	"github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/client"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/cosmos-sdk/testutil"
 	"github.com/stretchr/testify/suite"
 	dbm "github.com/tendermint/tm-db"
 )
@@ -137,6 +136,54 @@ func (s IntegrationTestSuite) TestClaimCouncilor_HappyPath() {
 	s.Require().NoError(err)
 	s.Require().Equal(val.Moniker, councilorByMoniker.Moniker)
 	s.Require().Equal(val.Address, councilorByMoniker.Address)
+}
+
+func (s IntegrationTestSuite) TestProposalAndVoteSetPoorNetworkMessages_HappyPath() {
+	val := s.network.Validators[0]
+	// # create proposal for setting poor network msgs
+	// tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+	s.SetPoorNetworkMessages("AAA,BBB")
+	// # query for proposals
+	// tsukid query customgov proposals
+	s.QueryProposals()
+	// # set permission to vote on proposal
+	// tsukid tx customgov permission whitelist-permission --permission=19 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+	s.WhitelistPermission(val.Address, "19") // 19 is permission for vote on poor network message set proposal
+	// # vote on the proposal
+	// tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+	s.VoteWithValidator0(1, customgovtypes.OptionYes)
+	// # check votes
+	// tsukid query customgov votes 1
+	s.QueryProposalVotes(1)
+	// # wait until vote end time finish
+	// tsukid query customgov proposals
+	// TODO: this takes long time and for now skip waiting
+	// # query poor network messages
+	// tsukid query customgov poor-network-messages
+	s.QueryPoorNetworkMessages()
+}
+
+func (s IntegrationTestSuite) TestProposalAndVotePoorNetworkMaxBankSend_HappyPath() {
+	// TODO: complete scenarios
+	// # try setting network property by governance to allow more amount sending
+	// tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+	// tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+	// # try sending after modification of poor network bank send param
+	// tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+}
+
+func (s IntegrationTestSuite) TestPoorNetworkRestrictions_HappyPath() {
+	// TODO: complete scenarios
+	// # whitelist permission for modifying network properties
+	// tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+	// # test poor network messages after modifying min_validators section
+	// tsukid tx customgov set-network-properties --from validator --min_validators="2" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+	// # set permission for upsert token rate
+	// tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+	// # try running upser token rate which is not allowed on poor network
+	// tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
+	// # try sending more than allowed amount via bank send
+	// tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
