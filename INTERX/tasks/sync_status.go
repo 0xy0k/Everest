@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/TsukiCore/tsuki/INTERX/common"
-	interx "github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
 )
 
@@ -65,6 +65,6 @@ func SyncStatus(rpcAddr string, isLog bool) {
 			common.GetLogger().Info("[node-status] Blocktime = ", common.NodeStatus.Blocktime)
 		}
 
-		time.Sleep(time.Duration(interx.Config.StatusSync) * time.Second)
+		time.Sleep(time.Duration(config.Config.Cache.StatusSync) * time.Second)
 	}
 }
