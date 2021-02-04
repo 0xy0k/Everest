@@ -373,6 +373,39 @@ tsukid query customgov votes 1
 tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 ```
 
+# Commands for poor network management
+```sh
+# create proposal for setting poor network msgs
+tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+# query for proposals
+tsukid query customgov proposals
+# set permission to vote on proposal
+tsukid tx customgov permission whitelist-permission --permission=19 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# vote on the proposal
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# check votes
+tsukid query customgov votes 1 
+# wait until vote end time finish
+tsukid query customgov proposals
+# query poor network messages
+tsukid query customgov poor-network-messages
+
+# whitelist permission for modifying network properties
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# test poor network messages after modifying min_validators section
+tsukid tx customgov set-network-properties --from validator --min_validators="2" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# set permission for upsert token rate
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# try running upser token rate which is not allowed on poor network
+tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
+# try sending more than allowed amount via bank send
+tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# try setting network property by governance to allow more amount sending
+tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+# try sending after modification of poor network bank send param
+tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+```
 # Commands for adding more validators
 
 ```sh
@@ -390,6 +423,9 @@ tsukid query customgov proposal 1
 tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 
 tsukid tx claim-validator-seat --from validator --keyring-backend=test --home=$HOME/.tsukid --validator-key=tsukivaloper1ntk7n5y38en5dvnhvmruwagmkemq76x8s4pnwu --moniker="validator" --chain-id=testing --fees=100ukex --yes
+
+# get ValAddress (tsukivaloperxxx) from validator key
+tsukid val-address $(tsukid keys show -a validator --keyring-backend=test)
 
 # tsukid tx claim-validator-seat --from val2 --keyring-backend=test --home=$HOME/.tsukid --pubkey=tsukivalconspub1zcjduepqdllep3v5wv04hmu987rv46ax7fml65j3dh5tf237ayn5p59jyamq04048n --validator-key=tsukivaloper1ewgq8gtsefakhal687t8hnsw5zl4y8eksup39w --moniker="val2" --chain-id=testing --fees=100ukex --yes
 # tsukid tx claim-validator-seat --from val2 --keyring-backend=test --home=$HOME/.tsukid --validator-key=tsukivaloper1ewgq8gtsefakhal687t8hnsw5zl4y8eksup39w --moniker="val2" --chain-id=testing --fees=100ukex --yes
