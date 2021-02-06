@@ -7,7 +7,7 @@ import (
 
 	stakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 
-	types2 "github.com/TsukiCore/tsuki/x/staking/types"
+	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 
 	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -23,14 +23,14 @@ func TestQuerier_ValidatorByAddress(t *testing.T) {
 	app := simapp.Setup(false)
 	ctx := app.NewContext(false, tmproto.Header{})
 
-	val, err := types2.NewValidator("Moniker", "Website", "Social", "identity", types.NewDec(123), valAddr1, pubKey)
+	val, err := stakingtypes.NewValidator("Moniker", "Website", "Social", "identity", types.NewDec(123), valAddr1, pubKey)
 	require.NoError(t, err)
 
 	app.CustomStakingKeeper.AddValidator(ctx, val)
 
 	querier := stakingkeeper.NewQuerier(app.CustomStakingKeeper)
 
-	qValidatorResp, err := querier.ValidatorByAddress(types.WrapSDKContext(ctx), &types2.ValidatorByAddressRequest{ValAddr: valAddr1})
+	qValidatorResp, err := querier.ValidatorByAddress(types.WrapSDKContext(ctx), &stakingtypes.ValidatorByAddressRequest{ValAddr: valAddr1})
 	require.NoError(t, err)
 
 	require.True(t, val.Equal(qValidatorResp.Validator))
