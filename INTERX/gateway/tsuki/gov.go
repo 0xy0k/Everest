@@ -19,7 +19,7 @@ import (
 // RegisterTsukiGovRoutes registers tsuki gov query routers.
 func RegisterTsukiGovRoutes(r *mux.Router, gwCosmosmux *runtime.ServeMux, rpcAddr string) {
 	r.HandleFunc(config.QueryDataReferenceKeys, QueryDataReferenceKeysRequest(gwCosmosmux, rpcAddr)).Methods("GET")
-	r.HandleFunc("/api/tsuki/gov/data/{key}", QueryDataReferenceRequest(gwCosmosmux, rpcAddr)).Methods("GET")
+	r.HandleFunc(config.QueryDataReference, QueryDataReferenceRequest(gwCosmosmux, rpcAddr)).Methods("GET")
 
 	common.AddRPCMethod("GET", config.QueryDataReferenceKeys, "This is an API to query all data reference keys.", true)
 	common.AddRPCMethod("GET", config.QueryDataReference, "This is an API to query data reference by key.", true)

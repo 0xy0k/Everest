@@ -23,6 +23,7 @@ func DefaultGenesis() *GenesisState {
 				PermCreateUpsertTokenRateProposal,
 				PermVoteUpsertTokenRateProposal,
 				PermUpsertRole,
+				PermCreateUnjailValidatorProposal,
 			}, nil),
 			uint64(RoleValidator): NewPermissions([]PermValue{PermClaimValidator}, nil),
 		},
@@ -35,7 +36,10 @@ func DefaultGenesis() *GenesisState {
 			ProposalEnactmentTime:       2, // 2min
 			EnableForeignFeePayments:    true,
 			MischanceRankDecreaseAmount: 10,
-			InactiveRankDecreasePercent: 50, // 50%
+			InactiveRankDecreasePercent: 50,      // 50%
+			PoorNetworkMaxBankSend:      1000000, // 1M ukex
+			MinValidators:               1,
+			JailMaxTime:                 10, // 10 mins
 		},
 		ExecutionFees: []*ExecutionFee{
 			{
@@ -117,6 +121,28 @@ func DefaultGenesis() *GenesisState {
 				FailureFee:        100,
 				Timeout:           10,
 				DefaultParameters: 0,
+			},
+		},
+		PoorNetworkMessages: &AllowedMessages{
+			Messages: []string{
+				tsukitypes.MsgTypeProposalAssignPermission,
+				tsukitypes.MsgTypeProposalSetNetworkProperty,
+				tsukitypes.MsgTypeSetNetworkProperties,
+				tsukitypes.MsgTypeVoteProposal,
+				tsukitypes.MsgTypeClaimCouncilor,
+				tsukitypes.MsgTypeWhitelistPermissions,
+				tsukitypes.MsgTypeBlacklistPermissions,
+				tsukitypes.MsgTypeCreateRole,
+				tsukitypes.MsgTypeAssignRole,
+				tsukitypes.MsgTypeRemoveRole,
+				tsukitypes.MsgTypeWhitelistRolePermission,
+				tsukitypes.MsgTypeBlacklistRolePermission,
+				tsukitypes.MsgTypeRemoveWhitelistRolePermission,
+				tsukitypes.MsgTypeRemoveBlacklistRolePermission,
+				tsukitypes.MsgTypeClaimValidator,
+				tsukitypes.MsgTypeActivate,
+				tsukitypes.MsgTypePause,
+				tsukitypes.MsgTypeUnpause,
 			},
 		},
 	}

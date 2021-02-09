@@ -373,6 +373,39 @@ tsukid query customgov votes 1
 tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 ```
 
+# Commands for poor network management
+```sh
+# create proposal for setting poor network msgs
+tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+# query for proposals
+tsukid query customgov proposals
+# set permission to vote on proposal
+tsukid tx customgov permission whitelist-permission --permission=19 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# vote on the proposal
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# check votes
+tsukid query customgov votes 1 
+# wait until vote end time finish
+tsukid query customgov proposals
+# query poor network messages
+tsukid query customgov poor-network-messages
+
+# whitelist permission for modifying network properties
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# test poor network messages after modifying min_validators section
+tsukid tx customgov set-network-properties --from validator --min_validators="2" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# set permission for upsert token rate
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# try running upser token rate which is not allowed on poor network
+tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
+# try sending more than allowed amount via bank send
+tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# try setting network property by governance to allow more amount sending
+tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+# try sending after modification of poor network bank send param
+tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+```
 # Commands for adding more validators
 
 ```sh
@@ -403,5 +436,92 @@ tsukid val-address $(tsukid keys show -a validator --keyring-backend=test)
 ```
 tsukid tx customgov proposal set-network-property MIN_TX_FEE 101 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 ```
----
-`dev` branch
+
+# Tx for Unjailing
+
+Modify genesis json to have jailed validator for Unjail testing
+
+```json
+{
+  "accounts": [
+    {
+      "@type": "/cosmos.auth.v1beta1.BaseAccount",
+      "address": "tsuki126f48ukar7ntqqvk0qxgd3juu7r42mjmsddjrq",
+      "pub_key": null,
+      "account_number": "0",
+      "sequence": "0"
+    }
+  ],
+  "balances": [
+    {
+      "address": "tsuki126f48ukar7ntqqvk0qxgd3juu7r42mjmsddjrq",
+      "coins": [
+        {
+          "denom": "stake",
+          "amount": "1000000000"
+        },
+        {
+          "denom": "ukex",
+          "amount": "1000000000"
+        },
+        {
+          "denom": "validatortoken",
+          "amount": "1000000000"
+        }
+      ]
+    }
+  ],
+  "validators": [
+    {
+      "moniker": "hello2",
+      "website": "",
+      "social": "social2",
+      "identity": "",
+      "commission": "1.000000000000000000",
+      "val_key": "tsukivaloper126f48ukar7ntqqvk0qxgd3juu7r42mjmrt33mv",
+      "pub_key": {
+        "@type": "/cosmos.crypto.ed25519.PubKey",
+        "key": "tC8mzxDI3bzfZtToxU6ZpZIOw6nqQx87OZ1fD6FpD7E="
+      },
+      "status": "JAILED",
+      "rank": "0",
+      "streak": "0"
+    }
+  ],
+  "network_actors": [
+    {
+      "address": "tsuki126f48ukar7ntqqvk0qxgd3juu7r42mjmsddjrq",
+      "roles": ["1"],
+      "status": "ACTIVE",
+      "votes": [
+        "VOTE_OPTION_YES",
+        "VOTE_OPTION_ABSTAIN",
+        "VOTE_OPTION_NO",
+        "VOTE_OPTION_NO_WITH_VETO"
+      ],
+      "permissions": {
+        "blacklist": [],
+        "whitelist": []
+      },
+      "skin": "1"
+    }
+  ],
+}
+```
+
+Add jailed validator key to kms.
+```sh
+  tsukid keys add jailed_validator --keyring-backend=test --home=$HOME/.tsukid --recover
+  "dish rather zoo connect cross inhale security utility occur spell price cute one catalog coconut sort shuffle palm crop surface label foster slender inherit"
+```
+
+```sh
+# make proposal to unjail validator from jailed_validator
+tsukid tx customstaking proposal proposal-unjail-validator hash reference --from=jailed_validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+
+# vote on unjail validator proposal
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+
+# proposal for jail max time - max to 1440min = 1d
+tsukid tx customgov proposal set-network-property JAIL_MAX_TIME 1440 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+```
