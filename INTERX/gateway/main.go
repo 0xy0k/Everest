@@ -8,11 +8,13 @@ import (
 
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
+	"github.com/TsukiCore/tsuki/INTERX/functions"
 	cosmosAuth "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/auth"
 	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
 	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
 	tsukiStaking "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/staking"
 	"github.com/TsukiCore/tsuki/INTERX/tasks"
+	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/rakyll/statik/fs"
@@ -84,6 +86,9 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 // Run runs the gRPC-Gateway, dialling the provided address.
 func Run(configFilePath string, log grpclog.LoggerV2) error {
 	config.LoadConfig(configFilePath)
+	functions.RegisterInterxFunctions()
+	functionmeta.RegisterStdMsgs()
+
 	database.LoadBlockDbDriver()
 	database.LoadFaucetDbDriver()
 	database.LoadReferenceDbDriver()
