@@ -10,6 +10,7 @@ import (
 
 	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/global"
 	"github.com/TsukiCore/tsuki/INTERX/types"
 )
 
@@ -31,14 +32,14 @@ func CacheDataCheck(rpcAddr string, isLog bool) {
 				if !info.IsDir() && info.Size() != 0 {
 					// check cache json data
 
-					common.Mutex.Lock()
+					global.Mutex.Lock()
 					// check if file or path exists
 					if _, err := os.Stat(path); os.IsNotExist(err) {
-						common.Mutex.Unlock()
+						global.Mutex.Unlock()
 						return nil
 					}
 					data, _ := ioutil.ReadFile(path)
-					common.Mutex.Unlock()
+					global.Mutex.Unlock()
 
 					result := types.InterxResponse{}
 					err := json.Unmarshal([]byte(data), &result)
@@ -53,14 +54,14 @@ func CacheDataCheck(rpcAddr string, isLog bool) {
 						common.GetLogger().Info("[cache] Deleting file: ", path)
 					}
 
-					common.Mutex.Lock()
+					global.Mutex.Lock()
 					// check if file or path exists
 					if _, err := os.Stat(path); os.IsNotExist(err) {
-						common.Mutex.Unlock()
+						global.Mutex.Unlock()
 						return nil
 					}
 					err := os.Remove(path)
-					common.Mutex.Unlock()
+					global.Mutex.Unlock()
 
 					if err != nil {
 						if isLog {

@@ -8,6 +8,8 @@ const (
 	QueryTransactionHash = "/api/cosmos/txs/{hash}"
 	EncodeTransaction    = "/api/cosmos/txs/encode"
 
+	QueryProposals         = "/api/tsuki/gov/proposals"
+	QueryProposal          = "/api/tsuki/gov/proposals/{proposal_id}"
 	QueryDataReferenceKeys = "/api/tsuki/gov/data_keys"
 	QueryDataReference     = "/api/tsuki/gov/data/{key}"
 	QueryTsukiFunctions     = "/api/tsuki/metadata"
