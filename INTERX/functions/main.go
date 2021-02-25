@@ -11,6 +11,6 @@ func GetTsukiFunctions() tsukitypes.FunctionList {
 }
 
 // GetInterxFunctions is a function to get all interx functions registered
-func GetInterxFunctions() tsukitypes.FunctionList {
+func GetInterxFunctions() InterxFunctionList {
 	return interxFunctions
 }

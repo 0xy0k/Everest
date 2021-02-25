@@ -10,6 +10,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
+	"github.com/TsukiCore/tsuki/INTERX/global"
 )
 
 func getStatus(rpcAddr string) {
@@ -42,11 +43,11 @@ func getStatus(rpcAddr string) {
 		return
 	}
 
-	common.Mutex.Lock()
+	global.Mutex.Lock()
 	common.NodeStatus.Chainid = result.Result.Block.Header.Chainid
 	common.NodeStatus.Block, _ = strconv.ParseInt(result.Result.Block.Header.Height, 10, 64)
 	common.NodeStatus.Blocktime = result.Result.Block.Header.Time
-	common.Mutex.Unlock()
+	global.Mutex.Unlock()
 
 	// save block height/time
 	t, _ := time.Parse(time.RFC3339, common.NodeStatus.Blocktime)
