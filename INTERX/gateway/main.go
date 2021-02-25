@@ -12,6 +12,7 @@ import (
 	cosmosAuth "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/auth"
 	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
 	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
+	tsukiSlashing "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/slashing"
 	tsukiStaking "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/staking"
 	"github.com/TsukiCore/tsuki/INTERX/tasks"
 	functionmeta "github.com/TsukiCore/tsuki/function_meta"
@@ -76,6 +77,11 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 	}
 
 	err = tsukiStaking.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
+	err = tsukiSlashing.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to register gateway: %w", err)
 	}
