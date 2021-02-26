@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"mime"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
 	"github.com/TsukiCore/tsuki/INTERX/functions"
+	"github.com/TsukiCore/tsuki/INTERX/insecure"
 	cosmosAuth "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/auth"
 	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
 	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
@@ -99,6 +101,7 @@ func Run(configFilePath string, log grpclog.LoggerV2) error {
 	database.LoadFaucetDbDriver()
 	database.LoadReferenceDbDriver()
 
+	serveHTTPS := config.Config.ServeHTTPS
 	grpcAddr := config.Config.GRPC
 	rpcAddr := config.Config.RPC
 	port := config.Config.PORT
@@ -128,15 +131,14 @@ func Run(configFilePath string, log grpclog.LoggerV2) error {
 		Handler: c.Handler(router),
 	}
 
-	// SERVE_HTTP: Empty parameters mean use the TLS Config specified with the server.
-	// if strings.ToLower(os.Getenv("SERVE_HTTP")) == "false" {
-	// 	gwServer.TLSConfig = &tls.Config{
-	// 		Certificates: []tls.Certificate{insecure.Cert},
-	// 	}
+	if serveHTTPS {
+		gwServer.TLSConfig = &tls.Config{
+			Certificates: []tls.Certificate{insecure.Cert},
+		}
 
-	// 	log.Info("Serving gRPC-Gateway and OpenAPI Documentation on https://", gatewayAddr)
-	// 	return fmt.Errorf("serving gRPC-Gateway server: %w", gwServer.ListenAndServeTLS("", ""))
-	// }
+		log.Info("Serving gRPC-Gateway and OpenAPI Documentation on https://", gatewayAddr)
+		return fmt.Errorf("serving gRPC-Gateway server: %w", gwServer.ListenAndServeTLS("", ""))
+	}
 
 	log.Info("Serving gRPC-Gateway and OpenAPI Documentation on http://", gatewayAddr)
 	return fmt.Errorf("serving gRPC-Gateway server: %w", gwServer.ListenAndServe())
