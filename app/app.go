@@ -6,10 +6,31 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-
+	customante "github.com/TsukiCore/tsuki/app/ante"
+	"github.com/TsukiCore/tsuki/middleware"
+	"github.com/TsukiCore/tsuki/x/evidence"
+	evidencekeeper "github.com/TsukiCore/tsuki/x/evidence/keeper"
+	evidencetypes "github.com/TsukiCore/tsuki/x/evidence/types"
+	"github.com/TsukiCore/tsuki/x/feeprocessing"
+	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
+	feeprocessingtypes "github.com/TsukiCore/tsuki/x/feeprocessing/types"
+	"github.com/TsukiCore/tsuki/x/genutil"
+	genutiltypes "github.com/TsukiCore/tsuki/x/genutil/types"
+	customgov "github.com/TsukiCore/tsuki/x/gov"
+	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
+	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	customslashing "github.com/TsukiCore/tsuki/x/slashing"
+	customslashingkeeper "github.com/TsukiCore/tsuki/x/slashing/keeper"
+	customslashingtypes "github.com/TsukiCore/tsuki/x/slashing/types"
+	customstaking "github.com/TsukiCore/tsuki/x/staking"
+	customstakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
+	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
+	"github.com/TsukiCore/tsuki/x/tokens"
+	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
+	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -43,27 +64,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
-
-	customante "github.com/TsukiCore/tsuki/app/ante"
-	"github.com/TsukiCore/tsuki/middleware"
-	"github.com/TsukiCore/tsuki/x/evidence"
-	evidencekeeper "github.com/TsukiCore/tsuki/x/evidence/keeper"
-	evidencetypes "github.com/TsukiCore/tsuki/x/evidence/types"
-	"github.com/TsukiCore/tsuki/x/feeprocessing"
-	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
-	feeprocessingtypes "github.com/TsukiCore/tsuki/x/feeprocessing/types"
-	customgov "github.com/TsukiCore/tsuki/x/gov"
-	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
-	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
-	customslashing "github.com/TsukiCore/tsuki/x/slashing"
-	customslashingkeeper "github.com/TsukiCore/tsuki/x/slashing/keeper"
-	customslashingtypes "github.com/TsukiCore/tsuki/x/slashing/types"
-	customstaking "github.com/TsukiCore/tsuki/x/staking"
-	customstakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
-	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
-	"github.com/TsukiCore/tsuki/x/tokens"
-	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
-	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
 )
 
 const appName = "Tsuki"
@@ -77,6 +77,7 @@ var (
 	// and genesis verification.
 	ModuleBasics = module.NewBasicManager(
 		auth.AppModuleBasic{},
+		genutil.AppModuleBasic{},
 		bank.AppModuleBasic{},
 		params.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
@@ -222,6 +223,10 @@ func NewInitApp(
 	// must be passed by reference here.
 	app.mm = module.NewManager(
 		auth.NewAppModule(appCodec, app.accountKeeper, simulation.RandomGenesisAccounts),
+		genutil.NewAppModule(
+			app.accountKeeper, app.customStakingKeeper, app.BaseApp.DeliverTx,
+			encodingConfig.TxConfig,
+		),
 		bank.NewAppModule(appCodec, app.bankKeeper, app.accountKeeper),
 		upgrade.NewAppModule(app.upgradeKeeper),
 		params.NewAppModule(app.paramsKeeper),
@@ -269,6 +274,7 @@ func NewInitApp(
 		customgovtypes.ModuleName,
 		tokenstypes.ModuleName,
 		feeprocessingtypes.ModuleName,
+		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 	)
 
