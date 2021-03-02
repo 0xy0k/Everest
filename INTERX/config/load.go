@@ -6,9 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/TsukiCore/tsuki/INTERX/functions"
 	tsukiapp "github.com/TsukiCore/tsuki/app"
-	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bytesize "github.com/inhies/go-bytesize"
@@ -54,8 +52,6 @@ func LoadMnemonic(mnemonic string) string {
 
 // LoadConfig is a function to load interx configurations from a given file
 func LoadConfig(configFilePath string) {
-	functions.RegisterInterxFunctions()
-	functionmeta.RegisterStdMsgs()
 	tsukiapp.SetConfig()
 
 	Config = InterxConfig{}

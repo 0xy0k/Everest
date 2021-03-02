@@ -8,6 +8,7 @@ import (
 
 	common "github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/global"
 )
 
 // CacheMaxSizeCheck is a function to check if cache reached the maximum size.
@@ -45,14 +46,14 @@ func CacheMaxSizeCheck(isLog bool) {
 							common.GetLogger().Info("[cache] Deleting file: ", path)
 						}
 
-						common.Mutex.Lock()
+						global.Mutex.Lock()
 						// check if file or path exists
 						if _, err := os.Stat(path); os.IsNotExist(err) {
-							common.Mutex.Unlock()
+							global.Mutex.Unlock()
 							return nil
 						}
 						err := os.Remove(path)
-						common.Mutex.Unlock()
+						global.Mutex.Unlock()
 
 						if err != nil {
 							if isLog {
