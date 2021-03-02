@@ -12,6 +12,8 @@ const (
 	QueryProposal          = "/api/tsuki/gov/proposals/{proposal_id}"
 	QueryDataReferenceKeys = "/api/tsuki/gov/data_keys"
 	QueryDataReference     = "/api/tsuki/gov/data/{key}"
+	QueryTsukiTokensAliases = "/api/tsuki/tokens/aliases"
+	QueryTsukiTokensRates   = "/api/tsuki/tokens/rates"
 	QueryTsukiFunctions     = "/api/tsuki/metadata"
 	QueryTsukiStatus        = "/api/tsuki/status"
 

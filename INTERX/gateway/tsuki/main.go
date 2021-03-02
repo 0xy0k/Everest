@@ -9,6 +9,6 @@ import (
 func RegisterRequest(router *mux.Router, gwCosmosmux *runtime.ServeMux, rpcAddr string) {
 	RegisterTsukiGovRoutes(router, gwCosmosmux, rpcAddr)
 	RegisterTsukiGovProposalRoutes(router, gwCosmosmux, rpcAddr)
-
 	RegisterTsukiQueryRoutes(router, gwCosmosmux, rpcAddr)
+	RegisterTsukiTokensRoutes(router, gwCosmosmux, rpcAddr)
 }

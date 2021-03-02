@@ -16,6 +16,7 @@ import (
 	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
 	tsukiSlashing "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/slashing"
 	tsukiStaking "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/staking"
+	tsukiTokens "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens"
 	"github.com/TsukiCore/tsuki/INTERX/tasks"
 	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/gorilla/mux"
@@ -84,6 +85,11 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 	}
 
 	err = tsukiSlashing.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
+	err = tsukiTokens.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to register gateway: %w", err)
 	}

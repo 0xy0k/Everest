@@ -160,6 +160,22 @@ func RegisterInterxFunctions() {
 	)
 
 	AddInterxFunction(
+		"QueryTsukiTokensAliases",
+		config.QueryTsukiTokensAliases,
+		`{
+			"description": "QueryTsukiTokensAliases is a function to query all tokens aliases."
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryTsukiTokensRates",
+		config.QueryTsukiTokensRates,
+		`{
+			"description": "QueryTsukiTokensRates is a function to query all tokens rates."
+		}`,
+	)
+
+	AddInterxFunction(
 		"Withdraws",
 		config.QueryWithdraws,
 		`{
