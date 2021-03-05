@@ -27,6 +27,8 @@ func getGetMethods() []string {
 		QueryProposal,
 		QueryTsukiTokensAliases,
 		QueryTsukiTokensRates,
+		QueryVoters,
+		QueryVotes,
 	}
 }
 
