@@ -160,6 +160,50 @@ func RegisterInterxFunctions() {
 	)
 
 	AddInterxFunction(
+		"QueryVoters",
+		config.QueryVoters,
+		`{
+			"description": "QueryVoters is a function to query voters by a given proposal id.",
+			"parameters": {
+				"proposal_id": {
+					"type":        "number",
+					"description": "This is an option of a proposal id"
+				}
+			}
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryVotes",
+		config.QueryVotes,
+		`{
+			"description": "QueryVotes is a function to query votes by a given proposal id.",
+			"parameters": {
+				"proposal_id": {
+					"type":        "number",
+					"description": "This is an option of a proposal id"
+				}
+			}
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryTsukiTokensAliases",
+		config.QueryTsukiTokensAliases,
+		`{
+			"description": "QueryTsukiTokensAliases is a function to query all tokens aliases."
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryTsukiTokensRates",
+		config.QueryTsukiTokensRates,
+		`{
+			"description": "QueryTsukiTokensRates is a function to query all tokens rates."
+		}`,
+	)
+
+	AddInterxFunction(
 		"Withdraws",
 		config.QueryWithdraws,
 		`{
