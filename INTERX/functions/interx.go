@@ -191,6 +191,22 @@ func RegisterInterxFunctions() {
 		"QueryTsukiTokensAliases",
 		config.QueryTsukiTokensAliases,
 		`{
+			"description": "QueryTsukiTokensAliases is a function to query all registered tokens."
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryTsukiTokensRates",
+		config.QueryTsukiTokensRates,
+		`{
+			"description": "QueryTsukiTokensRates is a function to query all registered token rates."
+		}`,
+	)
+
+	AddInterxFunction(
+		"QueryTsukiTokensAliases",
+		config.QueryTsukiTokensAliases,
+		`{
 			"description": "QueryTsukiTokensAliases is a function to query all tokens aliases."
 		}`,
 	)

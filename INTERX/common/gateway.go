@@ -13,6 +13,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/database"
 	"github.com/TsukiCore/tsuki/INTERX/types"
+	"github.com/TsukiCore/tsuki/INTERX/types/rosetta"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
@@ -159,4 +160,18 @@ func ServeError(code int, data string, message string, statusCode int) (interfac
 		Data:    data,
 		Message: message,
 	}, statusCode
+}
+
+func RosettaBuildError(code int, message string, description string, retriable bool, details interface{}) rosetta.Error {
+	return rosetta.Error{
+		Code:        code,
+		Message:     message,
+		Description: description,
+		Retriable:   retriable,
+		Details:     details,
+	}
+}
+
+func RosettaServeError(code int, data string, message string, statusCode int) (interface{}, interface{}, int) {
+	return nil, RosettaBuildError(code, message, data, true, nil), statusCode
 }
