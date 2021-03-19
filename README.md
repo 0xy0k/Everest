@@ -14,6 +14,8 @@ export PermVoteSetPermissionProposal=5
 export PermUpsertTokenAlias=6
 export PermChangeTxFee=7
 export PermUpsertTokenRate=8
+export PermCreateTokensWhiteBlackChangeProposal=21
+export PermVoteTokensWhiteBlackChangeProposal=22
 
 # transaction_type
 export TypeMsgSend      = "send"
@@ -545,4 +547,55 @@ tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --
 
 # proposal for jail max time - max to 1440min = 1d
 tsukid tx customgov proposal set-network-property JAIL_MAX_TIME 1440 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+```
+
+# Proposal Tx for freeze / unfreeze tokens
+
+```sh
+# create a proposal to blacklist validatortoken
+tsukid tx tokens propose-update-tokens-blackwhite --is_blacklist=true --is_add=true --tokens=validatortoken --tokens=kava --from validator --chain-id=testing --keyring-backend=test --fees=100ukex --home=$HOME/.tsukid --yes
+# check proposal ID
+tsukid query customgov proposals
+# whitelist permission to vote on proposal
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermVoteTokensWhiteBlackChangeProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# vote on proposal
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+# get all votes
+tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+```
+
+# Query for current frozen / unfronzen tokens [these values are valid only when specific network property is enabled]
+
+```sh
+# query token blacklists and whitelists
+tsukid query tokens token-black-whites
+# response
+data:
+  blacklisted:
+  - frozen
+  whitelisted:
+  - ukex
+
+# query network properties
+tsukid query customgov network-properties
+# response
+properties:
+  enable_foreign_fee_payments: true
+  enable_token_blacklist: false # useful for blacklist use or not
+  enable_token_whitelist: false # useful for whitelist use or not
+  inactive_rank_decrease_percent: "50"
+  jail_max_time: "10"
+  max_tx_fee: "1000000"
+  min_tx_fee: "100"
+  min_validators: "1"
+  mischance_rank_decrease_amount: "10"
+  poor_network_max_bank_send: "1000000"
+  proposal_enactment_time: "300"
+  proposal_end_time: "600"
+  vote_quorum: "33"
+
+# try sending frozen token
+tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000frozen --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+# response
+token is frozen: invalid request
 ```
