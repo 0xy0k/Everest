@@ -60,7 +60,7 @@ func (m *MsgProposalUpsertTokenRates) Route() string {
 }
 
 func (m *MsgProposalUpsertTokenRates) Type() string {
-	return tsukitypes.MsgProposalUpsertTokenRatesType
+	return tsukitypes.MsgTypeProposalUpsertTokenRates
 }
 
 func (m *MsgProposalUpsertTokenRates) ValidateBasic() error {
@@ -85,7 +85,7 @@ func (m *MsgProposalTokensWhiteBlackChange) Route() string {
 }
 
 func (m *MsgProposalTokensWhiteBlackChange) Type() string {
-	return tsukitypes.MsgProposalTokensWhiteBlackChangeType
+	return tsukitypes.MsgTypeProposalTokensWhiteBlackChange
 }
 
 func (m *MsgProposalTokensWhiteBlackChange) ValidateBasic() error {
