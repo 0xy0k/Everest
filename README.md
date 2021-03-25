@@ -14,8 +14,23 @@ export PermVoteSetPermissionProposal=5
 export PermUpsertTokenAlias=6
 export PermChangeTxFee=7
 export PermUpsertTokenRate=8
-export PermCreateTokensWhiteBlackChangeProposal=21
-export PermVoteTokensWhiteBlackChangeProposal=22
+export PermUpsertRole=9
+export PermCreateUpsertDataRegistryProposal=10
+export PermVoteUpsertDataRegistryProposal=11
+export PermCreateSetNetworkPropertyProposal=12
+export PermVoteSetNetworkPropertyProposal=13
+export PermCreateUpsertTokenAliasProposal=14
+export PermVoteUpsertTokenAliasProposal=15
+export PermCreateSetPoorNetworkMessagesProposal=16
+export PermVoteSetPoorNetworkMessagesProposal=17
+export PermCreateUpsertTokenRateProposal=18
+export PermVoteUpsertTokenRateProposal=19
+export PermCreateUnjailValidatorProposal=20
+export PermVoteUnjailValidatorProposal=21
+export PermCreateRoleProposal=22
+export PermVoteCreateRoleProposal=23
+export PermCreateTokensWhiteBlackChangeProposal=24
+export PermVoteTokensWhiteBlackChangeProposal=25
 
 # transaction_type
 export TypeMsgSend      = "send"
@@ -63,6 +78,17 @@ export FuncIDMsgClaimValidator = 19
 export FuncIDMsgUpsertTokenAlias = 20
 export FuncIDMsgUpsertTokenRate  = 21
 export FuncIDMsgProposalUpsertTokenAlias = 22
+```
+
+### Set permission via governance process
+
+```sh
+tsukid tx customgov proposal assign-permission $PermClaimValidator --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+
+tsukid query customgov proposals
+tsukid query customgov proposal 1
+
+tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 ```
 
 ## Set ChangeTxFee permission
