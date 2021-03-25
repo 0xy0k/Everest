@@ -29,7 +29,7 @@ func QueryTsukiTokensAliasesRequest(gwCosmosmux *runtime.ServeMux, rpcAddr strin
 		response := common.GetResponseFormat(request, rpcAddr)
 		statusCode := http.StatusOK
 
-		common.GetLogger().Info("[query-tokens-aliases] Entering proposals query")
+		common.GetLogger().Info("[query-tokens-aliases] Entering token aliases query")
 
 		if !common.RPCMethods["GET"][config.QueryTsukiTokensAliases].Enabled {
 			response.Response, response.Error, statusCode = common.ServeError(0, "", "API disabled", http.StatusForbidden)
@@ -63,7 +63,7 @@ func QueryTsukiTokensRatesRequest(gwCosmosmux *runtime.ServeMux, rpcAddr string)
 		response := common.GetResponseFormat(request, rpcAddr)
 		statusCode := http.StatusOK
 
-		common.GetLogger().Info("[query-tokens-rates] Entering proposals query")
+		common.GetLogger().Info("[query-tokens-rates] Entering token rates query")
 
 		if !common.RPCMethods["GET"][config.QueryTsukiTokensRates].Enabled {
 			response.Response, response.Error, statusCode = common.ServeError(0, "", "API disabled", http.StatusForbidden)
