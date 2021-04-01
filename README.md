@@ -6,431 +6,110 @@ Tsuki Hub
 ```sh
 sh env.sh
 ```
-
-### Set permission via governance process
+# Adding more validators
 
 ```sh
-tsukid tx customgov proposal assign-permission $PermClaimValidator --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-
-tsukid query customgov proposals
-tsukid query customgov proposal 1
-
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
+sh scripts/commands/adding-validators.sh
 ```
-
 ## Set ChangeTxFee permission
 ```sh
-# command to set PermChangeTxFee permission
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
-# good response
-"[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"whitelist-permissions\"}]}]}]"
-```
-
-## Query permission of an address
-```sh
-# command
-tsukid query customgov permissions $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
-
-# response
-blacklist: []
-whitelist:
-- 4
-- 3
+sh scripts/commands/set-permission.sh
 ```
 ## Set network properties
 ```sh
-
-# command with fee set
-tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
-
-# no error response
-"[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"set-network-properties\"}]}]}]"
-
-# response when not enough permissions to change tx fee
-"failed to execute message; message index: 0: PermChangeTxFee: not enough permissions"
-
-# command without fee set
-tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --home=$HOME/.tsukid
-
-# response
-"fee out of range [1, 10000]: invalid request"
-
+sh scripts/commands/set-network-properties.sh
 ```
-## Query network properties
-```sh
-# command
-tsukid query customgov network-properties
-
-# response
-properties:
-  max_tx_fee: "10000"
-  min_tx_fee: "1"
-```
-
 ## Set Execution Fee
 ```sh
-# command
-tsukid tx customgov set-execution-fee --from validator --execution_name="B" --transaction_type="B" --execution_fee=10 --failure_fee=1 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=10ukex --home=$HOME/.tsukid
-
-# response
-"[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"set-execution-fee\"}]}]}]"
+sh scripts/commands/set-execution-fee.sh
 ```
-
-## Set execution fee validation test
-```sh
-# command for setting execution fee
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
-
-Here, the value should be looked at is `--execution_name="set-network-properties"`, `--execution_fee=10000` and `--failure_fee=1000`.
-
-# check execution fee validation
-tsukid tx customgov set-network-properties --from validator --min_tx_fee="2" --max_tx_fee="20000" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid
-# response
-"fee is less than failure fee 1000: invalid request"
-
-Here, the value should be looked at is `"fee is less than failure fee 1000: invalid request"`.
-In this case, issue is found on ante step and fee is not being paid at all.
-
-# preparation for networks (v1) failure=1000, execution=10000
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=10000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-# preparation for networks (v2) failure=1000, execution=500
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx customgov set-execution-fee --from validator --execution_name="set-network-properties" --transaction_type="set-network-properties" --execution_fee=500 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-# init user1 with 100000ukex
-tsukid keys add user1 --keyring-backend=test --home=$HOME/.tsukid
-tsukid tx bank send validator $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) 100000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) --yes
-
-# try changing set-network-properties with user1 that does not have ChangeTxFee permission
-tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_tx_fee="25000" --keyring-backend=test --chain-id=testing --fees=1000ukex --home=$HOME/.tsukid --yes
-# this should fail and balance should be (previousBalance - failureFee)
-tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
-
-# whitelist user1's permission for ChangeTxFee and try again
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx customgov set-network-properties --from user1 --min_tx_fee="2" --max_tx_fee="25000" --keyring-backend=test --chain-id=testing --fees=1000ukex --home=$HOME/.tsukid --yes
-# this should fail and balance should be (previousBalance - successFee)
-tsukid query bank balances $(tsukid keys show -a user1 --keyring-backend=test --home=$HOME/.tsukid)
-```
-
-## Query execution fee
-```sh
-tsukid query customgov execution-fee <msg_type>
-# command
-tsukid query customgov execution-fee "B"
-# response
-fee:
-  default_parameters: "0"
-  execution_fee: "10"
-  failure_fee: "1"
-  name: ABC
-  timeout: "10"
-  transaction_type: B
-
-# genesis fee configuration test
-tsukid query customgov execution-fee "A"
-fee:
-  default_parameters: "0"
-  execution_fee: "10"
-  failure_fee: "1"
-  name: Claim Validator Seat
-  timeout: "10"
-  transaction_type: A
-```
-
-## Upsert token alias
-```sh
-# set PermUpsertTokenAlias permission to validator address
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenAlias --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# run upsert alias
-tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-
-# upsert alias by governance
-## proposal
-tsukid tx tokens proposal-upsert-alias --from=validator --keyring-backend=test --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-## query
-tsukid query proposals
-## vote
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-```
-
-# Query token alias
-```sh
-# command
-tsukid query tokens alias KEX
-# response
-allowed_vote_types:
-- "yes"
-- "no"
-decimals: 6
-denoms:
-- ukex
-enactment: 0
-expiration: 0
-icon: myiconurl
-name: Tsuki
-status: undefined
-symbol: KEX
-```
-```sh
-# command
-tsukid query tokens alias KE
-# response
-Error: KE symbol does not exist
-```
-```sh
-# command
-tsukid query tokens all-aliases --chain-id=testing --home=$HOME/.tsukid
-# response
-data:
-- allowed_vote_types:
-  - "yes"
-  - "no"
-  decimals: 6
-  denoms:
-  - ukex
-  enactment: 0
-  expiration: 0
-  icon: myiconurl
-  name: Tsuki
-  status: undefined
-  symbol: KEX
-
-# command
-tsukid query tokens aliases-by-denom ukex --chain-id=testing --home=$HOME/.tsukid
-# response
-data:
-  ukex:
-    allowed_vote_types:
-    - "yes"
-    - "no"
-    decimals: 6
-    denoms:
-    - ukex
-    enactment: 0
-    expiration: 0
-    icon: myiconurl
-    name: Tsuki
-    status: undefined
-    symbol: KEX
-```
-
 ## Upsert token rates
 ```sh
-# set PermUpsertTokenRate permission to validator address
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# run upsert rate
-tsukid tx tokens upsert-rate --from=validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-# upsert rate by governance
-## proposal
-tsukid tx tokens proposal-upsert-rate --from=validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-## query
-tsukid query proposals
-## vote
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-
+sh scripts/commands/upsert-token-rates.sh
 ```
-# Query token rate
+## Upsert token alias
 ```sh
-# command
-tsukid query tokens rate mykex
-# response
-denom: mykex
-fee_payments: true
-rate: "1.500000"
-```
-```sh
-# command
-tsukid query tokens rate invalid_denom
-# response
-Error: invalid_denom denom does not exist
-```
-```sh
-# command
-tsukid query tokens all-rates --chain-id=testing --home=$HOME/.tsukid
-# response
-data:
-- denom: ubtc
-  fee_payments: true
-  rate: "0.000010"
-- denom: ukex
-  fee_payments: true
-  rate: "1.000000"
-- denom: xeth
-  fee_payments: true
-  rate: "0.000100"
-
-# command
-tsukid query tokens rates-by-denom ukex --chain-id=testing --home=$HOME/.tsukid
-# response
-data:
-  ukex:
-    denom: ukex
-    fee_payments: true
-    rate: "1.000000"
+sh scripts/commands/upsert-token-alias.sh
 ```
 # Fee payment in foreign currency
 ```sh
-# register stake token as 1ukex=100stake
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="stake" --rate="0.01" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-tsukid query tokens rate stake
-# try to spend stake token as fee
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.01" --fee_payments=true --chain-id=testing --fees=10000stake --home=$HOME/.tsukid  --yes
-# smaller amount of fee in foreign currency
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.02" --fee_payments=true --chain-id=testing --fees=1000stake --home=$HOME/.tsukid  --yes
-# try to spend unregistered token (validatortoken) as fee
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="valstake" --rate="0.03" --fee_payments=true --chain-id=testing --fees=1000validatortoken --home=$HOME/.tsukid  --yes
+sh scripts/commands/foreign-fee-payments.sh
 ```
-
 # Fee payment in foreign currency returning failure - execution fee in foreign currency
 ```sh
-# register stake token as 1ukex=100stake
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="stake" --rate="0.01" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-tsukid query tokens rate stake
-
-# set execution fee and failure fee for upsert-rate transaction
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermChangeTxFee --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-# set execution_fee=1000 failure_fee=5000
-tsukid tx customgov set-execution-fee --from validator --execution_name="upsert-token-alias" --transaction_type="upsert-token-alias" --execution_fee=1000 --failure_fee=5000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-# set execution_fee=5000 failure_fee=1000
-tsukid tx customgov set-execution-fee --from validator --execution_name="upsert-token-alias" --transaction_type="upsert-token-alias" --execution_fee=5000 --failure_fee=1000 --timeout=10 default_parameters=0 --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-# check current balance
-tsukid query bank balances $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
-
-# try upsert-token-alias failure in foreign currency
-tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=500000stake --home=$HOME/.tsukid  --yes
-# set permission for this execution
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenAlias --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=10000stake --home=$HOME/.tsukid --yes
-# try upsert-token-alias success in foreign currency
-tsukid tx tokens upsert-alias --from validator --keyring-backend=test --expiration=0 --enactment=0 --allowed_vote_types=0,1 --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=500000stake --home=$HOME/.tsukid  --yes
+sh scripts/commands/foreign-fee-payments-failure-return.sh
 ```
-
+## Query permission of an address
+```sh
+sh scripts/commands/query-permission.sh
+```
+## Query network properties
+```sh
+sh scripts/commands/query-network-properties.sh
+```
+## Query execution fee
+```sh
+sh scripts/commands/query-execution-fee.sh
+```
+# Query token alias
+```sh
+sh scripts/commands/query-token-alias.sh
+```
+# Query token rate
+```sh
+sh scripts/commands/query-token-rate.sh
+```
 # Query validator account
 ```sh
-# query validator account
-tsukid query validator --addr  $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+sh scripts/commands/query-validator.sh
 ```
-
+# Query for current frozen / unfronzen tokens
+**Notes**: these values are valid only when specific network property is enabled
+```sh
+sh scripts/commands/query-frozen-token.sh
+```
+# Query poor network messages
+```
+sh scripts/commands/query-poor-network-messages.sh
+```
 # Query signing infos per validator's consensus address
 ```sh
-# query all signing infos as an array
-tsukid query customslashing signing-infos
-# response
-info:
-- address: tsukivalcons166p6nw8gm4cq7xescmyzm8qsqf56za0x5q6ep9
-  inactive_until: "1970-01-01T00:00:00Z"
-  index_offset: "2"
-  missed_blocks_counter: "0"
-  start_height: "0"
-  tombstoned: false
-pagination:
-  next_key: null
-  total: "0"
+sh scripts/commands/query-signing-infos.sh
 ```
+# Common commands for governance process
 ```sh
-# query signing info by validator
-tsukid query customslashing signing-info $(tsukid tendermint show-validator)
+sh scripts/commands/governance/common.sh
 ```
-
-# Custom governance module commands
+### Set permission via governance process
 
 ```sh
-tsukid tx customgov councilor claim-seat --from validator --keyring-backend=test --home=$HOME/.tsukid
-
-tsukid tx customgov permission blacklist-permission
-tsukid tx customgov permission whitelist-permission
-
-tsukid tx customgov proposal assign-permission
-tsukid tx customgov proposal vote
-
-tsukid tx customgov role blacklist-permission
-tsukid tx customgov role create
-tsukid tx customgov role remove
-tsukid tx customgov role remove-blacklist-permission
-tsukid tx customgov role remove-whitelist-permission
-tsukid tx customgov role whitelist-permission
-
-# querying for voters of a specific proposal
-tsukid query customgov voters 1
-# querying for votes of a specific proposal
-tsukid query customgov votes 1
-# querying for a vote of a specific propsal/voter pair
-tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+sh scripts/commands/governance/assign-permission.sh
 ```
 
-# Commands for poor network management
+## Upsert token alias via governance process
 ```sh
-# create proposal for setting poor network msgs
-tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
-# query for proposals
-tsukid query customgov proposals
-# set permission to vote on proposal
-tsukid tx customgov permission whitelist-permission --permission=19 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-# vote on the proposal
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-# check votes
-tsukid query customgov votes 1 
-# wait until vote end time finish
-tsukid query customgov proposals
-# query poor network messages
-tsukid query customgov poor-network-messages
-
-# whitelist permission for modifying network properties
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# test poor network messages after modifying min_validators section
-tsukid tx customgov set-network-properties --from validator --min_validators="2" --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# set permission for upsert token rate
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermUpsertTokenRate --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# try running upser token rate which is not allowed on poor network
-tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="mykex" --rate="1.5" --fee_payments=true --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
-# try sending more than allowed amount via bank send
-tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# try setting network property by governance to allow more amount sending
-tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-# try sending after modification of poor network bank send param
-tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+sh scripts/commands/governance/upsert-token-alias.sh
 ```
-# Commands for adding more validators
+
+## Upsert token rates via governance process
+```sh
+sh scripts/commands/governance/upsert-token-rates.sh
+```
+# Commands for poor network management via governance process
+```sh
+sh sh scripts/commands/governance/poor-network-messages.sh
+```
+# Freeze / unfreeze tokens via governance process
 
 ```sh
-# tsukid keys add val2 --keyring-backend=test --home=$HOME/.tsukid
-# tsukid tx bank send validator $(tsukid keys show -a val2 --keyring-backend=test --home=$HOME/.tsukid) 100000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermCreateSetPermissionsProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermVoteSetPermissionProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-
-tsukid tx customgov proposal assign-permission $PermClaimValidator --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-
-tsukid query customgov proposals
-tsukid query customgov proposal 1
-
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-
-tsukid tx claim-validator-seat --from validator --keyring-backend=test --home=$HOME/.tsukid --validator-key=tsukivaloper1ntk7n5y38en5dvnhvmruwagmkemq76x8s4pnwu --moniker="validator" --chain-id=testing --fees=100ukex --yes
-
-# get ValAddress (tsukivaloperxxx) from validator key
-tsukid val-address $(tsukid keys show -a validator --keyring-backend=test)
-
-# tsukid tx claim-validator-seat --from val2 --keyring-backend=test --home=$HOME/.tsukid --pubkey=tsukivalconspub1zcjduepqdllep3v5wv04hmu987rv46ax7fml65j3dh5tf237ayn5p59jyamq04048n --validator-key=tsukivaloper1ewgq8gtsefakhal687t8hnsw5zl4y8eksup39w --moniker="val2" --chain-id=testing --fees=100ukex --yes
-# tsukid tx claim-validator-seat --from val2 --keyring-backend=test --home=$HOME/.tsukid --validator-key=tsukivaloper1ewgq8gtsefakhal687t8hnsw5zl4y8eksup39w --moniker="val2" --chain-id=testing --fees=100ukex --yes
+sh scripts/commands/governance/token-freeze.sh
 ```
-
-# Tx for set network property proposal
+# Set network property proposal via governance process
 
 ```
-tsukid tx customgov proposal set-network-property MIN_TX_FEE 101 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+sh scripts/commands/governance/set-network-property.sh
 ```
-
-# Tx for Unjailing
+# Unjail via governance process
 
 Modify genesis json to have jailed validator for Unjail testing
 
@@ -509,63 +188,6 @@ Add jailed validator key to kms.
 ```
 
 ```sh
-# make proposal to unjail validator from jailed_validator
-tsukid tx customstaking proposal proposal-unjail-validator hash reference --from=jailed_validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-
-# vote on unjail validator proposal
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-
-# proposal for jail max time - max to 1440min = 1d
-tsukid tx customgov proposal set-network-property JAIL_MAX_TIME 1440 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+sh scripts/commands/governance/unjail-validator.sh
 ```
 
-# Proposal Tx for freeze / unfreeze tokens
-
-```sh
-# create a proposal to blacklist validatortoken
-tsukid tx tokens propose-update-tokens-blackwhite --is_blacklist=true --is_add=true --tokens=validatortoken --tokens=kava --from validator --chain-id=testing --keyring-backend=test --fees=100ukex --home=$HOME/.tsukid --yes
-# check proposal ID
-tsukid query customgov proposals
-# whitelist permission to vote on proposal
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermVoteTokensWhiteBlackChangeProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# vote on proposal
-tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
-# get all votes
-tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
-```
-
-# Query for current frozen / unfronzen tokens [these values are valid only when specific network property is enabled]
-
-```sh
-# query token blacklists and whitelists
-tsukid query tokens token-black-whites
-# response
-data:
-  blacklisted:
-  - frozen
-  whitelisted:
-  - ukex
-
-# query network properties
-tsukid query customgov network-properties
-# response
-properties:
-  enable_foreign_fee_payments: true
-  enable_token_blacklist: false # useful for blacklist use or not
-  enable_token_whitelist: false # useful for whitelist use or not
-  inactive_rank_decrease_percent: "50"
-  jail_max_time: "10"
-  max_tx_fee: "1000000"
-  min_tx_fee: "100"
-  min_validators: "1"
-  mischance_rank_decrease_amount: "10"
-  poor_network_max_bank_send: "1000000"
-  proposal_enactment_time: "300"
-  proposal_end_time: "600"
-  vote_quorum: "33"
-
-# try sending frozen token
-tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000frozen --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
-# response
-token is frozen: invalid request
-```
