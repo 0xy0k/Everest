@@ -336,3 +336,25 @@ func GetTokenAliases(gwCosmosmux *runtime.ServeMux, r *http.Request) []types.Tok
 
 	return result.Data
 }
+
+func GetTsukiStatus(rpcAddr string) *types.TsukiStatus {
+	success, _, _ := MakeGetRequest(rpcAddr, "/status", "")
+
+	if success != nil {
+		result := types.TsukiStatus{}
+
+		byteData, err := json.Marshal(success)
+		if err != nil {
+			GetLogger().Error("[rosetta-query-networklist] Invalid response format", err)
+		}
+
+		err = json.Unmarshal(byteData, &result)
+		if err != nil {
+			GetLogger().Error("[rosetta-query-networklist] Invalid response format", err)
+		}
+
+		return &result
+	}
+
+	return nil
+}
