@@ -2,6 +2,7 @@ package types
 
 import (
 	functionmeta "github.com/TsukiCore/tsuki/function_meta"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
@@ -49,6 +50,13 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgActivate{},
 		&MsgPause{},
 		&MsgUnpause{},
+		&MsgProposalResetWholeValidatorRank{},
+	)
+
+	registry.RegisterInterface(
+		"tsuki.gov.Content",
+		(*govtypes.Content)(nil),
+		&ProposalResetWholeValidatorRank{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

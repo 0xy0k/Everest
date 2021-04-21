@@ -1,12 +1,14 @@
 package keeper_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	"github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/x/slashing/testslashing"
 	"github.com/TsukiCore/tsuki/x/staking"
@@ -14,6 +16,11 @@ import (
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+func TestMain(m *testing.M) {
+	app.SetConfig()
+	os.Exit(m.Run())
+}
 
 // Test a new validator entering the validator set
 // Ensure that SigningInfo.StartHeight is set correctly
