@@ -365,12 +365,34 @@ func GetTsukiStatus(rpcAddr string) *types.TsukiStatus {
 
 		byteData, err := json.Marshal(success)
 		if err != nil {
-			GetLogger().Error("[rosetta-query-networklist] Invalid response format", err)
+			GetLogger().Error("[tsuki-status] Invalid response format", err)
 		}
 
 		err = json.Unmarshal(byteData, &result)
 		if err != nil {
-			GetLogger().Error("[rosetta-query-networklist] Invalid response format", err)
+			GetLogger().Error("[tsuki-status] Invalid response format", err)
+		}
+
+		return &result
+	}
+
+	return nil
+}
+
+func GetInterxStatus(interxAddr string) *types.InterxStatus {
+	success, _, _ := MakeGetRequest(interxAddr, "/api/status", "")
+
+	if success != nil {
+		result := types.InterxStatus{}
+
+		byteData, err := json.Marshal(success)
+		if err != nil {
+			GetLogger().Error("[interx-status] Invalid response format", err)
+		}
+
+		err = json.Unmarshal(byteData, &result)
+		if err != nil {
+			GetLogger().Error("[interx-status] Invalid response format", err)
 		}
 
 		return &result
