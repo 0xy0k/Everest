@@ -2,18 +2,16 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/types/errors"
-
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
-
+	tsukitypes "github.com/TsukiCore/tsuki/types"
+	tsukiquery "github.com/TsukiCore/tsuki/types/query"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/staking/types"
-
+	"github.com/cosmos/cosmos-sdk/store/prefix"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -68,10 +66,10 @@ func (q Querier) Validators(ctx context.Context, request *types.ValidatorsReques
 	store := c.KVStore(q.keeper.storeKey)
 
 	var validators []types.QueryValidator
+	var pageRes *query.PageResponse
+	var err error
 
-	validatorStore := prefix.NewStore(store, ValidatorsKey)
-
-	pageRes, err := query.FilteredPaginate(validatorStore, request.Pagination, func(key []byte, value []byte, accumulate bool) (bool, error) {
+	onResult := func(key []byte, value []byte, accumulate bool) (bool, error) {
 		var val types.Validator
 		err := q.keeper.cdc.UnmarshalBinaryBare(value, &val)
 		if err != nil {
@@ -118,29 +116,33 @@ func (q Querier) Validators(ctx context.Context, request *types.ValidatorsReques
 			return false, nil
 		}
 
-		if request.All || accumulate {
+		if accumulate {
 			validators = append(validators, validator)
 		}
-		return !request.All, nil
-	})
+		return true, nil
+	}
+
+	// we set maximum limit for safety of iteration
+	if request.Pagination.Limit > tsukitypes.PageIterationLimit {
+		request.Pagination.Limit = tsukitypes.PageIterationLimit
+	}
 
 	var actors []string
 	if request.All {
 		for _, actor := range q.keeper.govkeeper.GetNetworkActorsByAbsoluteWhitelistPermission(c, customgovtypes.PermClaimValidator) {
-			fmt.Println(actor.Address)
 			actors = append(actors, actor.Address.String())
 		}
+		validatorStore := prefix.NewStore(store, ValidatorsKey)
+		pageRes, err = tsukiquery.IterateAll(validatorStore, request.Pagination, onResult)
+	} else {
+		validatorStore := prefix.NewStore(store, ValidatorsKey)
+		pageRes, err = query.FilteredPaginate(validatorStore, request.Pagination, onResult)
 	}
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	if request.All {
-		pageRes = nil
-	}
-
 	response := types.ValidatorsResponse{Validators: validators, Pagination: pageRes, Actors: actors}
-
 	return &response, nil
 }
