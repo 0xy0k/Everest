@@ -5,7 +5,6 @@ import (
 
 	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
-	"github.com/TsukiCore/tsuki/INTERX/tasks"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
@@ -18,7 +17,7 @@ func RegisterNodeListQueryRoutes(r *mux.Router, gwCosmosmux *runtime.ServeMux, r
 }
 
 func queryNodeListHandle(gwCosmosmux *runtime.ServeMux, rpcAddr string) (interface{}, interface{}, int) {
-	return tasks.NodeListResponse, nil, http.StatusOK
+	return nil, nil, http.StatusOK
 }
 
 // QueryNodeList is a function to query node list.
