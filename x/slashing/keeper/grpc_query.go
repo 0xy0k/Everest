@@ -74,7 +74,7 @@ func (k Keeper) SigningInfos(c context.Context, request *types.QuerySigningInfos
 	}
 
 	// we set maximum limit for safety of iteration
-	if request.Pagination.Limit > tsukitypes.PageIterationLimit {
+	if request.Pagination != nil && request.Pagination.Limit > tsukitypes.PageIterationLimit {
 		request.Pagination.Limit = tsukitypes.PageIterationLimit
 	}
 
