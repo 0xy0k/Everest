@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+
 	customstaking "github.com/TsukiCore/tsuki/x/staking"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -14,7 +15,7 @@ func (app *TsukiApp) ExportAppStateAndValidators(
 
 	ctx := app.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 
-	//todo: handle zero height upgrades
+	// TODO: handle zero height upgrades
 	height := app.LastBlockHeight() + 1
 
 	genState := app.mm.ExportGenesis(ctx, app.appCodec)

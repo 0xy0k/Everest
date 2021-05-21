@@ -2,6 +2,7 @@ package upgrade
 
 import (
 	"encoding/json"
+
 	"github.com/TsukiCore/tsuki/middleware"
 	tokenscli "github.com/TsukiCore/tsuki/x/tokens/client/cli"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
@@ -109,7 +110,9 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 	return nil
 }
 
-func (am AppModule) BeginBlock(clientCtx sdk.Context, block abci.RequestBeginBlock) {}
+func (am AppModule) BeginBlock(clientCtx sdk.Context, block abci.RequestBeginBlock) {
+	BeginBlocker(am.upgradeKeeper, clientCtx, block)
+}
 
 func (am AppModule) EndBlock(ctx sdk.Context, block abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return nil
