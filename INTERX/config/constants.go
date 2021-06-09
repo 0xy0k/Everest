@@ -14,6 +14,7 @@ const (
 	QueryVotes             = "/api/tsuki/gov/votes/{proposal_id}"
 	QueryDataReferenceKeys = "/api/tsuki/gov/data_keys"
 	QueryDataReference     = "/api/tsuki/gov/data/{key}"
+	QueryNetworkProperties = "/api/tsuki/gov/network_properties"
 	QueryTsukiTokensAliases = "/api/tsuki/tokens/aliases"
 	QueryTsukiTokensRates   = "/api/tsuki/tokens/rates"
 	QueryTsukiFunctions     = "/api/tsuki/metadata"
@@ -36,10 +37,12 @@ const (
 	QueryValidatorInfos      = "/api/valoperinfos"
 	QueryGenesis             = "/api/genesis"
 	QueryGenesisSum          = "/api/gensum"
+	QueryNodeList            = "/api/node_list"
 
 	Download              = "/download"
 	DataReferenceRegistry = "DRR"
-	InterxVersion         = "0.1.1"
+	InterxVersion         = "0.1.2"
+	DefaultInterxPort     = "11000"
 
 	QueryRosettaNetworkList    = "/rosetta/network/list"
 	QueryRosettaNetworkOptions = "/rosetta/network/options"

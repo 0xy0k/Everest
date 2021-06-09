@@ -4,11 +4,17 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
+	tsukitypes "github.com/TsukiCore/tsuki/types"
+	tsukiquery "github.com/TsukiCore/tsuki/types/query"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // Querier describes grpc querier
@@ -121,15 +127,57 @@ func (q Querier) Proposal(ctx context.Context, request *types.QueryProposalReque
 	}, nil
 }
 
-// Proposals query proposals by querying params
+// Proposals query proposals by querying params with pagination
 func (q Querier) Proposals(ctx context.Context, request *types.QueryProposalsRequest) (*types.QueryProposalsResponse, error) {
-	sdkContext := sdk.UnwrapSDKContext(ctx)
-	proposals, err := q.keeper.GetProposals(sdkContext)
+	c := sdk.UnwrapSDKContext(ctx)
+	if request == nil {
+		err := status.Error(codes.InvalidArgument, "empty request")
+		return nil, sdkerrors.Wrap(types.ErrGettingProposals, fmt.Sprintf("error getting proposals: %s", err.Error()))
+	}
+
+	store := c.KVStore(q.keeper.storeKey)
+
+	var proposals []types.Proposal
+	var pageRes *query.PageResponse
+	var err error
+
+	proposalsStore := prefix.NewStore(store, ProposalsPrefix)
+
+	onResult := func(key []byte, value []byte, accumulate bool) (bool, error) {
+		var proposal types.Proposal
+		err := q.keeper.cdc.UnmarshalBinaryBare(value, &proposal)
+		if err != nil {
+			return false, err
+		}
+		if accumulate {
+			proposals = append(proposals, proposal)
+		}
+		return true, nil
+	}
+
+	// we set maximum limit for safety of iteration
+	if request.Pagination != nil && request.Pagination.Limit > tsukitypes.PageIterationLimit {
+		request.Pagination.Limit = tsukitypes.PageIterationLimit
+	}
+
+	if request.All {
+		pageRes, err = tsukiquery.IterateAll(proposalsStore, request.Pagination, onResult)
+	} else if request.Reverse {
+		pageRes, err = tsukiquery.FilteredReversePaginate(proposalsStore, request.Pagination, onResult)
+	} else {
+		pageRes, err = query.FilteredPaginate(proposalsStore, request.Pagination, onResult)
+	}
+
 	if err != nil {
 		return nil, sdkerrors.Wrap(types.ErrGettingProposals, fmt.Sprintf("error getting proposals: %s", err.Error()))
 	}
-	fmt.Println(proposals)
-	return &types.QueryProposalsResponse{Proposals: proposals}, nil
+
+	res := types.QueryProposalsResponse{
+		Proposals:  proposals,
+		Pagination: pageRes,
+	}
+
+	return &res, nil
 }
 
 // GetWhitelistedProposalVoters returns whitelisted voters for a proposal for tracking
