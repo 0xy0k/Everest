@@ -27,7 +27,7 @@ var (
 )
 
 const TENDERMINT_PORT = "26657"
-const TIMEOUT = 5 * time.Second
+const TIMEOUT = 3 * time.Second
 
 func getRPCAddress(ipAddr string) string {
 	return "http://" + ipAddr + ":" + TENDERMINT_PORT
@@ -35,6 +35,13 @@ func getRPCAddress(ipAddr string) string {
 
 func QueryPeers(rpcAddr string) ([]tmTypes.Peer, error) {
 	peers := []tmTypes.Peer{}
+
+	u, err := url.Parse(rpcAddr)
+	_, err = net.DialTimeout("tcp", u.Host, TIMEOUT)
+	if err != nil {
+		common.GetLogger().Info(err)
+		return peers, err
+	}
 
 	endpoint := fmt.Sprintf("%s/net_info", rpcAddr)
 
@@ -131,7 +138,7 @@ func NodeDiscover(rpcAddr string, isLog bool) {
 		}
 
 		peersFromIP := make(map[string]([]tmTypes.Peer))
-		tsukiStatusFromIP := make(map[string](tmTypes.ResultStatus))
+		// tsukiStatusFromIP := make(map[string](tmTypes.ResultStatus))
 
 		index := 0
 		for index < len(uniqueIPAddresses) {
@@ -151,9 +158,9 @@ func NodeDiscover(rpcAddr string, isLog bool) {
 				continue
 			}
 
-			if _, ok := tsukiStatusFromIP[ipAddr]; !ok {
-				tsukiStatusFromIP[ipAddr], _ = QueryTsukiStatus(getRPCAddress(ipAddr))
-			}
+			// if _, ok := tsukiStatusFromIP[ipAddr]; !ok {
+			// 	tsukiStatusFromIP[ipAddr], _ = QueryTsukiStatus(getRPCAddress(ipAddr))
+			// }
 
 			peers := peersFromIP[ipAddr]
 			// tsukiStatus := tsukiStatusFromIP[ipAddr]
