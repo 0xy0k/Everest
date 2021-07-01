@@ -161,5 +161,7 @@ func DefaultGenesis() *GenesisState {
 				tsukitypes.MsgTypeUnpause,
 			},
 		},
+		LastIdentityRecordId:        0,
+		LastIdRecordVerifyRequestId: 0,
 	}
 }
