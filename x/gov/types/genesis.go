@@ -159,7 +159,14 @@ func DefaultGenesis() *GenesisState {
 				tsukitypes.MsgTypeActivate,
 				tsukitypes.MsgTypePause,
 				tsukitypes.MsgTypeUnpause,
+				tsukitypes.MsgTypeCreateIdentityRecord,
+				tsukitypes.MsgTypeEditIdentityRecord,
+				tsukitypes.MsgTypeRequestIdentityRecordsVerify,
+				tsukitypes.MsgTypeApproveIdentityRecords,
+				tsukitypes.MsgTypeCancelIdentityRecordsVerifyRequest,
 			},
 		},
+		LastIdentityRecordId:        0,
+		LastIdRecordVerifyRequestId: 0,
 	}
 }
