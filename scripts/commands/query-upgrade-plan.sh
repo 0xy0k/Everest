@@ -1,3 +1,3 @@
 #!/bin/bash
 
-tsukid query upgrade current-plan --log_level=debug
+tsukid query upgrade show-plan --log_level=debug
