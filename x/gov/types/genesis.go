@@ -141,6 +141,7 @@ func DefaultGenesis() *GenesisState {
 		},
 		PoorNetworkMessages: &AllowedMessages{
 			Messages: []string{
+				tsukitypes.MsgTypeSubmitProposal,
 				tsukitypes.MsgTypeSetNetworkProperties,
 				tsukitypes.MsgTypeVoteProposal,
 				tsukitypes.MsgTypeClaimCouncilor,

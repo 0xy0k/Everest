@@ -6,17 +6,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/TsukiCore/tsuki/app"
+	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/x/gov"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
-
 	"github.com/TsukiCore/tsuki/x/staking"
-
-	"github.com/TsukiCore/tsuki/simapp"
 	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
@@ -287,7 +284,7 @@ func TestHandler_ProposalUnjailValidator_Errors(t *testing.T) {
 				"thehash",
 				"theReference",
 			)
-			msg, err := customgovtypes.NewMsgSubmitProposal(proposerAddr, "test", proposal)
+			msg, err := customgovtypes.NewMsgSubmitProposal(proposerAddr, "some desc", proposal)
 			require.NoError(t, err)
 			_, err = handler(
 				ctx,
@@ -334,7 +331,7 @@ func TestHandler_ProposalUnjailValidator(t *testing.T) {
 		"thehash",
 		"theReference",
 	)
-	msg, err := customgovtypes.NewMsgSubmitProposal(proposerAddr, "test", proposal)
+	msg, err := customgovtypes.NewMsgSubmitProposal(proposerAddr, "some desc", proposal)
 	require.NoError(t, err)
 	_, err = handler(
 		ctx,
