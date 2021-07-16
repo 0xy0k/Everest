@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/TsukiCore/tsuki/x/genutil"
+	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -92,12 +93,14 @@ func GetTxProposalUnjailValidatorCmd() *cobra.Command {
 				return fmt.Errorf("invalid description: %w", err)
 			}
 
-			msg := customstakingtypes.NewMsgProposalUnjailValidator(
+			msg, err := customgovtypes.NewMsgSubmitProposal(
 				clientCtx.FromAddress,
 				description,
-				hash,
-				reference,
+				customstakingtypes.NewUnjailValidatorProposal(clientCtx.FromAddress, hash, reference),
 			)
+			if err != nil {
+				return err
+			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

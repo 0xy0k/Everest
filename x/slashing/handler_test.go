@@ -7,6 +7,7 @@ import (
 
 	"github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/simapp"
+	"github.com/TsukiCore/tsuki/x/gov"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing"
 	"github.com/TsukiCore/tsuki/x/slashing/keeper"
@@ -39,22 +40,22 @@ func TestHandler_CreateProposalResetWholeValidatorRank(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		msg          *types.MsgProposalResetWholeValidatorRank
+		content      govtypes.Content
 		preparePerms func(t *testing.T, app *simapp.SimApp, ctx sdk.Context)
 		expectedErr  error
 	}{
 		{
 			"Proposer does not have Perm",
-			types.NewMsgProposalResetWholeValidatorRank(
-				proposerAddr, "some desc",
+			types.NewResetWholeValidatorRankProposal(
+				proposerAddr,
 			),
 			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {},
 			errors.Wrap(govtypes.ErrNotEnoughPermissions, "PERMISSION_CREATE_RESET_WHOLE_VALIDATOR_RANK_PROPOSAL"),
 		},
 		{
 			"Proposer has permission",
-			types.NewMsgProposalResetWholeValidatorRank(
-				proposerAddr, "some desc",
+			types.NewResetWholeValidatorRankProposal(
+				proposerAddr,
 			),
 			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {
 				proposerActor := govtypes.NewDefaultActor(proposerAddr)
@@ -73,8 +74,10 @@ func TestHandler_CreateProposalResetWholeValidatorRank(t *testing.T) {
 
 			tt.preparePerms(t, app, ctx)
 
-			handler := slashing.NewHandler(app.CustomSlashingKeeper)
-			_, err := handler(ctx, tt.msg)
+			handler := gov.NewHandler(app.CustomGovKeeper)
+			msg, err := govtypes.NewMsgSubmitProposal(proposerAddr, "some desc", tt.content)
+			require.NoError(t, err)
+			_, err = handler(ctx, msg)
 			if tt.expectedErr == nil {
 				require.NoError(t, err)
 			} else {
