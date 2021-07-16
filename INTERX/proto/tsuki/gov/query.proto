@@ -7,6 +7,7 @@ import "gogoproto/gogo.proto";
 import "tsuki/gov/data_registry.proto";
 import "tsuki/gov/pagination.proto";
 import "tsuki/gov/proposal.proto";
+import "tsuki/gov/identity_registrar.proto";
 import "tsuki/gov/actor.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "tsuki/gov/network_properties.proto";
