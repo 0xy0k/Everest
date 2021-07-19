@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tsukid tx customgov proposal set-network-property MIN_TX_FEE 101 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov proposal set-network-property MIN_TX_FEE 101  --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 
 ### possible network property upgrade options ###
 # MIN_TX_FEE: minimum transaction fee
