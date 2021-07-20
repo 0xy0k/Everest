@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
@@ -51,7 +52,7 @@ func TestMsgSubmitEvidence(t *testing.T) {
 
 	for i, tc := range testCases {
 		require.Equal(t, tc.msg.Route(), types.RouterKey, "unexpected result for tc #%d", i)
-		require.Equal(t, tc.msg.Type(), types.TypeMsgSubmitEvidence, "unexpected result for tc #%d", i)
+		require.Equal(t, tc.msg.Type(), tsukitypes.TypeMsgSubmitEvidence, "unexpected result for tc #%d", i)
 		require.Equal(t, tc.expectErr, tc.msg.ValidateBasic() != nil, "unexpected result for tc #%d", i)
 
 		if !tc.expectErr {
