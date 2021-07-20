@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # create proposal for setting poor network msgs
-tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --description="" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov proposal set-poor-network-msgs AAA,BBB --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
 # query for proposals
 tsukid query customgov proposals
 # set permission to vote on proposal
@@ -26,7 +26,7 @@ tsukid tx tokens upsert-rate --from validator --keyring-backend=test --denom="my
 # try sending more than allowed amount via bank send
 tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
 # try setting network property by governance to allow more amount sending
-tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov proposal set-network-property POOR_NETWORK_MAX_BANK_SEND 100000000  --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 # try sending after modification of poor network bank send param
 tsukid tx bank send validator $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) 100000000ukex --keyring-backend=test --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
