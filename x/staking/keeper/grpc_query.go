@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	tsukitypes "github.com/TsukiCore/tsuki/types"
-	tsukiquery "github.com/TsukiCore/tsuki/types/query"
 	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -126,21 +125,21 @@ func (q Querier) Validators(ctx context.Context, request *types.ValidatorsReques
 	}
 
 	var actors []string
-	if request.All {
-		for _, actor := range q.keeper.govkeeper.GetNetworkActorsByAbsoluteWhitelistPermission(c, customgovtypes.PermClaimValidator) {
-			actors = append(actors, actor.Address.String())
-		}
-		validatorStore := prefix.NewStore(store, ValidatorsKey)
-		pageRes, err = tsukiquery.IterateAll(validatorStore, request.Pagination, onResult)
-	} else {
-		validatorStore := prefix.NewStore(store, ValidatorsKey)
-		pageRes, err = query.FilteredPaginate(validatorStore, request.Pagination, onResult)
+	for _, actor := range q.keeper.govkeeper.GetNetworkActorsByAbsoluteWhitelistPermission(c, customgovtypes.PermClaimValidator) {
+		actors = append(actors, actor.Address.String())
 	}
+
+	validatorStore := prefix.NewStore(store, ValidatorsKey)
+	pageRes, err = query.FilteredPaginate(validatorStore, request.Pagination, onResult)
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	response := types.ValidatorsResponse{Validators: validators, Pagination: pageRes, Actors: actors}
+	response := types.ValidatorsResponse{
+		Validators: validators,
+		Actors:     actors,
+		Pagination: pageRes,
+	}
 	return &response, nil
 }
