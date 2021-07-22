@@ -2,14 +2,14 @@ syntax = "proto3";
 package tsuki.gov;
 
 import "gogoproto/gogo.proto";
-import "actor.proto";
-import "role.proto";
-import "proposal.proto";
-import "data_registry.proto";
-import "execution_fee.proto";
-import "network_properties.proto";
-import "allowed_messages.proto";
-import "identity_registrar.proto";
+import "tsuki/gov/actor.proto";
+import "tsuki/gov/role.proto";
+import "tsuki/gov/proposal.proto";
+import "tsuki/gov/data_registry.proto";
+import "tsuki/gov/execution_fee.proto";
+import "tsuki/gov/network_properties.proto";
+import "tsuki/gov/allowed_messages.proto";
+import "tsuki/gov/identity_registrar.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
 

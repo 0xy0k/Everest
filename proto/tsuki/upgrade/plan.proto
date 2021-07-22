@@ -2,7 +2,7 @@ syntax = "proto3";
 package tsuki.upgrade;
 
 import "gogoproto/gogo.proto";
-import "upgrade.proto";
+import "tsuki/upgrade/upgrade.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/upgrade/types";
 
