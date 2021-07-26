@@ -17,6 +17,7 @@ type InterxStatus struct {
 		} `json:"pub_key,omitempty"`
 		Moniker           string     `json:"moniker"`
 		TsukiAddr          string     `json:"tsuki_addr"`
+		TsukiPubKey        string     `json:"tsuki_pub_key"`
 		FaucetAddr        string     `jsong:"faucet_addr"`
 		GenesisChecksum   string     `json:"genesis_checksum"`
 		ChainID           string     `json:"chain_id"`
