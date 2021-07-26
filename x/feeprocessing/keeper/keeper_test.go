@@ -6,7 +6,7 @@ import (
 
 	"github.com/TsukiCore/tsuki/simapp"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
-	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -135,7 +135,7 @@ func TestNewKeeper_ProcessExecutionFeeReturn(t *testing.T) {
 	app.BankKeeper.SetBalance(ctx, addr2, sdk.NewInt64Coin("ukex", 10000))
 	app.BankKeeper.SetBalance(ctx, addr3, sdk.NewInt64Coin("ukex", 10000))
 
-	app.CustomGovKeeper.SetExecutionFee(ctx, &customgovtypes.ExecutionFee{
+	app.CustomGovKeeper.SetExecutionFee(ctx, &govtypes.ExecutionFee{
 		Name:              tsukitypes.MsgTypeUpsertTokenRate,
 		TransactionType:   tsukitypes.MsgTypeUpsertTokenRate,
 		ExecutionFee:      1000,

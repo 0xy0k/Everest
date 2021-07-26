@@ -1,7 +1,7 @@
 package types
 
 import (
-	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -36,7 +36,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 
 	registry.RegisterInterface(
 		"tsuki.gov.Content",
-		(*customgovtypes.Content)(nil),
+		(*govtypes.Content)(nil),
 		&ProposalSoftwareUpgrade{},
 		&ProposalCancelSoftwareUpgrade{},
 	)
