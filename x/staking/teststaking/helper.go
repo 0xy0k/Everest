@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
-	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/staking"
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
@@ -37,13 +37,13 @@ func NewHelper(t *testing.T, ctx sdk.Context, k keeper.Keeper, govKeeper customg
 // CreateValidator calls handler to create a new staking validator
 func (sh *Helper) CreateValidator(addr sdk.ValAddress, pk cryptotypes.PubKey, ok bool) {
 	// create permission whitelisted actor
-	actor := customgovtypes.NewNetworkActor(
+	actor := govtypes.NewNetworkActor(
 		sdk.AccAddress(addr),
 		nil,
 		1,
 		nil,
-		customgovtypes.NewPermissions([]customgovtypes.PermValue{
-			customgovtypes.PermClaimValidator,
+		govtypes.NewPermissions([]govtypes.PermValue{
+			govtypes.PermClaimValidator,
 		}, nil),
 		1,
 	)

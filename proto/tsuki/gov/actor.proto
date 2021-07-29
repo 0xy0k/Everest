@@ -2,7 +2,7 @@ syntax = "proto3";
 package tsuki.gov;
 
 import "gogoproto/gogo.proto";
-import "proposal.proto";
+import "tsuki/gov/proposal.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
 

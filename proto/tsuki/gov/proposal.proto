@@ -5,9 +5,9 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/any.proto";
 import "cosmos_proto/cosmos.proto";
-import "role.proto";
-import "permission.proto";
-import "network_properties.proto";
+import "tsuki/gov/role.proto";
+import "tsuki/gov/permission.proto";
+import "tsuki/gov/network_properties.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/gov/types";
 

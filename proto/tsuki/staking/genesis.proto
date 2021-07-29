@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tsuki.staking;
 
-import "staking.proto";
+import "tsuki/staking/staking.proto";
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/staking/types";

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/TsukiCore/tsuki/x/genutil"
-	customgovtypes "github.com/TsukiCore/tsuki/x/gov/types"
-	customstakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -57,7 +57,7 @@ func GetTxClaimValidatorCmd() *cobra.Command {
 			comm, err := types.NewDecFromStr(comission)
 			val := types.ValAddress(clientCtx.GetFromAddress())
 
-			msg, err := customstakingtypes.NewMsgClaimValidator(moniker, comm, val, valPubKey)
+			msg, err := stakingtypes.NewMsgClaimValidator(moniker, comm, val, valPubKey)
 			if err != nil {
 				return fmt.Errorf("error creating tx: %w", err)
 			}
@@ -99,11 +99,11 @@ func GetTxProposalUnjailValidatorCmd() *cobra.Command {
 				return fmt.Errorf("invalid description: %w", err)
 			}
 
-			msg, err := customgovtypes.NewMsgSubmitProposal(
+			msg, err := govtypes.NewMsgSubmitProposal(
 				clientCtx.FromAddress,
 				title,
 				description,
-				customstakingtypes.NewUnjailValidatorProposal(clientCtx.FromAddress, hash, reference),
+				stakingtypes.NewUnjailValidatorProposal(clientCtx.FromAddress, hash, reference),
 			)
 			if err != nil {
 				return err

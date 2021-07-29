@@ -4,7 +4,7 @@ package tsuki.slashing;
 option go_package = "github.com/TsukiCore/tsuki/x/slashing/types";
 
 import "gogoproto/gogo.proto";
-import "slashing.proto";
+import "tsuki/slashing/v1beta1/slashing.proto";
 
 // GenesisState defines the slashing module's genesis state.
 message GenesisState {
