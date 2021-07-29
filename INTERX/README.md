@@ -471,3 +471,21 @@ POST http://0.0.0.0:11000/api/cosmos/txs
 	"mode": "block"
 }
 ```
+
+## Additional Infomation
+
+### Validator properties for identity registrar
+
+| property   | type     | description                                |
+| ---------- | -------- | ------------------------------------------ |
+| `website`  | `string` | The website url for the validator          |
+| `social`   | `string` | The social media urls for the validator    |
+| `identity` | `string` | The identity description for the validator |
+
+```
+{
+	"website": "https://tsuki.network/",
+	"social": "https://twitter.com/tsuki_core",
+	"identity": "Tsuki Core Staking Services - Sentry, KMS, HSM, High Availability & Double Sign Protection"
+}
+```
