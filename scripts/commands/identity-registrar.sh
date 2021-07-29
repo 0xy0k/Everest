@@ -10,7 +10,7 @@ tsukid tx customgov create-identity-record --infos-file="id.json" --from=validat
 
 tsukid query customgov all-identity-records --log_level=debug
 tsukid query customgov identity-record 1 --log_level=debug
-tsukid query customgov identity-records-by-addr $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --log_level=debug
+tsukid query customgov identity-record-by-addr $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --log_level=debug
 # pagination: null
 # records:
 # - address: tsuki1zakwshqmx92fkl7ps094u4aratk827knfl7hm2

@@ -3,10 +3,10 @@ package tsuki.tokens;
 
 import "gogoproto/gogo.proto";
 
-import "alias.proto";
-import "proposal.proto";
-import "rate.proto";
-import "freeze.proto";
+import "tsuki/tokens/alias.proto";
+import "tsuki/tokens/proposal.proto";
+import "tsuki/tokens/rate.proto";
+import "tsuki/tokens/freeze.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/tokens/types";
 
