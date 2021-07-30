@@ -3,7 +3,7 @@ package tsuki.tokens;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens";
 
 message TokenAlias {
     string symbol = 1;// Ticker (eg. ATOM, KEX, BTC)

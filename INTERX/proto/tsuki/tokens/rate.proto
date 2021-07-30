@@ -3,7 +3,7 @@ package tsuki.tokens;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens";
 
 message TokenRate {
     string denom = 1; // denomination target

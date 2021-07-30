@@ -2,11 +2,11 @@
 // source: tsuki/gov/query.proto
 
 /*
-Package proto is a reverse proxy.
+Package gov is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package proto
+package gov
 
 import (
 	"context"

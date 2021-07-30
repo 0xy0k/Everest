@@ -1,7 +1,7 @@
 syntax = "proto3";
 package tsuki.gov;
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov";
 
 message DataRegistryEntry {
   string hash = 1;
