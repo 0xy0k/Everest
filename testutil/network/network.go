@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	customsimapp "github.com/TsukiCore/tsuki/simapp"
+	tsukiapp "github.com/TsukiCore/tsuki/app"
 
 	"github.com/TsukiCore/tsuki/app"
 
@@ -99,7 +99,7 @@ type Config struct {
 // DefaultConfig returns a sane default configuration suitable for nearly all
 // testing requirements.
 func DefaultConfig() Config {
-	encCfg := customsimapp.MakeEncodingConfig()
+	encCfg := tsukiapp.MakeEncodingConfig()
 
 	return Config{
 		Codec:             encCfg.Marshaler,

@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/types"
 
 	"github.com/TsukiCore/tsuki/app"
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/tokens/client/cli"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"

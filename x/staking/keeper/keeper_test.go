@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/TsukiCore/tsuki/app"
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/staking/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -109,7 +109,7 @@ func TestKeeper_GetPendingValidators(t *testing.T) {
 	require.Equal(t, 1, len(validatorSet))
 }
 
-func createValidators(t *testing.T, app *simapp.SimApp, ctx sdk.Context, accNum int) (validators []types.Validator) {
+func createValidators(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context, accNum int) (validators []types.Validator) {
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, accNum, sdk.TokensFromConsensusPower(10))
 
 	for _, addr := range addrs {

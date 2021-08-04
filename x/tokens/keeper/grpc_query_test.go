@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/tokens/keeper"
 	"github.com/TsukiCore/tsuki/x/tokens/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

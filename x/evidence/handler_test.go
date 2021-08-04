@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/evidence"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
@@ -22,7 +22,7 @@ type HandlerTestSuite struct {
 	suite.Suite
 
 	handler sdk.Handler
-	app     *simapp.SimApp
+	app     *simapp.TsukiApp
 }
 
 func testMsgSubmitEvidence(r *require.Assertions, e exported.Evidence, s sdk.AccAddress) exported.MsgSubmitEvidenceI {

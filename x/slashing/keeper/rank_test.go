@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,19 +16,19 @@ func TestResetWholeValidatorRank(t *testing.T) {
 	tests := []struct {
 		name            string
 		expectedError   error
-		prepareScenario func(app *simapp.SimApp, ctx sdk.Context, validator stakingtypes.Validator)
+		prepareScenario func(app *simapp.TsukiApp, ctx sdk.Context, validator stakingtypes.Validator)
 	}{
 		{
 			name:          "check validator status reset",
 			expectedError: nil,
-			prepareScenario: func(app *simapp.SimApp, ctx sdk.Context, validator stakingtypes.Validator) {
+			prepareScenario: func(app *simapp.TsukiApp, ctx sdk.Context, validator stakingtypes.Validator) {
 				app.CustomStakingKeeper.Inactivate(ctx, validator.ValKey)
 			},
 		},
 		{
 			name:          "check validator rank, streak reset",
 			expectedError: nil,
-			prepareScenario: func(app *simapp.SimApp, ctx sdk.Context, validator stakingtypes.Validator) {
+			prepareScenario: func(app *simapp.TsukiApp, ctx sdk.Context, validator stakingtypes.Validator) {
 				validator.Rank = 10
 				validator.Streak = 10
 				app.CustomStakingKeeper.AddValidator(ctx, validator)
@@ -37,7 +37,7 @@ func TestResetWholeValidatorRank(t *testing.T) {
 		{
 			name:          "check validator mischance, produced blocks counter, missed blocks counter, last present block reset",
 			expectedError: nil,
-			prepareScenario: func(app *simapp.SimApp, ctx sdk.Context, validator stakingtypes.Validator) {
+			prepareScenario: func(app *simapp.TsukiApp, ctx sdk.Context, validator stakingtypes.Validator) {
 				info, found := app.CustomSlashingKeeper.GetValidatorSigningInfo(ctx, validator.GetConsAddr())
 				if !found {
 					panic("validator signing info not found")
@@ -95,7 +95,7 @@ func TestResetWholeValidatorRank(t *testing.T) {
 	}
 }
 
-func createValidators(t *testing.T, app *simapp.SimApp, ctx sdk.Context, accNum int) (validators []stakingtypes.Validator) {
+func createValidators(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context, accNum int) (validators []stakingtypes.Validator) {
 	addrs := simapp.AddTestAddrsIncremental(app, ctx, accNum, sdk.TokensFromConsensusPower(10))
 
 	for _, addr := range addrs {

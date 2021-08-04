@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"

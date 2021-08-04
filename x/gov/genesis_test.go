@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov"
 	"github.com/TsukiCore/tsuki/x/gov/keeper"
