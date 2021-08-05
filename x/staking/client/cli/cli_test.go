@@ -19,7 +19,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/TsukiCore/tsuki/app"
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/staking/client/cli"
 	customtypes "github.com/TsukiCore/tsuki/x/staking/types"

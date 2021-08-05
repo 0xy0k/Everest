@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	stakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"

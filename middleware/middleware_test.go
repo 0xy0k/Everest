@@ -10,8 +10,8 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/TsukiCore/tsuki/app"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/middleware"
-	"github.com/TsukiCore/tsuki/simapp"
 	"github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"

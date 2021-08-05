@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
@@ -72,7 +72,7 @@ type KeeperTestSuite struct {
 
 	ctx     sdk.Context
 	querier sdk.Querier
-	app     *simapp.SimApp
+	app     *simapp.TsukiApp
 
 	queryClient types.QueryClient
 	stakingHdl  sdk.Handler
