@@ -13,4 +13,3 @@ cat $HOME/.tsukid/config/genesis.json | jq '.app_state["customgov"]["network_pro
 cat $HOME/.tsukid/config/genesis.json | jq '.app_state["customgov"]["network_properties"]["proposal_enactment_time"]="10"' > $HOME/.tsukid/config/tmp_genesis.json && mv $HOME/.tsukid/config/tmp_genesis.json $HOME/.tsukid/config/genesis.json
 
 tsukid start --home=$HOME/.tsukid
-

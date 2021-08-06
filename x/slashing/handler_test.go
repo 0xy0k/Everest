@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/TsukiCore/tsuki/app"
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/gov"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing"
@@ -41,7 +41,7 @@ func TestHandler_CreateProposalResetWholeValidatorRank(t *testing.T) {
 	tests := []struct {
 		name         string
 		content      govtypes.Content
-		preparePerms func(t *testing.T, app *simapp.SimApp, ctx sdk.Context)
+		preparePerms func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context)
 		expectedErr  error
 	}{
 		{
@@ -49,7 +49,7 @@ func TestHandler_CreateProposalResetWholeValidatorRank(t *testing.T) {
 			types.NewResetWholeValidatorRankProposal(
 				proposerAddr,
 			),
-			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {},
+			func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context) {},
 			errors.Wrap(govtypes.ErrNotEnoughPermissions, "PERMISSION_CREATE_RESET_WHOLE_VALIDATOR_RANK_PROPOSAL"),
 		},
 		{
@@ -57,7 +57,7 @@ func TestHandler_CreateProposalResetWholeValidatorRank(t *testing.T) {
 			types.NewResetWholeValidatorRankProposal(
 				proposerAddr,
 			),
-			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {
+			func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context) {
 				proposerActor := govtypes.NewDefaultActor(proposerAddr)
 				err2 := app.CustomGovKeeper.AddWhitelistPermission(ctx, proposerActor, govtypes.PermCreateResetWholeValidatorRankProposal)
 				require.NoError(t, err2)

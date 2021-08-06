@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/TsukiCore/tsuki/app"
-	"github.com/TsukiCore/tsuki/simapp"
+	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/gov"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
@@ -41,7 +41,7 @@ func NewAccountByIndex(accNum int) sdk.AccAddress {
 	return addr
 }
 
-func setPermissionToAddr(t *testing.T, app *simapp.SimApp, ctx sdk.Context, addr sdk.AccAddress, perm types.PermValue) error {
+func setPermissionToAddr(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context, addr sdk.AccAddress, perm types.PermValue) error {
 	proposerActor := govtypes.NewDefaultActor(addr)
 	err := proposerActor.Permissions.AddToWhitelist(perm)
 	require.NoError(t, err)
@@ -209,7 +209,7 @@ func TestHandler_CreateProposalUpsertTokenAliases_Errors(t *testing.T) {
 	tests := []struct {
 		name         string
 		content      govtypes.Content
-		preparePerms func(t *testing.T, app *simapp.SimApp, ctx sdk.Context)
+		preparePerms func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context)
 		expectedErr  error
 	}{
 		{
@@ -221,7 +221,7 @@ func TestHandler_CreateProposalUpsertTokenAliases_Errors(t *testing.T) {
 				18,
 				[]string{},
 			),
-			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {},
+			func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context) {},
 			errors.Wrap(types.ErrNotEnoughPermissions, types.PermCreateUpsertTokenAliasProposal.String()),
 		},
 	}
@@ -328,7 +328,7 @@ func TestHandler_CreateProposalUpsertTokenRates_Errors(t *testing.T) {
 	tests := []struct {
 		name         string
 		content      govtypes.Content
-		preparePerms func(t *testing.T, app *simapp.SimApp, ctx sdk.Context)
+		preparePerms func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context)
 		expectedErr  error
 	}{
 		{
@@ -338,7 +338,7 @@ func TestHandler_CreateProposalUpsertTokenRates_Errors(t *testing.T) {
 				sdk.NewDec(1234),
 				false,
 			),
-			func(t *testing.T, app *simapp.SimApp, ctx sdk.Context) {},
+			func(t *testing.T, app *simapp.TsukiApp, ctx sdk.Context) {},
 			errors.Wrap(types.ErrNotEnoughPermissions, types.PermCreateUpsertTokenRateProposal.String()),
 		},
 	}
