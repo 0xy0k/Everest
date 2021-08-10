@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tsukid query customgov voters 1 --log_level=debug
+tsukid query customgov voters 1
 
 # voters:
 # - address: tsuki1lcadkl3tcy69caqmwr4edt22zw87pcunfj0v75
