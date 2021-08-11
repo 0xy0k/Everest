@@ -1,9 +1,9 @@
 #!/bin/bash
 
-tsukid version --log_level=debug
+tsukid version
 # 1.0.0
 
-tsukid version --log_level=debug --long
+tsukid version --long
 # name: tsuki
 # server_name: tsukid
 # version: 1.0.0
