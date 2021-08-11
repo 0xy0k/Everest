@@ -9,6 +9,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	functions "github.com/TsukiCore/tsuki/INTERX/functions"
 	"github.com/TsukiCore/tsuki/INTERX/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
@@ -37,9 +38,9 @@ func QueryRPCMethods(rpcAddr string) http.HandlerFunc {
 }
 
 func queryInterxFunctionsHandle(rpcAddr string) (interface{}, interface{}, int) {
-	functions := functions.GetInterxFunctions()
+	metadata := functions.GetInterxMetadata()
 
-	return functions, nil, http.StatusOK
+	return metadata, nil, http.StatusOK
 }
 
 // QueryInterxFunctions is a function to list functions and metadata.
@@ -59,7 +60,8 @@ func queryStatusHandle(rpcAddr string) (interface{}, interface{}, int) {
 	result := types.InterxStatus{}
 
 	// Handle Interx Pubkey
-	pubkeyBytes, err := config.EncodingCg.Amino.MarshalJSON(config.Config.PubKey)
+	pubkeyBytes, err := config.EncodingCg.Amino.MarshalJSON(&config.Config.PubKey)
+
 	if err != nil {
 		common.GetLogger().Error("[query-status] Failed to marshal interx pubkey", err)
 		return common.ServeError(0, "", err.Error(), http.StatusInternalServerError)
@@ -97,6 +99,7 @@ func queryStatusHandle(rpcAddr string) (interface{}, interface{}, int) {
 	result.InterxInfo.Node = config.Config.Node
 
 	result.InterxInfo.TsukiAddr = config.Config.Address
+	result.InterxInfo.TsukiPubKey = sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, config.Config.PubKey)
 	result.InterxInfo.FaucetAddr = config.Config.Faucet.Address
 	result.InterxInfo.GenesisChecksum = checksum
 	result.InterxInfo.ChainID = genesis.ChainID

@@ -4,7 +4,7 @@ package tsuki.tokens;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens";
 
 message ProposalUpsertTokenAlias {
   option (cosmos_proto.implements_interface) = "Content";

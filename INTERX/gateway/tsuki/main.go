@@ -11,4 +11,5 @@ func RegisterRequest(router *mux.Router, gwCosmosmux *runtime.ServeMux, rpcAddr 
 	RegisterTsukiGovProposalRoutes(router, gwCosmosmux, rpcAddr)
 	RegisterTsukiQueryRoutes(router, gwCosmosmux, rpcAddr)
 	RegisterTsukiTokensRoutes(router, gwCosmosmux, rpcAddr)
+	RegisterTsukiUpgradeRoutes(router, gwCosmosmux, rpcAddr)
 }

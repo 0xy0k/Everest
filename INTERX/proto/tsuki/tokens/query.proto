@@ -6,7 +6,7 @@ import "tsuki/tokens/rate.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens";
 
 // These annotations are used when generating the OpenAPI file.
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {

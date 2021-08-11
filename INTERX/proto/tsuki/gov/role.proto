@@ -3,7 +3,7 @@ package tsuki.gov;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov";
 
 message MsgCreateRole {
   bytes proposer = 1 [

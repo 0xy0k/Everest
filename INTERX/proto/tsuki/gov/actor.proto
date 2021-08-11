@@ -4,7 +4,7 @@ package tsuki.gov;
 import "gogoproto/gogo.proto";
 import "tsuki/gov/proposal.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov";
 
 enum ActorStatus {
   option (gogoproto.goproto_enum_prefix) = false;
