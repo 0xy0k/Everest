@@ -8,7 +8,7 @@ import "cosmos_proto/cosmos.proto";
 import "tsuki/gov/network_properties.proto";
 import "tsuki/gov/permission.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov";
 
 // VoteOption enumerates the valid vote options for a given governance proposal.
 enum VoteOption {

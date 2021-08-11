@@ -4,7 +4,7 @@ package tsuki.staking;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/staking";
 
 message ProposalUnjailValidator {
   option (cosmos_proto.implements_interface) = "Content";

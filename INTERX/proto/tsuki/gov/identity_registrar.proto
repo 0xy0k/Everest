@@ -4,7 +4,7 @@ package tsuki.gov;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/TsukiCore/tsuki/INTERX/proto";
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov";
 
 message IdentityRecord {
     uint64 id = 1;
