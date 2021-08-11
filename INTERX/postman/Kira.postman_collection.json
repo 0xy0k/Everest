@@ -1727,6 +1727,36 @@
 			]
 		},
 		{
+			"name": "Upgrade",
+			"item": [
+				{
+					"name": "Current Upgrade Plan",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://0.0.0.0:11000/api/tsuki/upgrade/current_plan",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "11000",
+							"path": [
+								"api",
+								"tsuki",
+								"upgrade",
+								"current_plan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Tsuki Status",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
