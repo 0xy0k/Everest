@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# To get tsukid version, should install binary with `make install`
+make install
+
 tsukid version
 # 1.0.0
 
