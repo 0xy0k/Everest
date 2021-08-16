@@ -5,16 +5,16 @@ import (
 	"os"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
 	"github.com/TsukiCore/tsuki/app"
 	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/stretchr/testify/require"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestMain(m *testing.M) {
@@ -64,8 +64,11 @@ func Test_Middleware_SetNetworkProperties(t *testing.T) {
 			app := simapp.Setup(false)
 			ctx := app.NewContext(false, tmproto.Header{})
 
-			app.BankKeeper.SetBalance(ctx, sudoAddr, sdk.NewInt64Coin("ukex", 100000))
-			app.BankKeeper.SetBalance(ctx, changeFeeAddr, sdk.NewInt64Coin("ukex", 100000))
+			coins := sdk.Coins{sdk.NewInt64Coin("ukex", 100000)}
+			app.BankKeeper.MintCoins(ctx, authtypes.FeeCollectorName, coins)
+			app.BankKeeper.SendCoinsFromModuleToAccount(ctx, authtypes.FeeCollectorName, sudoAddr, coins)
+			app.BankKeeper.MintCoins(ctx, authtypes.FeeCollectorName, coins)
+			app.BankKeeper.SendCoinsFromModuleToAccount(ctx, authtypes.FeeCollectorName, changeFeeAddr, coins)
 
 			// First we set Role Sudo to proposer Actor
 			proposerActor := govtypes.NewDefaultActor(sudoAddr)
