@@ -2,7 +2,7 @@
 
 # upsert alias by governance
 ## proposal
-tsukid tx tokens proposal-upsert-alias --from=validator --keyring-backend=test --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
+tsukid tx tokens proposal-upsert-alias --from=validator --keyring-backend=test --title="upsert alias" --description="upsert alias proposal" --symbol="ETH" --name="Ethereum" --icon="myiconurl" --decimals=6 --denoms="finney" --chain-id=testing --fees=100ukex --home=$HOME/.tsukid  --yes
 ## query
 tsukid query proposals
 ## vote
