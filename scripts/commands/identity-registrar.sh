@@ -13,6 +13,9 @@ tsukid query customgov all-identity-records
 tsukid query customgov identity-record 1
 tsukid query customgov identity-records-by-addr $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
+# query by specific keys
+tsukid query customgov identity-records-by-addr $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --keys="moniker"
+
 tsukid tx customgov delete-identity-records --keys="moniker" --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 
 tsukid tx customgov request-identity-record-verify --record-ids=1 --verifier=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --tip=10ukex --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
