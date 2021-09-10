@@ -18,12 +18,18 @@ tsukid query customgov identity-records-by-addr $(tsukid keys show -a validator 
 
 tsukid tx customgov delete-identity-records --keys="moniker" --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 
-tsukid tx customgov request-identity-record-verify --record-ids=1 --verifier=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --tip=200ukex --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
+tsukid keys add test --keyring-backend=test --home=$HOME/.tsukid
+tsukid tx customgov request-identity-record-verify --record-ids=1 --verifier=$(tsukid keys show -a test --keyring-backend=test --home=$HOME/.tsukid) --tip=200ukex --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
+tsukid tx customgov request-identity-record-verify --record-ids=2 --verifier=$(tsukid keys show -a test --keyring-backend=test --home=$HOME/.tsukid) --tip=200ukex --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 
 tsukid query customgov all-identity-record-verify-requests
 tsukid query customgov identity-record-verify-request 1
-tsukid query customgov identity-record-verify-requests-by-approver $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
+tsukid query customgov identity-record-verify-requests-by-requester $(tsukid keys show -a test --keyring-backend=test --home=$HOME/.tsukid)
 tsukid query customgov identity-record-verify-requests-by-requester $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
+tsukid query customgov identity-record-verify-requests-by-approver $(tsukid keys show -a test --keyring-backend=test --home=$HOME/.tsukid)
+tsukid query customgov identity-record-verify-requests-by-approver $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
 tsukid tx customgov handle-identity-records-verify-request 1 --from=validator --approve=true --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 tsukid tx customgov handle-identity-records-verify-request 2 --from=validator --approve=false --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
