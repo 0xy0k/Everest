@@ -44,6 +44,7 @@ const (
 	QueryInterxList          = "/api/interx_list"
 	QuerySnapList            = "/api/snap_list"
 	QueryAddrBook            = "/api/addrbook"
+	QueryNetInfo             = "/api/net_info"
 
 	QueryUpgradePlan = "/api/tsuki/upgrade/current_plan"
 
