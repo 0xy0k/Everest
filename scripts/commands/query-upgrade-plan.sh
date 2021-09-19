@@ -1,3 +1,4 @@
 #!/bin/bash
 
-tsukid query upgrade show-plan
+tsukid query upgrade current-plan
+tsukid query upgrade next-plan
