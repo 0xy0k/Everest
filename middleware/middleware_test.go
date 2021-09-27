@@ -9,6 +9,7 @@ import (
 	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/TsukiCore/tsuki/types"
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -111,7 +112,7 @@ func Test_Middleware_SetNetworkProperties(t *testing.T) {
 				executions := app.FeeProcessingKeeper.GetExecutionsStatus(ctx)
 				successExist := false
 				for _, exec := range executions {
-					if exec.Success == true && exec.MsgType == tt.msg.Type() && bytes.Equal(exec.FeePayer, tt.msg.GetSigners()[0]) {
+					if exec.Success == true && exec.MsgType == tsukitypes.MsgType(tt.msg) && bytes.Equal(exec.FeePayer, tt.msg.GetSigners()[0]) {
 						successExist = true
 						break
 					}
