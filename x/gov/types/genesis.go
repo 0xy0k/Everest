@@ -56,6 +56,8 @@ func DefaultGenesis() *GenesisState {
 			JailMaxTime:                 600, // 600  seconds / 10 mins
 			EnableTokenWhitelist:        false,
 			EnableTokenBlacklist:        true,
+			MinIdentityApprovalTip:      200,
+			UniqueIdentityKeys:          "moniker,username",
 		},
 		ExecutionFees: []*ExecutionFee{
 			{
@@ -158,10 +160,10 @@ func DefaultGenesis() *GenesisState {
 				tsukitypes.MsgTypeActivate,
 				tsukitypes.MsgTypePause,
 				tsukitypes.MsgTypeUnpause,
-				tsukitypes.MsgTypeCreateIdentityRecord,
+				tsukitypes.MsgTypeRegisterIdentityRecords,
 				tsukitypes.MsgTypeEditIdentityRecord,
 				tsukitypes.MsgTypeRequestIdentityRecordsVerify,
-				tsukitypes.MsgTypeApproveIdentityRecords,
+				tsukitypes.MsgTypeHandleIdentityRecordsVerifyRequest,
 				tsukitypes.MsgTypeCancelIdentityRecordsVerifyRequest,
 			},
 		},
