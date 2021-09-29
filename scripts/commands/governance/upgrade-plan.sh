@@ -12,7 +12,7 @@ tsukid tx upgrade proposal-set-plan --name="upgrade1" --instate-upgrade=true --s
 
 tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 
-tsukid query upgrade show-plan
+tsukid query upgrade next-plan
 
 tsukid query customgov proposals
 
