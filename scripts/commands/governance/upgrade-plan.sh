@@ -39,5 +39,5 @@ tsukid tx customgov proposal vote 2 1 --from validator --keyring-backend=test --
 tsukid query customgov proposals
 
 # upgrade to new json for hard-fork case
-tsukid export > exported-genesis.json new-genesis.json
+tsukid export > exported-genesis.json
 tsukid new-genesis-from-exported exported-genesis.json new-genesis.json
