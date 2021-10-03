@@ -37,3 +37,7 @@ tsukid tx upgrade proposal-set-plan --name="upgrade5" --instate-upgrade=false --
 tsukid tx upgrade proposal-cancel-plan --name="cancel-upgrade4" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 tsukid tx customgov proposal vote 2 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 tsukid query customgov proposals
+
+# upgrade to new json for hard-fork case
+tsukid export > exported-genesis.json new-genesis.json
+tsukid new-genesis-from-exported exported-genesis.json new-genesis.json
