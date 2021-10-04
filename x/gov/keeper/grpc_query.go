@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	tsukitypes "github.com/TsukiCore/tsuki/types"
-	tsukiquery "github.com/TsukiCore/tsuki/types/query"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -147,11 +146,7 @@ func (k Keeper) Proposals(goCtx context.Context, request *types.QueryProposalsRe
 		request.Pagination.Limit = tsukitypes.PageIterationLimit
 	}
 
-	if request.Reverse {
-		pageRes, err = tsukiquery.FilteredReversePaginate(proposalsStore, request.Pagination, onResult)
-	} else {
-		pageRes, err = query.FilteredPaginate(proposalsStore, request.Pagination, onResult)
-	}
+	pageRes, err = query.FilteredPaginate(proposalsStore, request.Pagination, onResult)
 
 	if err != nil {
 		return nil, sdkerrors.Wrap(types.ErrGettingProposals, fmt.Sprintf("error getting proposals: %s", err.Error()))
