@@ -10,6 +10,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/types"
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -202,7 +203,7 @@ func parseTransaction(rpcAddr string, transaction tmTypes.ResultTx) (types.Trans
 	txResult.Msgs = make([]types.TxMsg, 0)
 	for _, msg := range tx.GetMsgs() {
 		txResult.Msgs = append(txResult.Msgs, types.TxMsg{
-			Type: msg.Type(),
+			Type: tsukitypes.MsgType(msg),
 			Data: msg,
 		})
 	}
@@ -223,7 +224,7 @@ func parseTransaction(rpcAddr string, transaction tmTypes.ResultTx) (types.Trans
 
 	for index, msg := range tx.GetMsgs() {
 		log := logs[index]
-		txType := msg.Type()
+		txType := tsukitypes.MsgType(msg)
 		transfers := []types.Transaction{}
 
 		var evMap = make(map[string]([]sdk.Attribute))

@@ -13,6 +13,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/common"
 	"github.com/TsukiCore/tsuki/INTERX/config"
 	"github.com/TsukiCore/tsuki/INTERX/types"
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -44,10 +45,6 @@ func toSnakeCase(str string) string {
 	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 	return strings.ToLower(snake)
-}
-
-func parseTxType(txType string) string {
-	return toSnakeCase(txType)
 }
 
 // SearchTxHashHandle is a function to query transactions
@@ -198,7 +195,6 @@ func QueryBlockTransactionsHandler(rpcAddr string, r *http.Request, isWithdraw b
 	if txType == "" {
 		txType = "all"
 	}
-	txType = parseTxType(txType)
 
 	last = r.FormValue("last")
 
@@ -275,7 +271,7 @@ func QueryBlockTransactionsHandler(rpcAddr string, r *http.Request, isWithdraw b
 		var txResponses []types.DepositWithdrawTransaction
 
 		for index, msg := range tx.GetMsgs() {
-			txType := msg.Type()
+			txType := tsukitypes.MsgType(msg)
 
 			var evMap = make(map[string]([]sdk.Attribute))
 			for _, event := range logs[index].GetEvents() {
@@ -616,7 +612,7 @@ func queryUnconfirmedTransactionsHandler(rpcAddr string, r *http.Request) (inter
 
 		for _, msg := range txResult.GetMsgs() {
 			msgs = append(msgs, types.TxMsg{
-				Type: msg.Type(),
+				Type: tsukitypes.MsgType(msg),
 				Data: msg,
 			})
 		}
