@@ -10,7 +10,6 @@ import (
 	functions "github.com/TsukiCore/tsuki/INTERX/functions"
 	"github.com/TsukiCore/tsuki/INTERX/tasks"
 	"github.com/TsukiCore/tsuki/INTERX/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
@@ -104,7 +103,7 @@ func queryStatusHandle(rpcAddr string) (interface{}, interface{}, int) {
 	result.InterxInfo.Node = config.Config.Node
 
 	result.InterxInfo.TsukiAddr = config.Config.Address
-	result.InterxInfo.TsukiPubKey = sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeAccPub, config.Config.PubKey)
+	result.InterxInfo.TsukiPubKey = config.Config.PubKey.String()
 	result.InterxInfo.FaucetAddr = config.Config.Faucet.Address
 	result.InterxInfo.GenesisChecksum = checksum
 	result.InterxInfo.ChainID = genesis.ChainID
