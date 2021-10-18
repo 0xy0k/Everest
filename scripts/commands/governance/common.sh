@@ -21,3 +21,9 @@ tsukid query customgov voters 1
 tsukid query customgov votes 1
 # querying for a vote of a specific propsal/voter pair
 tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
+# whitelist permission for claim validator
+tsukid keys add lladmin --keyring-backend=test
+tsukid tx bank send validator $(tsukid keys show -a lladmin --keyring-backend=test) 1000000ukex --keyring-backend=test --chain-id=testing --fees=200ukex --yes
+tsukid tx customgov permission whitelist-permission --from=validator --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=30 --chain-id=testing --fees=200ukex --yes
+tsukid tx customgov permission whitelist-permission --from=lladmin --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=2 --chain-id=testing --fees=200ukex --yes
