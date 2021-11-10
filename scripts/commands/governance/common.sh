@@ -23,6 +23,11 @@ tsukid tx customgov role remove-blacklist-permission
 tsukid tx customgov role remove-whitelist-permission
 tsukid tx customgov role whitelist-permission
 
+# query all roles
+tsukid query customgov all-roles
+# query roles for an address
+tsukid query customgov roles $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
 # querying for voters of a specific proposal
 tsukid query customgov voters 1
 # querying for votes of a specific proposal
