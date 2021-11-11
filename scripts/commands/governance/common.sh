@@ -3,7 +3,15 @@
 tsukid tx customgov councilor claim-seat --from validator --keyring-backend=test --home=$HOME/.tsukid
 
 tsukid tx customgov permission blacklist-permission
+tsukid tx customgov permission remove-blacklisted-permission
 tsukid tx customgov permission whitelist-permission
+tsukid tx customgov permission remove-whitelisted-permission
+
+# add / remove / query whitelisted permissions
+tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+tsukid query customgov permissions $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+tsukid tx customgov permission remove-whitelisted-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+tsukid query customgov permissions $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
 tsukid tx customgov proposal assign-permission
 tsukid tx customgov proposal vote
@@ -14,6 +22,11 @@ tsukid tx customgov role remove
 tsukid tx customgov role remove-blacklist-permission
 tsukid tx customgov role remove-whitelist-permission
 tsukid tx customgov role whitelist-permission
+
+# query all roles
+tsukid query customgov all-roles
+# query roles for an address
+tsukid query customgov roles $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
 # querying for voters of a specific proposal
 tsukid query customgov voters 1
