@@ -16,17 +16,24 @@ tsukid query customgov permissions $(tsukid keys show -a validator --keyring-bac
 tsukid tx customgov proposal assign-permission
 tsukid tx customgov proposal vote
 
-tsukid tx customgov role blacklist-permission
-tsukid tx customgov role create
-tsukid tx customgov role remove
-tsukid tx customgov role remove-blacklist-permission
-tsukid tx customgov role remove-whitelist-permission
-tsukid tx customgov role whitelist-permission
+# role creation, role permission add / remove
+tsukid tx customgov role create testRole "testRole Description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role whitelist-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role blacklist-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role remove-whitelisted-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role remove-blacklisted-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
 
 # query all roles
 tsukid query customgov all-roles
 # query roles for an address
 tsukid query customgov roles $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
+
+# query a single role
+tsukid query customgov role sudo
+tsukid query customgov role 1
+# query role permissions
+tsukid query customgov role-permissions sudo
+tsukid query customgov role-permissions 1
 
 # querying for voters of a specific proposal
 tsukid query customgov voters 1
