@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # create proposal for setting poor network msgs
-tsukid tx customgov proposal set-proposal-duration-proposal UpsertDataRegistryProposal 300 --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov proposal set-proposal-durations-proposal UpsertDataRegistryProposal 300 --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
 
 # query for proposals
 tsukid query customgov proposals
@@ -20,4 +20,4 @@ tsukid query customgov proposal-duration UpsertDataRegistryProposal
 tsukid query customgov all-proposal-durations
 
 # batch operation
-tsukid tx customgov proposal set-batch-proposal-durations-proposal UpsertDataRegistry,SetNetworkProperty 300,300 --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov proposal set-proposal-durations-proposal UpsertDataRegistry,SetNetworkProperty 300,300 --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
