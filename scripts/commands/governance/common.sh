@@ -31,9 +31,6 @@ tsukid query customgov roles $(tsukid keys show -a validator --keyring-backend=t
 # query a single role
 tsukid query customgov role sudo
 tsukid query customgov role 1
-# query role permissions
-tsukid query customgov role-permissions sudo
-tsukid query customgov role-permissions 1
 
 # querying for voters of a specific proposal
 tsukid query customgov voters 1
