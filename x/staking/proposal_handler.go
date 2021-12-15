@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"
@@ -23,7 +24,7 @@ func NewApplyUnjailValidatorProposalHandler(keeper keeper.Keeper, govkeeper type
 }
 
 func (a ApplyUnjailValidatorProposalHandler) ProposalType() string {
-	return types.ProposalTypeUnjailValidator
+	return tsukitypes.ProposalTypeUnjailValidator
 }
 
 func (a ApplyUnjailValidatorProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal govtypes.Content) error {

@@ -1,11 +1,9 @@
 package types
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 )
-
-const ProposalTypeSoftwareUpgrade = "SoftwareUpgrade"
-const ProposalTypeCancelSoftwareUpgrade = "CancelSoftwareUpgrade"
 
 var _ types.Content = &ProposalSoftwareUpgrade{}
 
@@ -30,7 +28,7 @@ func NewSoftwareUpgradeProposal(name string, resources []Resource,
 }
 
 func (m *ProposalSoftwareUpgrade) ProposalType() string {
-	return ProposalTypeSoftwareUpgrade
+	return tsukitypes.ProposalTypeSoftwareUpgrade
 }
 
 func (m *ProposalSoftwareUpgrade) ProposalPermission() types.PermValue {
@@ -55,7 +53,7 @@ func NewCancelSoftwareUpgradeProposal(name string) *ProposalCancelSoftwareUpgrad
 }
 
 func (m *ProposalCancelSoftwareUpgrade) ProposalType() string {
-	return ProposalTypeCancelSoftwareUpgrade
+	return tsukitypes.ProposalTypeCancelSoftwareUpgrade
 }
 
 func (m *ProposalCancelSoftwareUpgrade) ProposalPermission() types.PermValue {

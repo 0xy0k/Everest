@@ -4,12 +4,11 @@ import (
 	"testing"
 	"time"
 
+	simapp "github.com/TsukiCore/tsuki/app"
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/stretchr/testify/require"
-
-	simapp "github.com/TsukiCore/tsuki/app"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
@@ -348,17 +347,17 @@ func TestKeeper_ProposalDuration(t *testing.T) {
 	proposal, found := app.CustomGovKeeper.GetProposal(ctx, proposalID)
 	require.True(t, found)
 
-	require.Equal(t, proposal.VotingEndTime.Unix(), ctx.BlockTime().Unix()+int64(properties.DefaultProposalEndTime))
+	require.Equal(t, proposal.VotingEndTime.Unix(), ctx.BlockTime().Unix()+int64(properties.MinimumProposalEndTime))
 
 	// test SetNetworkPropertyProposal
 	proposalID, err = app.CustomGovKeeper.CreateAndSaveProposalWithContent(ctx, "title", "description", &types.SetNetworkPropertyProposal{})
 	require.NoError(t, err)
 	proposal, found = app.CustomGovKeeper.GetProposal(ctx, proposalID)
 	require.True(t, found)
-	require.Equal(t, proposal.VotingEndTime.Unix(), ctx.BlockTime().Unix()+int64(properties.DefaultProposalEndTime))
+	require.Equal(t, proposal.VotingEndTime.Unix(), ctx.BlockTime().Unix()+int64(properties.MinimumProposalEndTime))
 
 	// check longer duration proposal
-	app.CustomGovKeeper.SetProposalDuration(ctx, types.SetProposalDurationsProposalType, 2400)
+	app.CustomGovKeeper.SetProposalDuration(ctx, tsukitypes.SetProposalDurationsProposalType, 2400)
 	proposalID, err = app.CustomGovKeeper.CreateAndSaveProposalWithContent(ctx, "title", "description", &types.SetProposalDurationsProposal{})
 	require.NoError(t, err)
 	proposal, found = app.CustomGovKeeper.GetProposal(ctx, proposalID)

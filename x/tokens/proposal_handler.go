@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/tokens/keeper"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
@@ -18,7 +19,7 @@ func NewApplyUpsertTokenAliasProposalHandler(keeper keeper.Keeper) *ApplyUpsertT
 }
 
 func (a ApplyUpsertTokenAliasProposalHandler) ProposalType() string {
-	return tokenstypes.ProposalTypeUpsertTokenAlias
+	return tsukitypes.ProposalTypeUpsertTokenAlias
 }
 
 func (a ApplyUpsertTokenAliasProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content) error {
@@ -37,7 +38,7 @@ func NewApplyUpsertTokenRatesProposalHandler(keeper keeper.Keeper) *ApplyUpsertT
 }
 
 func (a ApplyUpsertTokenRatesProposalHandler) ProposalType() string {
-	return tokenstypes.ProposalTypeUpsertTokenRates
+	return tsukitypes.ProposalTypeUpsertTokenRates
 }
 
 func (a ApplyUpsertTokenRatesProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content) error {
@@ -56,7 +57,7 @@ func NewApplyWhiteBlackChangeProposalHandler(keeper keeper.Keeper) *ApplyWhiteBl
 }
 
 func (a ApplyWhiteBlackChangeProposalHandler) ProposalType() string {
-	return tokenstypes.ProposalTypeTokensWhiteBlackChange
+	return tsukitypes.ProposalTypeTokensWhiteBlackChange
 }
 
 func (a ApplyWhiteBlackChangeProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content) error {

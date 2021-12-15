@@ -1,6 +1,7 @@
 package types
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -9,12 +10,6 @@ var (
 	_ types.Content = &ProposalUpsertTokenAlias{}
 	_ types.Content = &ProposalUpsertTokenRates{}
 	_ types.Content = &ProposalTokensWhiteBlackChange{}
-)
-
-const (
-	ProposalTypeUpsertTokenAlias       = "UpsertTokenAlias"
-	ProposalTypeUpsertTokenRates       = "UpsertTokenRates"
-	ProposalTypeTokensWhiteBlackChange = "TokensWhiteBlackChange"
 )
 
 func NewUpsertTokenAliasProposal(
@@ -34,7 +29,7 @@ func NewUpsertTokenAliasProposal(
 }
 
 func (m *ProposalUpsertTokenAlias) ProposalType() string {
-	return ProposalTypeUpsertTokenAlias
+	return tsukitypes.ProposalTypeUpsertTokenAlias
 }
 
 func (m *ProposalUpsertTokenAlias) ProposalPermission() types.PermValue {
@@ -55,7 +50,7 @@ func NewUpsertTokenRatesProposal(denom string, rate sdk.Dec, feePayments bool) *
 }
 
 func (m *ProposalUpsertTokenRates) ProposalType() string {
-	return ProposalTypeUpsertTokenRates
+	return tsukitypes.ProposalTypeUpsertTokenRates
 }
 
 func (m *ProposalUpsertTokenRates) ProposalPermission() types.PermValue {
@@ -76,7 +71,7 @@ func NewTokensWhiteBlackChangeProposal(isBlacklist, isAdd bool, tokens []string)
 }
 
 func (m *ProposalTokensWhiteBlackChange) ProposalType() string {
-	return ProposalTypeTokensWhiteBlackChange
+	return tsukitypes.ProposalTypeTokensWhiteBlackChange
 }
 
 func (m *ProposalTokensWhiteBlackChange) ProposalPermission() types.PermValue {

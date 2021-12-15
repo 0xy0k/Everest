@@ -1,6 +1,7 @@
 package upgrade
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/upgrade/keeper"
 	upgradetypes "github.com/TsukiCore/tsuki/x/upgrade/types"
@@ -18,7 +19,7 @@ func NewApplySoftwareUpgradeProposalHandler(keeper keeper.Keeper) *ApplySoftware
 }
 
 func (a ApplySoftwareUpgradeProposalHandler) ProposalType() string {
-	return upgradetypes.ProposalTypeSoftwareUpgrade
+	return tsukitypes.ProposalTypeSoftwareUpgrade
 }
 
 func (a ApplySoftwareUpgradeProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content) error {
@@ -52,7 +53,7 @@ func NewApplyCancelSoftwareUpgradeProposalHandler(keeper keeper.Keeper) *ApplyCa
 }
 
 func (a ApplyCancelSoftwareUpgradeProposalHandler) ProposalType() string {
-	return upgradetypes.ProposalTypeCancelSoftwareUpgrade
+	return tsukitypes.ProposalTypeCancelSoftwareUpgrade
 }
 
 func (a ApplyCancelSoftwareUpgradeProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content) error {
