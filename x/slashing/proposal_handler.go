@@ -1,6 +1,7 @@
 package slashing
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing/keeper"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
@@ -18,7 +19,7 @@ func NewApplyResetWholeValidatorRankProposalHandler(keeper keeper.Keeper) *Apply
 }
 
 func (a ApplyResetWholeValidatorRankProposalHandler) ProposalType() string {
-	return types.ProposalTypeResetWholeValidatorRank
+	return tsukitypes.ProposalTypeResetWholeValidatorRank
 }
 
 func (a ApplyResetWholeValidatorRankProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal govtypes.Content) error {

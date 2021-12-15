@@ -1,11 +1,10 @@
 package types
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
-
-const ProposalTypeResetWholeValidatorRank = "ResetWholeValidatorRank"
 
 func NewResetWholeValidatorRankProposal(proposer sdk.AccAddress) *ProposalResetWholeValidatorRank {
 	return &ProposalResetWholeValidatorRank{
@@ -14,7 +13,7 @@ func NewResetWholeValidatorRankProposal(proposer sdk.AccAddress) *ProposalResetW
 }
 
 func (m *ProposalResetWholeValidatorRank) ProposalType() string {
-	return ProposalTypeResetWholeValidatorRank
+	return tsukitypes.ProposalTypeResetWholeValidatorRank
 }
 
 func (m *ProposalResetWholeValidatorRank) ProposalPermission() types.PermValue {

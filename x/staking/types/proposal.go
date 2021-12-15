@@ -1,11 +1,10 @@
 package types
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
-
-const ProposalTypeUnjailValidator = "UnjailValidator"
 
 func NewUnjailValidatorProposal(proposer sdk.AccAddress, valAddr sdk.ValAddress, reference string) *ProposalUnjailValidator {
 	return &ProposalUnjailValidator{
@@ -16,7 +15,7 @@ func NewUnjailValidatorProposal(proposer sdk.AccAddress, valAddr sdk.ValAddress,
 }
 
 func (m *ProposalUnjailValidator) ProposalType() string {
-	return ProposalTypeUnjailValidator
+	return tsukitypes.ProposalTypeUnjailValidator
 }
 
 func (m *ProposalUnjailValidator) ProposalPermission() types.PermValue {
