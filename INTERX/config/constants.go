@@ -11,7 +11,6 @@ const (
 	QueryRoles                = "/api/tsuki/gov/all_roles"
 	QueryRolesByAddress       = "/api/tsuki/gov/roles_by_address/{val_addr}"
 	QueryPermissionsByAddress = "/api/tsuki/gov/permissions_by_address/{val_addr}"
-	QueryPermissionsByRole    = "/api/tsuki/gov/permissions_by_role/{identifier}"
 	QueryProposals            = "/api/tsuki/gov/proposals"
 	QueryProposal             = "/api/tsuki/gov/proposals/{proposal_id}"
 	QueryVoters               = "/api/tsuki/gov/voters/{proposal_id}"
