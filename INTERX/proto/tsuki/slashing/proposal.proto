@@ -1,0 +1,14 @@
+syntax = "proto3";
+package tsuki.slashing;
+
+import "gogoproto/gogo.proto";
+import "tsuki/gov/proposal.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/slashing";
+
+message ProposalResetWholeValidatorRank {
+    bytes proposer = 1 [
+      (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+    ];
+    string description = 2;
+}

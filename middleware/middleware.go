@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	tsukitypes "github.com/TsukiCore/tsuki/types"
 	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -26,7 +27,7 @@ func NewRoute(p string, h sdk.Handler) sdk.Route {
 		}
 		// handle extra fee based on handler result
 
-		fee := customGovKeeper.GetExecutionFee(ctx, msg.Type())
+		fee := customGovKeeper.GetExecutionFee(ctx, tsukitypes.MsgType(msg))
 		if fee == nil {
 			return hResult, hErr
 		}

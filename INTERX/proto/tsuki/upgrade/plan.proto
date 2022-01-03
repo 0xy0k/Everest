@@ -1,0 +1,25 @@
+syntax = "proto3";
+package tsuki.upgrade;
+
+import "gogoproto/gogo.proto";
+import "tsuki/upgrade/upgrade.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/upgrade";
+
+message Plan {
+  string name = 1;
+  repeated Resource resources = 2 [ (gogoproto.nullable) = false ];
+  int64 upgrade_time = 3;
+  string old_chain_id = 4;
+  string new_chain_id = 5;
+  string rollback_checksum = 6;
+  int64 max_enrolment_duration = 7;
+  bool instate_upgrade = 8; // if it's set to false, chain is always halted
+  bool reboot_required = 9; // only used by Tsuki Manager to check
+  bool skip_handler = 10;
+  uint64 proposalID = 11; // save proposalID to reference vote info at the time of plan execution
+  bool processed_no_vote_validators = 12;
+}
+
+
+

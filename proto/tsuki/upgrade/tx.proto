@@ -1,0 +1,11 @@
+syntax = "proto3";
+package tsuki.upgrade;
+
+import "gogoproto/gogo.proto";
+import "tsuki/upgrade/upgrade.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/upgrade/types";
+
+// Msg defines the tokens Msg service.
+service Msg {
+}

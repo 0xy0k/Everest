@@ -6,20 +6,25 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
-	"os"
-	"strings"
 
+	"github.com/TsukiCore/tsuki/INTERX/config"
+	"github.com/TsukiCore/tsuki/INTERX/database"
+	"github.com/TsukiCore/tsuki/INTERX/functions"
 	"github.com/TsukiCore/tsuki/INTERX/insecure"
 	cosmosAuth "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/auth"
 	cosmosBank "github.com/TsukiCore/tsuki/INTERX/proto-gen/cosmos/bank"
 	tsukiGov "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/gov"
-	tasks "github.com/TsukiCore/tsuki/INTERX/tasks"
+	tsukiSlashing "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/slashing"
+	tsukiStaking "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/staking"
+	tsukiTokens "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/tokens"
+	tsukiUpgrades "github.com/TsukiCore/tsuki/INTERX/proto-gen/tsuki/upgrade"
+	"github.com/TsukiCore/tsuki/INTERX/tasks"
+	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	grpclog "google.golang.org/grpc/grpclog"
 )
 
@@ -42,9 +47,11 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 	// This is where the gRPC-Gateway proxies the requests.
 	// WITH_TRANSPORT_CREDENTIALS: Empty parameters mean set transport security.
 	security := grpc.WithInsecure()
-	if strings.ToLower(os.Getenv("WITH_TRANSPORT_CREDENTIALS")) == "true" {
-		security = grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(insecure.CertPool, ""))
-	}
+
+	// With transport credentials
+	// if strings.ToLower(os.Getenv("WITH_TRANSPORT_CREDENTIALS")) == "true" {
+	// 	security = grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(insecure.CertPool, ""))
+	// }
 
 	conn, err := grpc.DialContext(
 		context.Background(),
@@ -73,12 +80,44 @@ func GetGrpcServeMux(grpcAddr string) (*runtime.ServeMux, error) {
 		return nil, fmt.Errorf("failed to register gateway: %w", err)
 	}
 
+	err = tsukiStaking.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
+	err = tsukiSlashing.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
+	err = tsukiTokens.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
+	err = tsukiUpgrades.RegisterQueryHandler(context.Background(), gwCosmosmux, conn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register gateway: %w", err)
+	}
+
 	return gwCosmosmux, nil
 }
 
 // Run runs the gRPC-Gateway, dialling the provided address.
-func Run(grpcAddr string, rpcAddr string, log grpclog.LoggerV2) error {
-	tasks.RunTasks(rpcAddr)
+func Run(configFilePath string, log grpclog.LoggerV2) error {
+	config.LoadConfig(configFilePath)
+	functions.RegisterInterxFunctions()
+	functionmeta.RegisterStdMsgs()
+
+	database.LoadBlockDbDriver()
+	database.LoadBlockNanoDbDriver()
+	database.LoadFaucetDbDriver()
+	database.LoadReferenceDbDriver()
+
+	serveHTTPS := config.Config.ServeHTTPS
+	grpcAddr := config.Config.GRPC
+	rpcAddr := config.Config.RPC
+	port := config.Config.PORT
 
 	gwCosmosmux, err := GetGrpcServeMux(grpcAddr)
 	if err != nil {
@@ -87,20 +126,17 @@ func Run(grpcAddr string, rpcAddr string, log grpclog.LoggerV2) error {
 
 	oaHander := getOpenAPIHandler()
 
-	// PORT: Empty parameters mean use port 11000.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "11000"
-	}
-
 	router := mux.NewRouter()
 	RegisterRequest(router, gwCosmosmux, rpcAddr)
 
 	router.PathPrefix("/").Handler(oaHander)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedHeaders: []string{"*"},
+		AllowedOrigins:   []string{"*"},
+		AllowedHeaders:   []string{"*"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete, http.MethodHead, http.MethodOptions, http.MethodPatch, http.MethodConnect, http.MethodTrace},
+		AllowCredentials: true,
+		ExposedHeaders:   []string{"*"},
 	})
 
 	gatewayAddr := "0.0.0.0:" + port
@@ -109,8 +145,9 @@ func Run(grpcAddr string, rpcAddr string, log grpclog.LoggerV2) error {
 		Handler: c.Handler(router),
 	}
 
-	// SERVE_HTTP: Empty parameters mean use the TLS Config specified with the server.
-	if strings.ToLower(os.Getenv("SERVE_HTTP")) == "false" {
+	tasks.RunTasks(gwCosmosmux, rpcAddr, gatewayAddr)
+
+	if serveHTTPS {
 		gwServer.TLSConfig = &tls.Config{
 			Certificates: []tls.Certificate{insecure.Cert},
 		}

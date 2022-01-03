@@ -10,7 +10,7 @@ func GetTsukiFunctions() tsukitypes.FunctionList {
 	return functionmeta.GetFunctionList()
 }
 
-// GetInterxFunctions is a function to get all interx functions registered
-func GetInterxFunctions() tsukitypes.FunctionList {
-	return interxFunctions
+// GetInterxMetadata is a function to get all interx functions registered
+func GetInterxMetadata() InterxMetadata {
+	return interxMetadata
 }

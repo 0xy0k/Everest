@@ -4,6 +4,7 @@ import (
 	"github.com/TsukiCore/tsuki/INTERX/gateway/cosmos"
 	"github.com/TsukiCore/tsuki/INTERX/gateway/interx"
 	"github.com/TsukiCore/tsuki/INTERX/gateway/tsuki"
+	"github.com/TsukiCore/tsuki/INTERX/gateway/rosetta"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
@@ -13,4 +14,5 @@ func RegisterRequest(router *mux.Router, gwCosmosmux *runtime.ServeMux, rpcAddr 
 	cosmos.RegisterRequest(router, gwCosmosmux, rpcAddr)
 	tsuki.RegisterRequest(router, gwCosmosmux, rpcAddr)
 	interx.RegisterRequest(router, gwCosmosmux, rpcAddr)
+	rosetta.RegisterRequest(router, gwCosmosmux, rpcAddr)
 }
