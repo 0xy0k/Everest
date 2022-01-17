@@ -18,10 +18,10 @@ tsukid tx customgov proposal vote
 
 # role creation, role permission add / remove
 tsukid tx customgov role create testRole "testRole Description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
-tsukid tx customgov role whitelist-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
-tsukid tx customgov role blacklist-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
-tsukid tx customgov role remove-whitelisted-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
-tsukid tx customgov role remove-blacklisted-role-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role whitelist-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role blacklist-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role remove-whitelisted-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
+tsukid tx customgov role remove-blacklisted-permission testRole 1 --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=1000ukex --yes
 
 # query all roles
 tsukid query customgov all-roles
