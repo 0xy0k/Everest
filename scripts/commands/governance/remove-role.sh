@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # for complexity of the operation, this proposal is not implemented
-tsukid tx customgov proposal role remove-role newrole --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov proposal role remove newrole --title="title" --description="description" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 
 tsukid query customgov proposals
 tsukid query customgov proposal 1
