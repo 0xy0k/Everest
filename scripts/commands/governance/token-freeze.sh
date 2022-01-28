@@ -5,7 +5,7 @@ tsukid tx tokens proposal-update-tokens-blackwhite --is_blacklist=true --is_add=
 # check proposal ID
 tsukid query customgov proposals
 # whitelist permission to vote on proposal
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=$PermVoteTokensWhiteBlackChangeProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+tsukid tx customgov permission whitelist --from validator --keyring-backend=test --permission=$PermVoteTokensWhiteBlackChangeProposal --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
 # vote on proposal
 tsukid tx customgov proposal vote 1 1 --from validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes 
 # get all votes
