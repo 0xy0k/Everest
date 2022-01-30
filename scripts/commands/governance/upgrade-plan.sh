@@ -2,8 +2,8 @@
 
 # PermCreateSoftwareUpgradeProposal PermValue = 28
 # PermVoteSoftwareUpgradeProposal PermValue = 29
-tsukid tx customgov permission whitelist-permission --permission=28 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
-tsukid tx customgov permission whitelist-permission --permission=29 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov permission whitelist --permission=28 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
+tsukid tx customgov permission whitelist --permission=29 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
 
 # The upgrade time should be set to future time if not it cause internal error
 tsukid tx upgrade proposal-set-plan --name="upgrade1" --instate-upgrade=true --skip-handler=false --resources="[{\"id\":\"infra\",\"git\":\"https://aaa/bbb.com\"}]" --min-upgrade-time=$(($(date -u +%s) + 200))  --old-chain-id=testing --new-chain-id=1 --rollback-memo=1 --max-enrollment-duration=1 --upgrade-memo="upgrade1 test" --from=validator --keyring-backend=test --home=$HOME/.tsukid --chain-id=testing --fees=100ukex --yes
