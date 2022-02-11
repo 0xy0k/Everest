@@ -1,4 +1,4 @@
-package tokens
+package spending
 
 import (
 	"github.com/TsukiCore/tsuki/x/spending/keeper"
