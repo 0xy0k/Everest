@@ -2,15 +2,15 @@
 
 tsukid tx customgov councilor claim-seat --from validator --keyring-backend=test --home=$HOME/.tsukid
 
-tsukid tx customgov permission blacklist-permission
-tsukid tx customgov permission remove-blacklisted-permission
-tsukid tx customgov permission whitelist-permission
-tsukid tx customgov permission remove-whitelisted-permission
+tsukid tx customgov permission blacklist
+tsukid tx customgov permission remove-blacklisted
+tsukid tx customgov permission whitelist
+tsukid tx customgov permission remove-whitelisted
 
 # add / remove / query whitelisted permissions
-tsukid tx customgov permission whitelist-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+tsukid tx customgov permission whitelist --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
 tsukid query customgov permissions $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
-tsukid tx customgov permission remove-whitelisted-permission --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
+tsukid tx customgov permission remove-whitelisted --from validator --keyring-backend=test --permission=7 --addr=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --chain-id=testing --fees=100ukex --home=$HOME/.tsukid --yes
 tsukid query customgov permissions $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
 tsukid tx customgov proposal assign-permission
@@ -42,5 +42,5 @@ tsukid query customgov vote 1 $(tsukid keys show -a validator --keyring-backend=
 # whitelist permission for claim validator
 tsukid keys add lladmin --keyring-backend=test
 tsukid tx bank send validator $(tsukid keys show -a lladmin --keyring-backend=test) 1000000ukex --keyring-backend=test --chain-id=testing --fees=200ukex --yes
-tsukid tx customgov permission whitelist-permission --from=validator --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=30 --chain-id=testing --fees=200ukex --yes
-tsukid tx customgov permission whitelist-permission --from=lladmin --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=2 --chain-id=testing --fees=200ukex --yes
+tsukid tx customgov permission whitelist --from=validator --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=30 --chain-id=testing --fees=200ukex --yes
+tsukid tx customgov permission whitelist --from=lladmin --keyring-backend=test --addr=$(tsukid keys show -a lladmin --keyring-backend=test) --permission=2 --chain-id=testing --fees=200ukex --yes
