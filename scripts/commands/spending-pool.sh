@@ -10,6 +10,8 @@ tsukid tx spending claim-spending-pool --name="ValidatorRewardsPool" --from=vali
 
 tsukid query spending pool-by-name ValidatorRewardsPool --home=$HOME/.tsukid
 tsukid query spending pool-names
+tsukid query spending pool-proposals ValidatorRewardsPool
+tsukid query spending pools-by-account $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
 tsukid query customgov roles $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
