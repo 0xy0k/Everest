@@ -3,7 +3,6 @@ package types
 import (
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ types.Content = &UpsertUBIProposal{}
@@ -12,7 +11,7 @@ func NewUpsertUBIProposal(
 	name string,
 	distrStart uint64,
 	distrEnd uint64,
-	amount sdk.Int,
+	amount uint64,
 	period uint64,
 	poolName string,
 ) *UpsertUBIProposal {
