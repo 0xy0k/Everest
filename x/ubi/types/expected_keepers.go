@@ -2,6 +2,7 @@ package types
 
 import (
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	spendingtypes "github.com/TsukiCore/tsuki/x/spending/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
@@ -22,5 +23,6 @@ type AccountKeeper interface {
 }
 
 type SpendingKeeper interface {
+	GetSpendingPool(ctx sdk.Context, name string) *spendingtypes.SpendingPool
 	DepositSpendingPoolFromModule(ctx sdk.Context, moduleName, poolName string, amount sdk.Coin) error
 }
