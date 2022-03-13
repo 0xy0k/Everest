@@ -1,5 +1,18 @@
 # tsuki
-Tsuki Hub
+TSUKI Relay Chain
+
+## Quick Setup
+
+```
+# From remote branch
+cd $HOME && rm -fvr ./tsuki && TSUKI_BRANCH="feature/ci-cd-v1" && \
+ git clone https://github.com/TsukiCore/tsuki.git -b $TSUKI_BRANCH && \
+ cd ./tsuki && chmod -R 777 ./scripts && make proto-gen && \
+ make install && echo "SUCCESS installed tsukid $(tsukid version)" || echo "FAILED"
+
+# From deb package
+TBD
+```
 
 ## Set environment variables
 
