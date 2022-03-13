@@ -1,0 +1,11 @@
+syntax = "proto3";
+package tsuki.ubi;
+
+option go_package = "github.com/TsukiCore/tsuki/x/ubi/types";
+
+import "gogoproto/gogo.proto";
+import "tsuki/ubi/ubi.proto";
+
+message GenesisState {
+  repeated UBIRecord ubi_records = 1 [(gogoproto.nullable) = false];
+}
