@@ -8,12 +8,12 @@ UTILS_VER=$(utilsVersion 2> /dev/null || echo "")
 GO_VER=$(go version 2> /dev/null || echo "")
 PLATFORM=$(uname) && PLATFORM=$(echo "$PLATFORM" |  tr '[:upper:]' '[:lower:]' )
 
-UTILS_OLD_VER="false" && [[ $(versionToNumber "$UTILS_VER" || echo "0") -ge $(versionToNumber "v0.0.11" || echo "1") ]] || UTILS_OLD_VER="true" 
+UTILS_OLD_VER="false" && [[ $(versionToNumber "$UTILS_VER" || echo "0") -ge $(versionToNumber "v0.0.12" || echo "1") ]] || UTILS_OLD_VER="true" 
 
 # Installing utils is essential to simplify the setup steps
 if [ "$UTILS_OLD_VER" == "true" ] ; then
     echo "INFO: TSUKI utils were NOT installed on the system, setting up..." && sleep 2
-    TSUKI_UTILS_BRANCH="v0.0.2" && cd /tmp && rm -fv ./i.sh && \
+    TSUKI_UTILS_BRANCH="v0.0.3" && cd /tmp && rm -fv ./i.sh && \
     wget https://raw.githubusercontent.com/TsukiCore/tools/$TSUKI_UTILS_BRANCH/bash-utils/install.sh -O ./i.sh && \
     chmod 777 ./i.sh && ./i.sh "$TSUKI_UTILS_BRANCH" "/var/tsukiglob" && . /etc/profile && loadGlobEnvs
 else
@@ -77,14 +77,12 @@ fi
 
 CONSTANS_FILE=./types/constants.go
 COSMOS_BRANCH=$(grep -Fn -m 1 'CosmosVersion ' $CONSTANS_FILE | rev | cut -d "=" -f1 | rev | xargs | tr -dc '[:alnum:]\-\.' || echo '')
-TSUKI_BRANCH=$(grep -Fn -m 1 'TsukiVersion ' $CONSTANS_FILE | rev | cut -d "=" -f1 | rev | xargs | tr -dc '[:alnum:]\-\.' || echo '')
 ($(isNullOrEmpty "$COSMOS_BRANCH")) && ( echoErr "ERROR: CosmosVersion was NOT found in contants '$CONSTANS_FILE' !" && sleep 5 && exit 1 )
-($(isNullOrEmpty "$TSUKI_BRANCH")) && ( echoErr "ERROR: TsukiVersion was NOT found in contants '$CONSTANS_FILE' !" && sleep 5 && exit 1 )
 
 go get github.com/cosmos/cosmos-sdk@$COSMOS_BRANCH
 
 echoInfo "Cleaning up proto gen files..."
-rm -rfv ./proto-gen
+#rm -rfv ./proto-gen
 mkdir -p ./proto-gen ./proto
 cosmos_sdk_dir=$(go list -f '{{ .Dir }}' -m github.com/cosmos/cosmos-sdk@$COSMOS_BRANCH)
 tsuki_dir=$(find ./proto -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
