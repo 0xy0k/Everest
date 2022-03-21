@@ -67,5 +67,7 @@ pcgRelease "arm64" "$VERSION" "linux"
 pcgRelease "arm64" "$VERSION" "darwin"
 pcgRelease "arm64" "$VERSION" "windows"
 
+cp -fv ./scripts/tsuki-utils.sh ./bin/tsuki-utils.sh
+
 rm -rfv ./bin/amd64 ./bin/arm64 ./bin/deb
 echoInfo "INFO: Sucessfully published TSUKI deb packages into ./bin"
