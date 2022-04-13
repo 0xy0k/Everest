@@ -2,6 +2,7 @@
 set -e
 set -x
 . /etc/profile
+. ./scripts/tsuki-env.sh
 
 TEST_NAME="TOKEN-TRANSFERS"
 timerStart $TEST_NAME
