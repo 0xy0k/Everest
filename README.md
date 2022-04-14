@@ -1,17 +1,65 @@
 # tsuki
 TSUKI Relay Chain
 
-## Quick Setup
+## Quick setup from Github
 
-```
-# From remote branch
-cd $HOME && rm -fvr ./tsuki && TSUKI_BRANCH="feature/ci-cd-v1" && \
+```bash
+# dont forget to specify branch name or hash
+cd $HOME && rm -fvr ./tsuki && TSUKI_BRANCH="<branch-name-or-checkout-hash>" && \
  git clone https://github.com/TsukiCore/tsuki.git -b $TSUKI_BRANCH && \
  cd ./tsuki && chmod -R 777 ./scripts && make proto-gen && \
  make install && echo "SUCCESS installed tsukid $(tsukid version)" || echo "FAILED"
+```
 
-# From deb package
-TBD
+## Signatures
+
+All files in TSUKI repositories are always signed with [cosign](https://github.com/sigstore/cosign/releases), you should NEVER install anything on your machine unless you verified integrity of the files!
+
+Cosign requires simple initial setup of the signer keys described more precisely [here](https://dev.to/n3wt0n/sign-your-container-images-with-cosign-github-actions-and-github-container-registry-3mni)
+
+```bash
+# install cosign
+COSIGN_VERSION="v1.7.2" && \
+if [[ "$(uname -m)" == *"ar"* ]] ; then ARCH="arm64"; else ARCH="amd64" ; fi && echo $ARCH && \
+PLATFORM=$(uname) && FILE=$(echo "cosign-${PLATFORM}-${ARCH}" | tr '[:upper:]' '[:lower:]') && \
+ wget https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/$FILE && chmod +x -v ./$FILE && \
+ mv -fv ./$FILE /usr/local/bin/cosign && cosign version
+
+# save TSUKI public cosign key
+KEYS_DIR="/usr/keys" && TSUKI_COSIGN_PUB="${KEYS_DIR}/tsuki-cosign.pub" && \
+mkdir -p $KEYS_DIR  && cat > ./cosign.pub << EOL
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/IrzBQYeMwvKa44/DF/HB7XDpnE+
+f+mU9F/Qbfq25bBWV2+NlYMJv3KvKHNtu3Jknt6yizZjUV4b8WGfKBzFYw==
+-----END PUBLIC KEY-----
+EOL
+
+# download desired files and the corresponding .sig file from: https://github.com/TsukiCore/tools/releases
+
+# verify signature of downloaded files
+cosign verify-blob --key=$TSUKI_COSIGN_PUB--signature=./<file>.sig ./<file>
+```
+
+## Install bash-utils
+
+Bash-utils is a TSUKI tool that helps to simplify shell scripts and various bash commands that you might need to run
+
+```
+# Install bash-utils.sh TSUKI tool to make downloads faster and easier
+TOOLS_VERSION="v0.0.12.4" && mkdir -p /usr/keys && FILE_NAME="bash-utils.sh" && \
+ if [ -z "$TSUKI_COSIGN_PUB" ] ; then TSUKI_COSIGN_PUB=/usr/keys/tsuki-cosign.pub ; fi && \
+ echo -e "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/IrzBQYeMwvKa44/DF/HB7XDpnE+\nf+mU9F/Qbfq25bBWV2+NlYMJv3KvKHNtu3Jknt6yizZjUV4b8WGfKBzFYw==\n-----END PUBLIC KEY-----" > $TSUKI_COSIGN_PUB && \
+ wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}" -O ./$FILE_NAME && \
+ wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}.sig" -O ./${FILE_NAME}.sig && \
+ cosign verify-blob --key="$TSUKI_COSIGN_PUB" --signature=./${FILE_NAME}.sig ./$FILE_NAME && \
+ chmod -v 555 ./$FILE_NAME && ./$FILE_NAME bashUtilsSetup "/var/tsukiglob" && . /etc/profile && \
+ echoInfo "Installed bash-utils $(bashUtilsVersion)"
+```
+
+## Quick setup from Releases
+
+```bash
+# TBD
 ```
 
 ## Set environment variables
