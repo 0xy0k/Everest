@@ -2,7 +2,7 @@ package types
 
 import (
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
-
+	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -18,4 +18,9 @@ type BankKeeper interface {
 	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
 	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule, recipientModule string, amt sdk.Coins) error
+}
+
+// TokensKeeper defines expected interface needed to get token rate
+type TokensKeeper interface {
+	GetTokenRate(ctx sdk.Context, denom string) *tokenstypes.TokenRate
 }

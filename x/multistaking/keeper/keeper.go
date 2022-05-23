@@ -1,14 +1,17 @@
 package keeper
 
 import (
+	"github.com/TsukiCore/tsuki/x/multistaking/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // Keeper represents the keeper that maintains the Validator Registry.
 type Keeper struct {
-	storeKey sdk.StoreKey
-	cdc      *codec.LegacyAmino
+	storeKey    sdk.StoreKey
+	cdc         *codec.LegacyAmino
+	bankKeeper  types.BankKeeper
+	tokenKeeper types.TokensKeeper
 }
 
 // NewKeeper returns new keeper.
