@@ -22,6 +22,8 @@ import (
 	customgov "github.com/TsukiCore/tsuki/x/gov"
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
+	multistakingkeeper "github.com/TsukiCore/tsuki/x/multistaking/keeper"
+	multistakingtypes "github.com/TsukiCore/tsuki/x/multistaking/types"
 	customslashing "github.com/TsukiCore/tsuki/x/slashing"
 	customslashingkeeper "github.com/TsukiCore/tsuki/x/slashing/keeper"
 	slashingtypes "github.com/TsukiCore/tsuki/x/slashing/types"
@@ -144,6 +146,7 @@ type TsukiApp struct {
 	SpendingKeeper       spendingkeeper.Keeper
 	UbiKeeper            ubikeeper.Keeper
 	DistrKeeper          distributorkeeper.Keeper
+	MultiStakingKeeper   multistakingkeeper.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -187,6 +190,7 @@ func NewInitApp(
 		govtypes.ModuleName,
 		spendingtypes.ModuleName,
 		distributortypes.ModuleName,
+		multistakingtypes.ModuleName,
 		ubitypes.ModuleName,
 		tokenstypes.ModuleName,
 		feeprocessingtypes.ModuleName,
@@ -230,8 +234,12 @@ func NewInitApp(
 	app.CustomStakingKeeper = *customStakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(app.CustomSlashingKeeper.Hooks()),
 	)
-	app.MultiStakingKeeper = multistakingkeeper.NewKeeper()
-	app.DistrKeeper = distributorkeeper.NewKeeper(keys[distributortypes.ModuleName], appCodec, app.AccountKeeper, app.BankKeeper, app.CustomStakingKeeper, app.CustomGovKeeper)
+	app.MultiStakingKeeper = multistakingkeeper.NewKeeper(keys[multistakingtypes.ModuleName], appCodec)
+	app.DistrKeeper = distributorkeeper.NewKeeper(
+		keys[distributortypes.ModuleName], appCodec,
+		app.AccountKeeper, app.BankKeeper,
+		app.CustomStakingKeeper, app.CustomGovKeeper,
+		app.MultiStakingKeeper)
 
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(keys[upgradetypes.StoreKey], appCodec, app.CustomStakingKeeper)
 
