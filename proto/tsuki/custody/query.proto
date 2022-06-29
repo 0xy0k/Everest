@@ -1,0 +1,26 @@
+syntax = "proto3";
+package tsuki.custody;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "tsuki/custody/custody.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/custody/types";
+
+// Query defines the gRPC querier service
+service Query {
+    rpc CustodyByAddress (CustodyByAddressRequest) returns (CustodyByAddressResponse) {
+        option (google.api.http).get = "/tsuki/custody/custody_info/{addr}";
+    }
+}
+
+message CustodyByAddressRequest {
+  bytes addr = 1 [
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"addr\""
+  ];
+}
+
+message CustodyByAddressResponse {
+  CustodySettings custody_settings = 1;
+}

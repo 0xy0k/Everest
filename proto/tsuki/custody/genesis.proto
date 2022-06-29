@@ -1,0 +1,9 @@
+syntax = "proto3";
+package tsuki.custody;
+
+import "gogoproto/gogo.proto";
+import "tsuki/custody/custody.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/custody/types";
+
+message GenesisState {}
