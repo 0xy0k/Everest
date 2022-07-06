@@ -5,6 +5,7 @@ import (
 	custodykeeper "github.com/TsukiCore/tsuki/x/custody/keeper"
 
 	tsukitypes "github.com/TsukiCore/tsuki/types"
+	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
 	feeprocessingkeeper "github.com/TsukiCore/tsuki/x/feeprocessing/keeper"
 	feeprocessingtypes "github.com/TsukiCore/tsuki/x/feeprocessing/types"
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
@@ -70,6 +71,28 @@ func NewCustodyDecorator(ck custodykeeper.Keeper) CustodyDecorator {
 }
 
 func (cd CustodyDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+	feeTx, ok := tx.(sdk.FeeTx)
+	if !ok {
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "invalid transaction type")
+	}
+
+	for _, msg := range feeTx.GetMsgs() {
+		whiteList := cd.ck.GetCustodyWhiteListByAddress(ctx, msg.GetSigners()[0])
+		settings := cd.ck.GetCustodyInfoByAddress(ctx, msg.GetSigners()[0])
+
+		if !settings.UseWhiteList {
+			continue
+		}
+
+		if tsukitypes.MsgType(msg) == bank.TypeMsgSend {
+			msg := msg.(*bank.MsgSend)
+
+			if !whiteList.Addresses[msg.ToAddress] {
+				return ctx, sdkerrors.Wrap(custodytypes.ErrNotInWhiteList, fmt.Sprintf("recipient not in the whitelist"))
+			}
+		}
+	}
+
 	return next(ctx, tx, simulate)
 }
 
