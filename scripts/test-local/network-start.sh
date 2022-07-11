@@ -1,61 +1,69 @@
 #!/usr/bin/env bash
 set -e
 set -x
-. /etc/profile
 . ./scripts/tsuki-env.sh
 . ./scripts/tsuki-utils.sh
 
-TEST_NAME="NETWORK-START" && timerStart $TEST_NAME
-echoInfo "INFO: $TEST_NAME - Integration Test - START"
+TEST_NAME="NETWORK-START"
+echo "INFO: $TEST_NAME - Integration Test - START"
+echo "INFO: Ensuring essential dependencies are installed & up to date"
 
-echoInfo "INFO: Ensuring essential dependencies are installed & up to date"
-SYSCTRL_DESTINATION=/usr/local/bin/systemctl2
-if [ ! -f $SYSCTRL_DESTINATION ] ; then
-    safeWget /usr/local/bin/systemctl2 \
-     https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/9cbe1a00eb4bdac6ff05b96ca34ec9ed3d8fc06c/files/docker/systemctl.py \
-     "e02e90c6de6cd68062dadcc6a20078c34b19582be0baf93ffa7d41f5ef0a1fdd" && \
-    chmod +x $SYSCTRL_DESTINATION && \
-    systemctl2 --version
-fi
-
-UTILS_VER=$(bashUtilsVersion 2> /dev/null || echo "")
-UTILS_OLD_VER="false" && [[ $(versionToNumber "$UTILS_VER" || echo "0") -ge $(versionToNumber "v0.1.5" || echo "1") ]] || UTILS_OLD_VER="true" 
+UTILS_VER=$(bash-utils bashUtilsVersion 2> /dev/null || echo "")
+[[ $(bash-utils versionToNumber "$UTILS_VER" 2> /dev/null || echo "0") -ge $(bash-utils versionToNumber "v0.2.13" 2> /dev/null || echo "1") ]] && \
+ UTILS_OLD_VER="false" || UTILS_OLD_VER="true" 
 
 # Installing utils is essential to simplify the setup steps
-if [ "$UTILS_OLD_VER" == "true" ] ; then
+if [ "$UTILS_OLD_VER" != "false" ] ; then
     echo "INFO: TSUKI utils were NOT installed on the system, setting up..." && sleep 2
-    TOOLS_VERSION="v0.1.5" && mkdir -p /usr/keys && FILE_NAME="bash-utils.sh" && \
+    TOOLS_VERSION="v0.2.13" && mkdir -p /usr/keys && FILE_NAME="bash-utils.sh" && \
      if [ -z "$TSUKI_COSIGN_PUB" ] ; then TSUKI_COSIGN_PUB=/usr/keys/tsuki-cosign.pub ; fi && \
      echo -e "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/IrzBQYeMwvKa44/DF/HB7XDpnE+\nf+mU9F/Qbfq25bBWV2+NlYMJv3KvKHNtu3Jknt6yizZjUV4b8WGfKBzFYw==\n-----END PUBLIC KEY-----" > $TSUKI_COSIGN_PUB && \
      wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}" -O ./$FILE_NAME && \
      wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}.sig" -O ./${FILE_NAME}.sig && \
      cosign verify-blob --key="$TSUKI_COSIGN_PUB" --signature=./${FILE_NAME}.sig ./$FILE_NAME && \
-     chmod -v 555 ./$FILE_NAME && ./$FILE_NAME bashUtilsSetup "/var/tsukiglob" && . /etc/profile && \
-     echoInfo "Installed bash-utils $(bashUtilsVersion)"
-else
-    echoInfo "INFO: TSUKI utils are up to date, latest version $UTILS_VER" && sleep 2
+     chmod -v 555 ./$FILE_NAME && ./$FILE_NAME bashUtilsSetup "/var/tsukiglob"
 fi
 
+bash-utils loadGlobEnvs
+. /etc/profile
+echoInfo "INFO: Bash-utils version: $(bashUtilsVersion)"
+
+SYSCTRL_DESTINATION=/usr/local/bin/systemctl2
+if [ ! -f $SYSCTRL_DESTINATION ] ; then
+    safeWget $SYSCTRL_DESTINATION \
+     https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/9cbe1a00eb4bdac6ff05b96ca34ec9ed3d8fc06c/files/docker/systemctl.py \
+     "e02e90c6de6cd68062dadcc6a20078c34b19582be0baf93ffa7d41f5ef0a1fdd" && \
+    chmod +x $SYSCTRL_DESTINATION
+fi
+
+echoInfo "INFO: Systemctrl2 version: $(systemctl2 --version)"
+
+timerStart $TEST_NAME
 ./scripts/tsuki-utils.sh tsukiUtilsSetup
-loadGlobEnvs
 
 echoInfo "INFO: Environment cleanup...."
 NETWORK_NAME="localnet-1"
 setGlobEnv TSUKID_HOME ~/.tsukid-$NETWORK_NAME
 setGlobEnv NETWORK_NAME $NETWORK_NAME
 loadGlobEnvs
+. /etc/profile
 
 rm -rfv $TSUKID_HOME 
 mkdir -p $TSUKID_HOME
 
 echoInfo "INFO: Starting new network..."
-
 tsukid init --overwrite --chain-id=$NETWORK_NAME "TSUKI TEST LOCAL VALIDATOR NODE" --home=$TSUKID_HOME
 tsukid keys add validator --keyring-backend=test --home=$TSUKID_HOME
 tsukid keys add faucet --keyring-backend=test --home=$TSUKID_HOME
 tsukid add-genesis-account $(showAddress validator) 150000000000000ukex,300000000000000test,2000000000000000000000000000samolean,1000000lol --keyring-backend=test --home=$TSUKID_HOME
 tsukid add-genesis-account $(showAddress faucet) 150000000000000ukex,300000000000000test,2000000000000000000000000000samolean,1000000lol --keyring-backend=test --home=$TSUKID_HOME
 tsukid gentx-claim validator --keyring-backend=test --moniker="GENESIS VALIDATOR" --home=$TSUKID_HOME
+
+CFG="$TSUKID_HOME/config/config.toml"
+# set block time to 0.5 second
+setTomlVar "[consensus]" timeout_commit "500ms" $CFG
+# progress ASAP we have all precommits needed
+setTomlVar "[consensus]" skip_timeout_commit "true" $CFG
 
 cat > /etc/systemd/system/tsuki.service << EOL
 [Unit]
