@@ -16,11 +16,11 @@ if [ "$UTILS_OLD_VER" == "true" ] ; then
      wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}" -O ./$FILE_NAME && \
      wget "https://github.com/TsukiCore/tools/releases/download/$TOOLS_VERSION/${FILE_NAME}.sig" -O ./${FILE_NAME}.sig && \
      cosign verify-blob --key="$TSUKI_COSIGN_PUB" --signature=./${FILE_NAME}.sig ./$FILE_NAME && \
-     chmod -v 555 ./$FILE_NAME && ./$FILE_NAME bashUtilsSetup "/var/tsukiglob" && bash-utils loadGlobEnvs && \
-     echoInfo "Installed bash-utils $(bash-utils bashUtilsVersion)"
+     chmod -v 555 ./$FILE_NAME && ./$FILE_NAME bashUtilsSetup "/var/tsukiglob" && . /etc/profile
+     echoInfo "Installed bash-utils $(bashUtilsVersion)"
 else
+    . /etc/profile
     echoInfo "INFO: TSUKI utils are up to date, latest version $UTILS_VER" && sleep 2
-    bash-utils loadGlobEnvs
 fi
 
 GO_VER=$(go version 2> /dev/null || echo "")
