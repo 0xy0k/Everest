@@ -1,6 +1,8 @@
 package ante
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	custodykeeper "github.com/TsukiCore/tsuki/x/custody/keeper"
@@ -10,6 +12,7 @@ import (
 	customgovkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	customstakingkeeper "github.com/TsukiCore/tsuki/x/staking/keeper"
 	tokenskeeper "github.com/TsukiCore/tsuki/x/tokens/keeper"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
@@ -17,6 +20,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/gogo/protobuf/proto"
 	"time"
 )
 
@@ -79,8 +83,62 @@ func (cd CustodyDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool,
 	for _, msg := range feeTx.GetMsgs() {
 		settings := cd.ck.GetCustodyInfoByAddress(ctx, msg.GetSigners()[0])
 
+		if tsukitypes.MsgType(msg) == tsukitypes.MsgTypeAddToCustodyCustodians {
+			msg := msg.(*custodytypes.MsgAddToCustodyCustodians)
+			custodyInfo := cd.ck.GetCustodyInfoByAddress(ctx, msg.GetSigners()[0])
+
+			hash := sha256.Sum256([]byte(msg.OldKey))
+			hashString := hex.EncodeToString(hash[:])
+
+			if hashString != custodyInfo.Key {
+				return ctx, custodytypes.ErrWrongKey
+			}
+		}
+
+		if tsukitypes.MsgType(msg) == tsukitypes.MsgApproveCustodyTransaction { //Check approve
+			//Todo: Reward
+		}
+
+		if tsukitypes.MsgType(msg) == tsukitypes.MsgDeclineCustodyTransaction { //Check decline
+			//Todo: Reward
+		}
+
 		if tsukitypes.MsgType(msg) == bank.TypeMsgSend {
+			protoTx := msg.(proto.Message)
 			msg := msg.(*bank.MsgSend)
+
+			if settings != nil && settings.CustodyEnabled {
+				custodians := cd.ck.GetCustodyCustodiansByAddress(ctx, msg.GetSigners()[0])
+
+				//Todo: Check fee exists
+
+				if len(custodians.Addresses) == 0 {
+					continue
+				}
+
+				record := custodytypes.CustodyPool{
+					Address:      msg.GetSigners()[0],
+					Transactions: new(custodytypes.TransactionPool),
+				}
+
+				hash := sha256.Sum256(ctx.TxBytes())
+				hashString := hex.EncodeToString(hash[:])
+				anyValue, anyErr := codectypes.NewAnyWithValue(protoTx)
+
+				if anyErr != nil {
+					return ctx, sdkerrors.Wrap(sdkerrors.ErrPackAny, anyErr.Error())
+				}
+
+				record.Transactions.Record[hashString] = &custodytypes.TransactionRecord{
+					Transaction: anyValue,
+					Votes:       0,
+				}
+
+				//Todo: if Exists in pool and votes anought do not block and remove from the list
+				cd.ck.AddToCustodyPool(ctx, record)
+
+				return ctx, sdkerrors.Wrap(sdkerrors.ErrConflict, "Waiting for custodians check.")
+			}
 
 			if settings != nil && settings.UseWhiteList {
 				whiteList := cd.ck.GetCustodyWhiteListByAddress(ctx, msg.GetSigners()[0])
