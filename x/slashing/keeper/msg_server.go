@@ -4,6 +4,7 @@ import (
 	"context"
 
 	tsukitypes "github.com/TsukiCore/tsuki/types"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -104,7 +105,7 @@ func (k msgServer) RefuteSlashingProposal(goCtx context.Context, msg *types.MsgR
 
 	proposals, _ := k.gk.GetProposals(ctx)
 	for _, proposal := range proposals {
-		if proposal.GetContent().ProposalType() == tsukitypes.ProposalTypeSlashValidator {
+		if proposal.Result == govtypes.Pending && proposal.GetContent().ProposalType() == tsukitypes.ProposalTypeSlashValidator {
 			content := proposal.GetContent().(*types.ProposalSlashValidator)
 			if content.Offender == msg.Validator {
 				content.Refutation = msg.Refutation
