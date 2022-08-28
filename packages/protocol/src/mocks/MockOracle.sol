@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import {IEverestOracle} from "../../../src/interfaces/IEverestOracle.sol";
+import {IEverestOracle} from "../interfaces/IEverestOracle.sol";
 
 contract MockOracle is IEverestOracle {
   mapping(address => mapping(address => uint256)) public prices;
