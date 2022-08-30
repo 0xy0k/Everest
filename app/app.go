@@ -1,10 +1,6 @@
 package app
 
 import (
-	"github.com/TsukiCore/tsuki/x/custody"
-	custodykeeper "github.com/TsukiCore/tsuki/x/custody/keeper"
-	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
-
 	"io"
 	"net/http"
 	"os"
@@ -12,6 +8,9 @@ import (
 
 	customante "github.com/TsukiCore/tsuki/app/ante"
 	"github.com/TsukiCore/tsuki/middleware"
+	"github.com/TsukiCore/tsuki/x/custody"
+	custodykeeper "github.com/TsukiCore/tsuki/x/custody/keeper"
+	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
 	"github.com/TsukiCore/tsuki/x/distributor"
 	distributorkeeper "github.com/TsukiCore/tsuki/x/distributor/keeper"
 	distributortypes "github.com/TsukiCore/tsuki/x/distributor/types"
@@ -266,7 +265,7 @@ func NewInitApp(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	app.CustodyKeeper = custodykeeper.NewKeeper(keys[custodytypes.StoreKey], appCodec)
+	app.CustodyKeeper = custodykeeper.NewKeeper(keys[custodytypes.StoreKey], appCodec, app.CustomGovKeeper, app.BankKeeper)
 
 	proposalRouter := govtypes.NewProposalRouter(
 		[]govtypes.ProposalHandler{
@@ -325,7 +324,7 @@ func NewInitApp(
 		ubi.NewAppModule(app.UbiKeeper, app.CustomGovKeeper),
 		feeprocessing.NewAppModule(app.FeeProcessingKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		custody.NewAppModule(app.CustodyKeeper),
+		custody.NewAppModule(app.CustodyKeeper, app.CustomGovKeeper, app.BankKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
