@@ -1110,7 +1110,7 @@ function addCustodians() {
 
 # e.g. getCustodyInfo
 function getCustodyKey() {
-  local FROM=$1
+  local FROM=$(showAddress $1)
   local RESULT=$(tsukid query custody get $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "custody_settings.key" 2> /dev/null || echo -n "")
 
   echo $RESULT
@@ -1118,7 +1118,7 @@ function getCustodyKey() {
 
 # e.g. getCustodyInfo
 function getCustodyInfo() {
-  local FROM=$1
+  local FROM=$(showAddress $1)
   local RESULT=$(tsukid query custody get $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "" 2> /dev/null || echo -n "")
 
   echo $RESULT
@@ -1126,7 +1126,7 @@ function getCustodyInfo() {
 
 # e.g. getCustodyWhitelist
 function getCustodians() {
-  local FROM=$1
+  local FROM=$(showAddress $1)
   local RESULT=$(tsukid query custody custodians get $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "custody_custodians" 2> /dev/null || echo -n "")
 
   echo $RESULT
@@ -1134,29 +1134,67 @@ function getCustodians() {
 
 # e.g. getCustodyWhitelist
 function getCustodyPool() {
-  local FROM=$1
-  local RESULT=$(tsukid query custody custodians pool $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "transactions" 2> /dev/null || echo -n "")
+  local FROM=$(showAddress $1)
+  local RESULT=$(tsukid query custody custodians pool $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "transactions.record" 2> /dev/null || echo -n "")
+
+  echo $RESULT
+}
+
+function getCustodyPoolVotes() {
+  local FROM=$(showAddress $1)
+  local HASH=$2
+
+  local RESULT=$(tsukid query custody custodians pool $FROM --output=json --home=$TSUKID_HOME 2> /dev/null | jsonParse "transactions.record.$HASH.votes" 2> /dev/null || echo -n "")
 
   echo $RESULT
 }
 
 # e.g. sendTokens faucet tsukiXXX...XXX 1000 ukex 100 ukex
-function sendFailTokens() {
+function custodySendTokens() {
     local SOURCE=$1
     local DESTINATION=$(showAddress $2)
     local AMOUNT="$3"
     local DENOM="$4"
     local FEE_AMOUNT="$5"
     local FEE_DENOM="$6"
+    local PASSWORD="$7"
+    local RESULT=""
 
     ($(isNullOrEmpty $FEE_AMOUNT)) && FEE_AMOUNT=100
     ($(isNullOrEmpty $FEE_DENOM)) && FEE_DENOM="ukex"
 
-    echoInfo "INFO: Sending $AMOUNT $DENOM | $SOURCE -> $DESTINATION"
-    OLD_BALANCE_SRC=$(showBalance "$SOURCE" "$DENOM") && (! $(isNaturalNumber $OLD_BALANCE_SRC)) && OLD_BALANCE_SRC=0
-    OLD_BALANCE_SRC_FEE=$(showBalance "$SOURCE" "$FEE_DENOM") && (! $(isNaturalNumber $OLD_BALANCE_SRC_FEE)) && OLD_BALANCE_SRC_FEE=0
-    OLD_BALANCE_DEST=$(showBalance "$DESTINATION" "$DENOM") && (! $(isNaturalNumber $OLD_BALANCE_DEST)) && OLD_BALANCE_DEST=0
+    RESULT=$(tsukid tx custody send $SOURCE $DESTINATION "${AMOUNT}${DENOM}" $PASSWORD --keyring-backend=test --chain-id=$NETWORK_NAME --fees "${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME 2> /dev/null | jsonParse "txhash" 2> /dev/null || echo -n "")
 
-    tsukid tx bank send $SOURCE $DESTINATION "${AMOUNT}${DENOM}" --keyring-backend=test --chain-id=$NETWORK_NAME --fees "${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME
+    echo "$RESULT"
 }
 
+function approveTransaction() {
+    local FROM=$1
+    local ADDRESS=$(showAddress $2)
+    local HASH=$3
+    local FEE_AMOUNT="$4"
+    local FEE_DENOM="$5"
+
+    tsukid tx custody approve --from=$FROM $ADDRESS $HASH --keyring-backend=test --chain-id=$NETWORK_NAME --fees "${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME | txAwait 180
+}
+
+function declineTransaction() {
+    local FROM=$1
+    local ADDRESS=$(showAddress $2)
+    local HASH=$3
+    local FEE_AMOUNT="$4"
+    local FEE_DENOM="$5"
+
+    tsukid tx custody decline --from=$FROM $ADDRESS $HASH --keyring-backend=test --chain-id=$NETWORK_NAME --fees "${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME | txAwait 180
+}
+
+function passwordConfirmTransaction() {
+    local FROM=$1
+    local ADDRESS=$(showAddress $2)
+    local HASH=$3
+    local PASSWORD=$4
+    local FEE_AMOUNT="$5"
+    local FEE_DENOM="$6"
+
+    tsukid tx custody confirm --from=$FROM $ADDRESS $HASH $PASSWORD --keyring-backend=test --chain-id=$NETWORK_NAME --fees "${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME | txAwait 180
+}

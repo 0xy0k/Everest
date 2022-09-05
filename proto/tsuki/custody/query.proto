@@ -4,6 +4,7 @@ package tsuki.custody;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "tsuki/custody/custody.proto";
+import "tsuki/custody/tx.proto";
 
 option go_package = "github.com/TsukiCore/tsuki/x/custody/types";
 
