@@ -44,4 +44,4 @@ jobs:
 
       - run: yarn workspace @x-everest/frontend install
       - run: yarn workspace @x-everest/frontend run lint
-      - run: yarn workspace @x-everest/frontend run prettier --debug-check
+      - run: yarn workspace @x-everest/frontend run prettier --check
