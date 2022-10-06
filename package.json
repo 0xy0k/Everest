@@ -14,7 +14,11 @@
     "protocol:build": "yarn workspace @x-everest/protocol build",
     "protocol:test": "yarn workspace @x-everest/protocol test",
     "protocol:format:fix": "yarn workspace @x-everest/protocol format:fix",
-    "prepare": "husky install"
+    "sdk:build": "yarn workspace @x-everest/sdk build",
+    "sdk:test": "yarn workspace @x-everest/sdk test",
+    "sdk:lint": "yarn workspace @x-everest/sdk lint",
+    "prepare": "husky install",
+    "frontend:dev": "yarn workspace @x-everest/frontend dev"
   },
   "devDependencies": {
     "@commitlint/cli": "17.0.3",
