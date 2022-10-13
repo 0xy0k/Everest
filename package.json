@@ -10,7 +10,8 @@
     "packages/*"
   ],
   "scripts": {
-    "protocol:install": "yarn workspace @x-everest/protocol install",
+    "start": "yarn workspace @x-everest/frontend start",
+    "protocol:install": "yarn workspace @x-everest/protocol forge:install",
     "protocol:build": "yarn workspace @x-everest/protocol build",
     "protocol:test": "yarn workspace @x-everest/protocol test",
     "protocol:format:fix": "yarn workspace @x-everest/protocol format:fix",
