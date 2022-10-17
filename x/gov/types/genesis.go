@@ -121,7 +121,7 @@ func DefaultGenesis() *GenesisState {
 			MaxCustodyTxSize:            8192,
 			MaxCustodyBufferSize:        10,
 		},
-		ExecutionFees: []*ExecutionFee{
+		ExecutionFees: []ExecutionFee{
 			{
 				TransactionType:   tsukitypes.MsgTypeClaimValidator,
 				ExecutionFee:      100,
