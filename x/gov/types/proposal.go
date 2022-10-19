@@ -595,7 +595,7 @@ func NewResetWholeCouncilorRankProposal(proposer sdk.AccAddress) *ProposalResetW
 }
 
 func (m *ProposalResetWholeCouncilorRank) ProposalType() string {
-	return tsukitypes.ProposalTypeResetWholeValidatorRank
+	return tsukitypes.ProposalTypeResetWholeCouncilorRank
 }
 
 func (m *ProposalResetWholeCouncilorRank) ProposalPermission() PermValue {
