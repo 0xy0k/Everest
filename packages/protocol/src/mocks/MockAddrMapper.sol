@@ -1,17 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.15;
 
-/**
- * @title AddrMapper
- * @author Everest
- * @notice Contract that stores and returns addresses mappings
- * Required for getting contract addresses for some providers and flashloan providers.
- */
-
-import {SystemAccessControl} from "../access/SystemAccessControl.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IAddrMapper} from "../interfaces/IAddrMapper.sol";
 
-contract AddrMapper is IAddrMapper, SystemAccessControl {
+contract MockAddrMapper is IAddrMapper, Ownable {
   // provider name => key address => returned address
   // (e.g. Compound_V2 => public erc20 => protocol Token)
   mapping(string => mapping(address => address)) private _addrMapping;
@@ -22,8 +15,6 @@ contract AddrMapper is IAddrMapper, SystemAccessControl {
   string[] private _providerNames;
 
   mapping(string => bool) private _isProviderNameAdded;
-
-  constructor(address chief) SystemAccessControl(chief) {}
 
   function getProviders() public view returns (string[] memory) {
     return _providerNames;
@@ -54,11 +45,9 @@ contract AddrMapper is IAddrMapper, SystemAccessControl {
   function setMapping(string memory providerName, address keyAddr, address returnedAddr)
     public
     override
-    onlyTimelock
   {
     if (!_isProviderNameAdded[providerName]) {
       _isProviderNameAdded[providerName] = true;
-      _providerNames.push(providerName);
     }
     _addrMapping[providerName][keyAddr] = returnedAddr;
     address[] memory inputAddrs = new address[](1);
@@ -76,15 +65,18 @@ contract AddrMapper is IAddrMapper, SystemAccessControl {
     address keyAddr1,
     address keyAddr2,
     address returnedAddr
-  ) public override onlyTimelock {
+  ) public override {
     if (!_isProviderNameAdded[providerName]) {
       _isProviderNameAdded[providerName] = true;
-      _providerNames.push(providerName);
     }
     _addrNestedMapping[providerName][keyAddr1][keyAddr2] = returnedAddr;
     address[] memory inputAddrs = new address[](2);
     inputAddrs[0] = keyAddr1;
     inputAddrs[1] = keyAddr2;
     emit MappingChanged(inputAddrs, returnedAddr);
+  }
+
+  function prepareToRedeploythisAddress() public onlyOwner {
+    selfdestruct(payable(owner()));
   }
 }
