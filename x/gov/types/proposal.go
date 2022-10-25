@@ -620,7 +620,7 @@ func NewJailCouncilorProposal(proposer sdk.AccAddress, description string, counc
 }
 
 func (m *ProposalJailCouncilor) ProposalType() string {
-	return tsukitypes.ProposalTypeResetWholeCouncilorRank
+	return tsukitypes.ProposalTypeJailCouncilor
 }
 
 func (m *ProposalJailCouncilor) ProposalPermission() PermValue {
