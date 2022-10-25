@@ -127,7 +127,7 @@ func DefaultGenesis() *GenesisState {
 			AbstentionRankDecreaseAmount: 1,
 			MaxAbstention:                2,
 		},
-		ExecutionFees: []*ExecutionFee{
+		ExecutionFees: []ExecutionFee{
 			{
 				TransactionType:   tsukitypes.MsgTypeClaimValidator,
 				ExecutionFee:      100,
