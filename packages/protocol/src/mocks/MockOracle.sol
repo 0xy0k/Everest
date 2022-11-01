@@ -6,7 +6,11 @@ import {IEverestOracle} from "../interfaces/IEverestOracle.sol";
 contract MockOracle is IEverestOracle {
   mapping(address => mapping(address => uint256)) public prices;
 
-  function getPriceOf(address currencyAsset, address commodityAsset, uint8 decimals)
+  function getPriceOf(
+    address currencyAsset,
+    address commodityAsset,
+    uint8 decimals
+  )
     external
     view
     returns (uint256 price)
