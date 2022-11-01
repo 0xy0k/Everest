@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import invariant from 'tiny-invariant';
 import warning from 'tiny-warning';
 
-import { EVEREST_ORACLE_ADDRESS } from '../constants';
+import { EVEREST_ORACLE_ADDRESS } from '../constants/addresses';
 import { CHAIN } from '../constants/chains';
 import { ChainId } from '../enums';
 import { ChainConfig } from '../types';
