@@ -9,7 +9,7 @@
 tsukid tx customgov register-identity-records --infos-file="id.json" --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 tsukid tx customgov register-identity-records --infos-json='{"moniker":"My Moniker","social":"My Social"}' --from=validator --keyring-backend=test --home=$HOME/.tsukid --fees=100ukex --chain-id=testing --yes
 
-tsukid query customgov all-identity-records
+tsukid query customgov identity-records
 tsukid query customgov identity-record 1
 tsukid query customgov identity-records-by-addr $(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid)
 
