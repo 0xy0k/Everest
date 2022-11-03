@@ -9,7 +9,7 @@ import {TimelockController} from
 import {IWETH9} from "../../../src/helpers/PeripheryPayments.sol";
 import {IVault} from "../../../src/interfaces/IVault.sol";
 import {BorrowingVault} from "../../../src/vaults/borrowing/BorrowingVault.sol";
-import {AaveV3Arbitrum} from "../../../src/providers/arbitrum/AaveV3Arbitrum.sol";
+import {AaveV3Optimism} from "../../../src/providers/optimism/AaveV3Optimism.sol";
 import {ILendingProvider} from "../../../src/interfaces/ILendingProvider.sol";
 import {MockOracle} from "../../../src/mocks/MockOracle.sol";
 import {Chief} from "../../../src/Chief.sol";
@@ -22,7 +22,7 @@ contract ProviderTest is DSTestPlus, CoreRoles {
   address alice = address(0xA);
   address bob = address(0xB);
 
-  uint256 arbitrumFork;
+  uint256 optimismFork;
 
   IVault public vault;
   ILendingProvider public aaveV3;
@@ -36,10 +36,10 @@ contract ProviderTest is DSTestPlus, CoreRoles {
   uint256 public constant BORROW_AMOUNT = 200 * 1e6;
 
   function setUp() public {
-    arbitrumFork = vm.createSelectFork("arbitrum");
+    optimismFork = vm.createSelectFork("optimism");
 
-    weth = IWETH9(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1);
-    usdc = IERC20(0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8);
+    weth = IWETH9(0x4200000000000000000000000000000000000006);
+    usdc = IERC20(0x7F5c764cBc14f9669B88837ca1490cCa17c31607);
 
 
     vm.label(address(alice), "alice");
@@ -68,7 +68,7 @@ contract ProviderTest is DSTestPlus, CoreRoles {
       "fv2WETH"
     );
 
-    aaveV3 = new AaveV3Arbitrum();
+    aaveV3 = new AaveV3Optimism();
     ILendingProvider[] memory providers = new ILendingProvider[](1);
     providers[0] = aaveV3;
 
@@ -141,6 +141,7 @@ contract ProviderTest is DSTestPlus, CoreRoles {
 
     _utils_doDepositRoutine(alice, DEPOSIT_AMOUNT);
     _utils_doBorrowRoutine(alice, BORROW_AMOUNT);
+
     uint256 aliceDebt = vault.balanceOfDebt(alice);
     _utils_doPaybackRoutine(alice, aliceDebt);
 

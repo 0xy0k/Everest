@@ -9,7 +9,7 @@ import {TimelockController} from
 import {IWETH9} from "../../../src/helpers/PeripheryPayments.sol";
 import {IVault} from "../../../src/interfaces/IVault.sol";
 import {BorrowingVault} from "../../../src/vaults/borrowing/BorrowingVault.sol";
-import {AaveV3} from "../../../src/providers/polygon/AaveV3.sol";
+import {AaveV3Polygon} from "../../../src/providers/polygon/AaveV3Polygon.sol";
 import {ILendingProvider} from "../../../src/interfaces/ILendingProvider.sol";
 import {MockOracle} from "../../../src/mocks/MockOracle.sol";
 import {Chief} from "../../../src/Chief.sol";
@@ -41,7 +41,6 @@ contract ProviderTest is DSTestPlus, CoreRoles {
     weth = IWETH9(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
     usdc = IERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
 
-
     vm.label(address(alice), "alice");
     vm.label(address(bob), "bob");
     vm.label(address(weth), "weth");
@@ -68,12 +67,12 @@ contract ProviderTest is DSTestPlus, CoreRoles {
       "fv2WETH"
     );
 
-    aaveV3 = new AaveV3();
+    aaveV3 = new AaveV3Polygon();
+
     ILendingProvider[] memory providers = new ILendingProvider[](1);
     providers[0] = aaveV3;
 
     _utils_setupVaultProvider(vault, providers);
-    vault.setActiveProvider(aaveV3);
   }
 
   function _utils_setupTestRoles() internal {
@@ -115,9 +114,7 @@ contract ProviderTest is DSTestPlus, CoreRoles {
     vm.startPrank(who);
     uint256 prevDebt = vault.balanceOfDebt(who);
     SafeERC20.safeApprove(IERC20(address(usdc)), address(vault), amount);
-    console.log("123");
     vault.payback(amount, who);
-    console.log("1234");
     uint256 debtDiff = prevDebt - amount;
     assertEq(vault.balanceOfDebt(who), debtDiff);
     vm.stopPrank();
@@ -141,10 +138,15 @@ contract ProviderTest is DSTestPlus, CoreRoles {
 
   function test_paybackAndWithdraw() public {
     deal(address(weth), alice, DEPOSIT_AMOUNT);
+
     _utils_doDepositRoutine(alice, DEPOSIT_AMOUNT);
+
     _utils_doBorrowRoutine(alice, BORROW_AMOUNT);
+
+
     uint256 aliceDebt = vault.balanceOfDebt(alice);
-    _utils_doPaybackRoutine(alice, aliceDebt);
+    _utils_doPaybackRoutine(alice, BORROW_AMOUNT-50000);
+    // _utils_doPaybackRoutine(alice, aliceDebt);
     uint256 maxAmount = vault.maxWithdraw(alice);
     _utils_doWithdrawRoutine(alice, maxAmount);
   }
