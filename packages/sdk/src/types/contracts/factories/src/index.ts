@@ -14,3 +14,4 @@ export * as swappers from "./swappers";
 export * as vaults from "./vaults";
 export { Chief__factory } from "./Chief__factory";
 export { EverestOracle__factory } from "./EverestOracle__factory";
+export { RebalancerManager__factory } from "./RebalancerManager__factory";

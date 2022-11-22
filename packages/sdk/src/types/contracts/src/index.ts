@@ -25,3 +25,4 @@ import type * as vaults from "./vaults";
 export type { vaults };
 export type { Chief } from "./Chief";
 export type { EverestOracle } from "./EverestOracle";
+export type { RebalancerManager } from "./RebalancerManager";
