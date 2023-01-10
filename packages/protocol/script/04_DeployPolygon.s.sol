@@ -17,7 +17,7 @@ import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {IERC20Metadata} from
   "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-contract DeployProduction is ScriptPlus {
+contract DeployPolygon is ScriptPlus {
   IWETH9 WETH;
   Chief chief;
   BorrowingVaultFactory factory;
@@ -40,7 +40,7 @@ contract DeployProduction is ScriptPlus {
 
     /*connextHandler = IConnext(getAddress("ConnextHandler"));*/
     connextHandler = IConnext(0x11984dc4465481512eb5b777E44061C158CF2259);
-    saveAddress("ConnextRouter", address(connextHandler));
+    saveAddress("ConnextHandler", address(connextHandler));
   }
 
   function run() public {
