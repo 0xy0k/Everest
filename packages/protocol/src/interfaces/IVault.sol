@@ -2,7 +2,7 @@
 pragma solidity 0.8.15;
 
 /**
- * @title IVault.
+ * @title IVault
  * @author Everest
  *
  * @notice Interface for vaults extending from IERC4326.
