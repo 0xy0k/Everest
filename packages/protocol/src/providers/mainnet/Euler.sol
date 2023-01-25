@@ -9,7 +9,7 @@ import {IEulerEToken} from "../../interfaces/euler/IEulerEToken.sol";
 import {IEulerDToken} from "../../interfaces/euler/IEulerDToken.sol";
 
 /**
- * @title Euler Finance Lending Provider.
+ * @title Euler Finance Lending Provider
  * @author everestdao Labs
  * @notice This contract allows interaction with Euler Finance.
  */
