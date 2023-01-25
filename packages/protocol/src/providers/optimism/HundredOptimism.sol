@@ -17,7 +17,7 @@ import {IProxyReceiver} from "../../interfaces/compoundV2/IProxyReceiver.sol";
 
 /**
  * @title Hundred Lending Provider
- * @author everestdao Labs
+ * @author Everest
  * @notice This contract allows interaction with Hundred.
  * @dev The IAddrMapper needs to be properly configured for Hundred.
  */

@@ -10,7 +10,7 @@ import {IAddrMapper} from "../../interfaces/IAddrMapper.sol";
 
 /**
  * @title Morpho Lending Provider
- * @author everestdao Labs
+ * @author Everest
  * @notice This contract allows interaction with Morpho.
  * @dev The IAddrMapper needs to be properly configured for CompoundV3
  */

@@ -13,7 +13,7 @@ import {IVelodromeRouter} from "../../interfaces/velodrome/IVelodromeRouter.sol"
 
 /**
  * @title Beefy Velodrome sETH-ETH Optimism Lending Provider
- * @author everestdao Labs
+ * @author Everest
  * @notice This contract allows interaction with this specific vault.
  */
 contract BeefyVelodromesETHETH is ILendingProvider {

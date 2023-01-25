@@ -16,7 +16,7 @@ import {LibCompoundV2} from "../../libraries/LibCompoundV2.sol";
 
 /**
  * @title WePiggy Lending Provider
- * @author everestdao Labs
+ * @author Everest
  * @notice This contract allows interaction with WePiggy.
  * @dev The IAddrMapper needs to be properly configured for WePiggy.
  */
