@@ -3,6 +3,7 @@ pragma solidity 0.8.15;
 
 /**
  * @title CoreRoles
+ *
  * @author Everest
  *
  * @notice System definition of roles used across EverestV2 contracts.
