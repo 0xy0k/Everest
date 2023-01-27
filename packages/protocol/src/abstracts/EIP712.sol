@@ -3,6 +3,7 @@ pragma solidity 0.8.15;
 
 /**
  * @title EIP712
+ *
  * @author Everest
  *
  * @notice EIP712 abstract contract for VaultPermissions.
