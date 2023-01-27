@@ -8,7 +8,9 @@ import {IV2Pool} from "../../interfaces/aaveV2/IV2Pool.sol";
 
 /**
  * @title Radiant Lending Provider.
+ *
  * @author Everest
+ *
  * @notice This contract allows interaction with Radiant.
  */
 contract RadiantArbitrum is ILendingProvider {

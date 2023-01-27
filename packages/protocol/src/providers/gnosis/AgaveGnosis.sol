@@ -8,7 +8,9 @@ import {IV2Pool} from "../../interfaces/aaveV2/IV2Pool.sol";
 
 /**
  * @title Agave Lending Provider
+ *
  * @author Everest
+ *
  * @notice This contract allows interaction with Agave.
  */
 contract AgaveGnosis is ILendingProvider {
