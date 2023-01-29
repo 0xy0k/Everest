@@ -3,7 +3,9 @@ pragma solidity 0.8.15;
 
 /**
  * @title FlasherEuler
+ *
  * @author Everest
+ *
  * @notice Handles logic of Euler as a flashloan provider.
  */
 
