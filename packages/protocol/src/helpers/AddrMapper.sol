@@ -3,7 +3,9 @@ pragma solidity 0.8.15;
 
 /**
  * @title AddrMapper
+ *
  * @author Everest
+ *
  * @notice Contract that stores and returns addresses mappings
  * Required for getting contract addresses for some providers and flashloan providers.
  */
