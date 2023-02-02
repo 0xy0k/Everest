@@ -46,3 +46,6 @@ tsukid query customgov proposals
 # upgrade to new json for hard-fork case
 tsukid export > exported-genesis.json
 tsukid new-genesis-from-exported exported-genesis.json new-genesis.json
+
+# export minimized genesis
+tsukid export-minimized-genesis exported-genesis.json minimized.json
