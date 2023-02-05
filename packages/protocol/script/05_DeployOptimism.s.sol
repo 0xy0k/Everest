@@ -20,41 +20,26 @@ import {IERC20Metadata} from
   "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 contract DeployOptimism is ScriptPlus {
-  IWETH9 WETH;
   Chief chief;
   BorrowingVaultFactory factory;
-  IConnext connextHandler;
   TimelockController timelock;
-
+  EverestOracle oracle;
   ConnextRouter connextRouter;
 
   AaveV3Optimism aaveV3Optimism;
-  EverestOracle oracle;
+
+  IConnext connextHandler = IConnext(0x8f7492DE823025b4CfaAB1D34c58963F2af5DEDA);
+  IWETH9 WETH = IWETH9(0x4200000000000000000000000000000000000006);
   ERC20 DAI;
-  ERC20 USDC;
+  ERC20 USDC = ERC20(0x7F5c764cBc14f9669B88837ca1490cCa17c31607);
   ERC20 USDT;
 
   function setUp() public {
     chainName = "optimism";
-
-    WETH = IWETH9(getAddress("WETH"));
-    /*saveAddress("WETH", address(WETH));*/
-
-    connextHandler = IConnext(getAddress("ConnextHandler"));
-    /*saveAddress("ConnextHandler", address(connextHandler));*/
   }
 
   function run() public {
     vm.startBroadcast();
-
-    /*DAI = ERC20(getAddress("DAI"));*/
-    /*saveAddress("DAI", address(DAI));*/
-
-    USDC = ERC20(getAddress("USDC"));
-    /*saveAddress("USDC", address(USDC));*/
-
-    /*USDT = ERC20(getAddress("USDT"));*/
-    /*saveAddress("USDT", address(USDT));*/
 
     aaveV3Optimism = AaveV3Optimism(getAddress("AaveV3Optimism"));
     /*aaveV3Optimism = new AaveV3Optimism();*/
@@ -110,13 +95,32 @@ contract DeployOptimism is ScriptPlus {
     /*_deployVault(address(WETH), address(USDT), "BorrowingVault-WETHUSDT");*/
 
     /*address polygonRouter = getAddressAt("ConnextRouter", "polygon");*/
+    /*address arbitrumRouter = getAddressAt("ConnextRouter", "arbitrum");*/
+    /*address gnosisRouter = getAddressAt("ConnextRouter", "gnosis");*/
     /*_scheduleWithTimelock(*/
+    /*address(connextRouter),*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, POLYGON_DOMAIN, polygonRouter)*/
+    /*);*/
+    /*_scheduleWithTimelock(*/
+    /*address(connextRouter),*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
+    /*);*/
+    /*_scheduleWithTimelock(*/
+    /*address(connextRouter),*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, GNOSIS_DOMAIN, gnosisRouter)*/
+    /*);*/
+
+    /*_executeWithTimelock(*/
     /*address(connextRouter),*/
     /*abi.encodeWithSelector(connextRouter.setRouter.selector, POLYGON_DOMAIN, polygonRouter)*/
     /*);*/
     /*_executeWithTimelock(*/
     /*address(connextRouter),*/
-    /*abi.encodeWithSelector(connextRouter.setRouter.selector, POLYGON_DOMAIN, polygonRouter)*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
+    /*);*/
+    /*_executeWithTimelock(*/
+    /*address(connextRouter),*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, GNOSIS_DOMAIN, gnosisRouter)*/
     /*);*/
 
     vm.stopBroadcast();

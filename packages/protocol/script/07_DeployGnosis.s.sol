@@ -10,7 +10,7 @@ import {IVault} from "../src/interfaces/IVault.sol";
 import {Chief} from "../src/Chief.sol";
 import {ConnextRouter} from "../src/routers/ConnextRouter.sol";
 import {IWETH9} from "../src/abstracts/WETH9.sol";
-import {AaveV3Polygon} from "../src/providers/polygon/AaveV3Polygon.sol";
+import {AgaveGnosis} from "../src/providers/gnosis/AgaveGnosis.sol";
 import {EverestOracle} from "../src/EverestOracle.sol";
 import {ILendingProvider} from "../src/interfaces/ILendingProvider.sol";
 import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
@@ -19,31 +19,31 @@ import {TimelockController} from
 import {IERC20Metadata} from
   "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-contract DeployPolygon is ScriptPlus {
+contract DeployGnosis is ScriptPlus {
   Chief chief;
   BorrowingVaultFactory factory;
   TimelockController timelock;
   EverestOracle oracle;
   ConnextRouter connextRouter;
 
-  AaveV3Polygon aaveV3Polygon;
+  AgaveGnosis agaveGnosis;
 
-  IConnext connextHandler = IConnext(0x11984dc4465481512eb5b777E44061C158CF2259);
-  IWETH9 WETH = IWETH9(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
+  IConnext connextHandler = IConnext(0x5bB83e95f63217CDa6aE3D181BA580Ef377D2109);
+  IWETH9 WETH = IWETH9(0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1);
   ERC20 DAI;
-  ERC20 USDC = ERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
+  ERC20 USDC = ERC20(0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83);
   ERC20 USDT;
 
   function setUp() public {
-    chainName = "polygon";
+    chainName = "gnosis";
   }
 
   function run() public {
     vm.startBroadcast();
 
-    aaveV3Polygon = AaveV3Polygon(getAddress("AaveV3Polygon"));
-    /*aaveV3Polygon = new AaveV3Polygon();*/
-    /*saveAddress("AaveV3Polygon", address(aaveV3Polygon));*/
+    agaveGnosis = AgaveGnosis(getAddress("AgaveGnosis"));
+    /*agaveGnosis = new AgaveGnosis();*/
+    /*saveAddress("AgaveGnosis", address(agaveGnosis));*/
 
     chief = Chief(getAddress("Chief"));
     /*chief = new Chief(true, false);*/
@@ -56,8 +56,8 @@ contract DeployPolygon is ScriptPlus {
     /*assets[0] = address(WETH);*/
     /*assets[1] = address(USDC);*/
     /*address[] memory feeds = new address[](2);*/
-    /*feeds[0] = 0xF9680D99D6C9589e2a93a78A04A279e509205945;*/
-    /*feeds[1] = 0xfE4A8cc5b5B2366C1B58Bea3858e81843581b2F7;*/
+    /*feeds[0] = 0xa767f745331D267c7751297D982b050c93985627;*/
+    /*feeds[1] = 0x26C31ac71010aF62E6B486D1132E266D6298857D;*/
     /*oracle = new EverestOracle(assets, feeds, address(chief));*/
     /*saveAddress("EverestOracle", address(oracle));*/
 
@@ -75,15 +75,15 @@ contract DeployPolygon is ScriptPlus {
     /*factory.setContractCode.selector, vm.getCode("BorrowingVault.sol:BorrowingVault")*/
     /*)*/
     /*);*/
+    /*_scheduleWithTimelock(*/
+    /*address(chief),*/
+    /*abi.encodeWithSelector(chief.allowVaultFactory.selector, address(factory), true)*/
+    /*);*/
     /*_executeWithTimelock(*/
     /*address(factory),*/
     /*abi.encodeWithSelector(*/
     /*factory.setContractCode.selector, vm.getCode("BorrowingVault.sol:BorrowingVault")*/
     /*)*/
-    /*);*/
-    /*_scheduleWithTimelock(*/
-    /*address(chief),*/
-    /*abi.encodeWithSelector(chief.allowVaultFactory.selector, address(factory), true)*/
     /*);*/
     /*_executeWithTimelock(*/
     /*address(chief),*/
@@ -94,12 +94,12 @@ contract DeployPolygon is ScriptPlus {
     /*_deployVault(address(WETH), address(USDC), "BorrowingVault-WETHUSDC");*/
     /*_deployVault(address(WETH), address(USDT), "BorrowingVault-WETHUSDT");*/
 
-    /*address arbitrumRouter = getAddressAt("ConnextRouter", "arbitrum");*/
+    /*address polygonRouter = getAddressAt("ConnextRouter", "polygon");*/
     /*address optimismRouter = getAddressAt("ConnextRouter", "optimism");*/
-    /*address gnosisRouter = getAddressAt("ConnextRouter", "gnosis");*/
+    /*address arbitrumRouter = getAddressAt("ConnextRouter", "arbitrum");*/
     /*_scheduleWithTimelock(*/
     /*address(connextRouter),*/
-    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, POLYGON_DOMAIN, polygonRouter)*/
     /*);*/
     /*_scheduleWithTimelock(*/
     /*address(connextRouter),*/
@@ -107,12 +107,12 @@ contract DeployPolygon is ScriptPlus {
     /*);*/
     /*_scheduleWithTimelock(*/
     /*address(connextRouter),*/
-    /*abi.encodeWithSelector(connextRouter.setRouter.selector, GNOSIS_DOMAIN, gnosisRouter)*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
     /*);*/
 
     /*_executeWithTimelock(*/
     /*address(connextRouter),*/
-    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, POLYGON_DOMAIN, polygonRouter)*/
     /*);*/
     /*_executeWithTimelock(*/
     /*address(connextRouter),*/
@@ -120,7 +120,7 @@ contract DeployPolygon is ScriptPlus {
     /*);*/
     /*_executeWithTimelock(*/
     /*address(connextRouter),*/
-    /*abi.encodeWithSelector(connextRouter.setRouter.selector, GNOSIS_DOMAIN, gnosisRouter)*/
+    /*abi.encodeWithSelector(connextRouter.setRouter.selector, ARBITRUM_DOMAIN, arbitrumRouter)*/
     /*);*/
 
     vm.stopBroadcast();
@@ -128,7 +128,7 @@ contract DeployPolygon is ScriptPlus {
 
   function _deployVault(address collateral, address debtAsset, string memory name) internal {
     ILendingProvider[] memory providers = new ILendingProvider[](1);
-    providers[0] = aaveV3Polygon;
+    providers[0] = agaveGnosis;
     address vault = chief.deployVault(
       address(factory), abi.encode(collateral, debtAsset, address(oracle), providers), 95
     );
