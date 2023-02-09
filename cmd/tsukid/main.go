@@ -1,12 +1,16 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/TsukiCore/tsuki/app"
+	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	genutilcli "github.com/TsukiCore/tsuki/x/genutil/client/cli"
+	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	customstaking "github.com/TsukiCore/tsuki/x/staking/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -167,6 +171,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		keys.Commands(app.DefaultNodeHome),
 		GetValAddressFromAddressCmd(),
 		GetValConsAddressFromAddressCmd(),
+		GetExportMetadataCmd(),
 	)
 
 	// add rosetta
@@ -214,6 +219,29 @@ func GetValAddressFromAddressCmd() *cobra.Command {
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetExportMetadataCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "export-metadata",
+		Short: "Get metadata for client interaction to the node",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			metadata := make(map[string]interface{})
+			metadata["transactions"] = functionmeta.GetFunctionList()
+			metadata["permissions"] = govtypes.PermMetadata
+			metadata["properties"] = govtypes.PropertyMetadata
+
+			bz, err := json.MarshalIndent(metadata, "", " ")
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(bz))
+			return nil
+		},
+	}
 
 	return cmd
 }
