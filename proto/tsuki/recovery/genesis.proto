@@ -13,4 +13,7 @@ message GenesisState {
       [ (gogoproto.nullable) = false ];
   repeated tsuki.recovery.RecoveryToken recovery_tokens = 2
       [ (gogoproto.nullable) = false ];
+  repeated tsuki.recovery.Rewards rewards = 3 [ (gogoproto.nullable) = false ];
+  repeated tsuki.recovery.Rotation rotations = 4
+      [ (gogoproto.nullable) = false ];
 }

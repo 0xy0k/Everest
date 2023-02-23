@@ -3,6 +3,6 @@ package types
 const (
 	// we set page iteration limit for safety
 	PageIterationLimit = 512
-	TsukiVersion       = "v0.3.8.32"
+	TsukiVersion       = "v0.3.9.33"
 	CosmosVersion      = "v0.45.10"
 )
