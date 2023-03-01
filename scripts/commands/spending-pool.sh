@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tsukid tx spending create-spending-pool --name="ValidatorRewardsPool" --claim-start=$(($(date -u +%s))) --claim-end=0 --rates=0.1ukex --vote-quorum="33" --vote-period="60" --vote-enactment="30" --owner-roles="" --owner-accounts=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --beneficiary-roles="1" --beneficiary-role-weights="1" --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes  --broadcast-mode=block 
+tsukid tx spending create-spending-pool --name="ValidatorRewardsPool" --claim-start=$(($(date -u +%s))) --claim-end=0 --claim-expiry=43200 --rates=0.1ukex --vote-quorum="33" --vote-period="60" --vote-enactment="30" --owner-roles="" --owner-accounts=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --beneficiary-roles="1" --beneficiary-role-weights="1" --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes  --broadcast-mode=block 
 
 tsukid tx spending deposit-spending-pool --name="ValidatorRewardsPool" --amount=1000000ukex --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes --broadcast-mode=block 
 
