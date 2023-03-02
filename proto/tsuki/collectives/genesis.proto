@@ -1,0 +1,13 @@
+syntax = "proto3";
+package tsuki.collectives;
+
+import "tsuki/collectives/collective.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/TsukiCore/tsuki/x/collectives/types";
+
+message GenesisState {
+  repeated tsuki.collectives.Collective collectives = 1 [ (gogoproto.nullable) = false ];
+  repeated tsuki.collectives.CollectiveContributor contributers = 2
+      [ (gogoproto.nullable) = false ];
+}
