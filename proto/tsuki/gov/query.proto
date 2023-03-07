@@ -9,6 +9,7 @@ import "tsuki/gov/role.proto";
 import "tsuki/gov/execution_fee.proto";
 import "tsuki/gov/network_properties.proto";
 import "tsuki/gov/proposal.proto";
+import "tsuki/gov/poll.proto";
 import "tsuki/gov/identity_registrar.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
@@ -146,6 +147,33 @@ service Query {
   rpc QueryAddressesByWhitelistedRole(QueryAddressesByWhitelistedRole) returns (QueryAddressesByWhitelistedRoleResponse) {
     option (google.api.http).get = "/tsuki/gov/addresses_by_whitelisted_role/{role}";
   }
+  //Query list of all polls by address
+  rpc PollsListByAddress(QueryPollsListByAddress) returns (QueryPollsListByAddressResponse) {
+    option (google.api.http).get = "/tsuki/gov/proposal_polls/{creator}";
+  }
+
+  rpc PollsVotesByPollId(QueryPollsVotesByPollId) returns (QueryPollsVotesByPollIdResponse) {
+    option (google.api.http).get = "/tsuki/gov/proposal_poll/votes/{poll_id}";
+  }
+}
+
+message QueryPollsVotesByPollId {
+  uint64 poll_id = 1;
+}
+
+message QueryPollsVotesByPollIdResponse {
+  repeated PollVote votes = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPollsListByAddress {
+  bytes creator = 1 [
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+}
+
+message QueryPollsListByAddressResponse {
+  repeated tsuki.gov.Poll polls = 1 [(gogoproto.nullable) = false];
 }
 
 message NetworkPropertiesRequest {}
