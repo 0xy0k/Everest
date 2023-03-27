@@ -1181,6 +1181,18 @@ function addCustodians() {
   tsukid tx custody custodians add "$ADDRESSES" --from=$FROM --keyring-backend=test --chain-id=$NETWORK_NAME --fees="${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME --okey=$OKEY --nkey=$NKEY | txAwait 180
 }
 
+# addCustodiansForce
+function addCustodiansForce() {
+  local FROM=$1
+  local ADDRESSES=$2
+  local FEE_AMOUNT=$3
+  local FEE_DENOM=$4
+  local OKEY=$5
+  local NKEY=$6
+
+  tsukid tx custody custodians add "$ADDRESSES" --from=$FROM --keyring-backend=test --chain-id=$NETWORK_NAME --gas-prices="${FEE_AMOUNT}${FEE_DENOM}" --output=json --yes --home=$TSUKID_HOME --okey=$OKEY --nkey=$NKEY
+}
+
 # dropCustodians
 function dropCustodians() {
   local FROM=$1
