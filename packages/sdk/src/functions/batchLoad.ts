@@ -10,6 +10,7 @@ import { LENDING_PROVIDERS } from '../constants/lending-providers';
 import {
   Address,
   BorrowingVault,
+  EverestError,
   EverestResultError,
   EverestResultSuccess,
 } from '../entities';
@@ -171,9 +172,7 @@ export async function batchLoad(
 
     return new EverestResultSuccess(data);
   } catch (e: unknown) {
-    const code =
-      e instanceof String ? EverestErrorCode.SDK : EverestErrorCode.MULTICALL;
-    const message = e instanceof Error ? e.message : String(e);
+    const { code, message } = EverestError.handleError(e, EverestErrorCode.MULTICALL);
     return new EverestResultError(code, message);
   }
 }
