@@ -17,7 +17,7 @@ import {
 } from './constants';
 import { Address, Currency, Token } from './entities';
 import { BorrowingVault } from './entities/BorrowingVault';
-import { EverestError } from './entities/EverestError';
+import { EverestResultError, EverestResultSuccess } from './entities/EverestError';
 import { ChainId, ChainType, RouterAction } from './enums';
 import { batchLoad, encodeActionArgs } from './functions';
 import { Nxtp } from './Nxtp';
@@ -25,7 +25,7 @@ import { Previews } from './Previews';
 import {
   ChainConfig,
   ChainConnectionDetails,
-  EverestResult,
+  EverestResultPromise,
   PermitParams,
   RouterActionParams,
   RoutingStepDetails,
@@ -222,13 +222,13 @@ export class Sdk {
   async getBorrowingVaultsFinancials(
     chainId: ChainId,
     account?: Address
-  ): Promise<EverestResult<VaultWithFinancials[]>> {
+  ): EverestResultPromise<VaultWithFinancials[]> {
     const chain = CHAIN[chainId];
     if (!chain.isDeployed) {
-      return {
-        success: false,
-        error: new EverestError(EverestErrorCode.SDK, `${chain.name} not deployed`),
-      };
+      return new EverestResultError(
+        EverestErrorCode.SDK,
+        `${chain.name} not deployed`
+      );
     }
     const vaults = VAULT_LIST[chainId].map((v) =>
       v.setConnection(this._configParams)
@@ -250,7 +250,7 @@ export class Sdk {
    */
   async getLlamaFinancials(
     vaults: VaultWithFinancials[]
-  ): Promise<EverestResult<VaultWithFinancials[]>> {
+  ): EverestResultPromise<VaultWithFinancials[]> {
     // fetch from DefiLlama
     const { defillamaproxy } = this._configParams;
     const uri = {
@@ -272,19 +272,13 @@ export class Sdk {
       const data = vaults.map((vault) =>
         this._getFinancialsFor(vault, pools, borrows)
       );
-      return {
-        success: true,
-        data,
-      };
+      return new EverestResultSuccess(data);
     } catch (e) {
       const message = axios.isAxiosError(e)
         ? `DefiLlama API call failed with a message: ${e.message}`
         : 'DefiLlama API call failed with an unexpected error!';
       console.error(message);
-      return {
-        success: false,
-        error: new EverestError(EverestErrorCode.LLAMA, message),
-      };
+      return new EverestResultError(EverestErrorCode.LLAMA, message);
     }
   }
 

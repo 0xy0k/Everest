@@ -7,9 +7,14 @@ import invariant from 'tiny-invariant';
 import { EverestErrorCode } from '../constants';
 import { EVEREST_ORACLE_ADDRESS } from '../constants/addresses';
 import { LENDING_PROVIDERS } from '../constants/lending-providers';
-import { Address, BorrowingVault, EverestError } from '../entities';
+import {
+  Address,
+  BorrowingVault,
+  EverestResultError,
+  EverestResultSuccess,
+} from '../entities';
 import { Chain } from '../entities/Chain';
-import { EverestResult, VaultWithFinancials } from '../types';
+import { EverestResultPromise, VaultWithFinancials } from '../types';
 import {
   EverestOracle__factory,
   ILendingProvider__factory,
@@ -104,7 +109,7 @@ export async function batchLoad(
   vaults: BorrowingVault[],
   account: Address | undefined,
   chain: Chain
-): Promise<EverestResult<VaultWithFinancials[]>> {
+): EverestResultPromise<VaultWithFinancials[]> {
   try {
     invariant(chain.connection, 'Chain connection not set!');
     invariant(
@@ -164,11 +169,11 @@ export async function batchLoad(
       return setResults(v, details, rates);
     });
 
-    return { success: true, data };
+    return new EverestResultSuccess(data);
   } catch (e: unknown) {
     const code =
       e instanceof String ? EverestErrorCode.SDK : EverestErrorCode.MULTICALL;
     const message = e instanceof Error ? e.message : String(e);
-    return { success: false, error: new EverestError(code, message) };
+    return new EverestResultError(code, message);
   }
 }
