@@ -111,13 +111,19 @@ export async function batchLoad(
   account: Address | undefined,
   chain: Chain
 ): EverestResultPromise<VaultWithFinancials[]> {
-  try {
-    invariant(chain.connection, 'Chain connection not set!');
-    invariant(
-      !vaults.find((v) => v.chainId !== chain.chainId),
-      'Vault from a different chain!'
+  if (!chain.connection) {
+    return new EverestResultError(EverestErrorCode.SDK, 'Chain connection not set!', {
+      chainId: chain.chainId,
+    });
+  }
+  if (vaults.find((v) => v.chainId !== chain.chainId)) {
+    return new EverestResultError(
+      EverestErrorCode.SDK,
+      'Vault from a different chain!',
+      { chainId: chain.chainId }
     );
-
+  }
+  try {
     const { multicallRpcProvider } = chain.connection;
     const oracle = EverestOracle__factory.multicall(
       EVEREST_ORACLE_ADDRESS[chain.chainId].value
@@ -172,7 +178,7 @@ export async function batchLoad(
 
     return new EverestResultSuccess(data);
   } catch (e: unknown) {
-    const { code, message } = EverestError.handleError(e, EverestErrorCode.MULTICALL);
-    return new EverestResultError(code, message);
+    const message = EverestError.messageFromUnknownError(e);
+    return new EverestResultError(EverestErrorCode.SDK, message);
   }
 }

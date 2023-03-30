@@ -176,11 +176,16 @@ export class Sdk {
     account: Address,
     chainId: ChainId
   ): EverestResultPromise<BigNumber[]> {
-    try {
-      invariant(
-        !tokens.find((t) => t.chainId !== chainId),
-        'Token from a different chain!'
+    if (tokens.find((t) => t.chainId === chainId)) {
+      return new EverestResultError(
+        EverestErrorCode.SDK,
+        'Token from a different chain!',
+        {
+          chainId,
+        }
       );
+    }
+    try {
       const { multicallRpcProvider } = this.getConnectionFor(chainId);
       const balances = tokens
         .map((token) => token.setConnection(this._configParams))
@@ -192,11 +197,8 @@ export class Sdk {
       const result = await multicallRpcProvider.all(balances);
       return new EverestResultSuccess(result);
     } catch (e) {
-      const { code, message } = EverestError.handleError(
-        e,
-        EverestErrorCode.MULTICALL
-      );
-      return new EverestResultError(code, message, { chainId });
+      const message = EverestError.messageFromUnknownError(e);
+      return new EverestResultError(EverestErrorCode.MULTICALL, message, { chainId });
     }
   }
 
