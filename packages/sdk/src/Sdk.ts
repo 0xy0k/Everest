@@ -177,7 +177,7 @@ export class Sdk {
     account: Address,
     chainId: ChainId
   ): EverestResultPromise<BigNumber[]> {
-    if (tokens.find((t) => t.chainId === chainId)) {
+    if (tokens.find((t) => t.chainId !== chainId)) {
       return new EverestResultError(
         EverestErrorCode.SDK,
         'Token from a different chain!',
@@ -377,18 +377,14 @@ export class Sdk {
 
     const actions = _actionParams.map(({ action }) => BigNumber.from(action));
     const result = _actionParams.map(encodeActionArgs);
-    const args: string[] = result
-      .filter((result): result is EverestResultSuccess<string> => result.success)
-      .map((result) => result.data);
 
-    if (args.length !== _actionParams.length) {
-      const error = result.find((r): r is EverestResultError => !r.success);
-      if (!error?.success)
-        return new EverestResultError(
-          error?.error.code ?? EverestErrorCode.SDK,
-          error?.error.message || 'Unknown error'
-        );
-    }
+    const error = result.find((r): r is EverestResultError => !r.success);
+    if (error)
+      return new EverestResultError(error.error.code, error.error.message);
+
+    const args: string[] = (result as EverestResultSuccess<string>[]).map(
+      (r) => r.data
+    );
 
     const callData =
       ConnextRouter__factory.createInterface().encodeFunctionData('xBundle', [
