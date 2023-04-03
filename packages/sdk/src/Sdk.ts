@@ -3,7 +3,6 @@ import { Signature } from '@ethersproject/bytes';
 import { TransactionRequest } from '@ethersproject/providers';
 import { Call } from '@hovoh/ethcall';
 import axios from 'axios';
-import invariant from 'tiny-invariant';
 
 import {
   CHAIN,
@@ -246,8 +245,8 @@ export class Sdk {
     const vaults = VAULT_LIST[chainId].map((v) =>
       v.setConnection(this._configParams)
     );
-    const res = await batchLoad(vaults, account, chain);
-    return res;
+    const data = await batchLoad(vaults, account, chain);
+    return data;
   }
 
   /**
@@ -402,18 +401,26 @@ export class Sdk {
   async watchTxStatus(
     transactionHash: string,
     steps: RoutingStepDetails[]
-  ): Promise<RoutingStepDetails[]> {
+  ): EverestResultPromise<RoutingStepDetails[]> {
     const srcChainId = steps[0].chainId;
     const chainType = CHAIN[srcChainId].chainType;
-    const transferId = await this.getTransferId(srcChainId, transactionHash);
+    const transferIdResult = await this.getTransferId(
+      srcChainId,
+      transactionHash
+    );
+    if (!transferIdResult.success) {
+      return transferIdResult;
+    }
+    const transferId = transferIdResult.data;
 
     const srcTxHash = Promise.resolve(transactionHash);
     const destTxHash = this.getDestTxHash(transferId ?? '', chainType);
 
-    return steps.map((step) => ({
+    const data = steps.map((step) => ({
       ...step,
       txHash: step.chainId === srcChainId ? srcTxHash : destTxHash,
     }));
+    return new EverestResultSuccess(data);
   }
 
   /**
@@ -425,13 +432,14 @@ export class Sdk {
   async getTransferId(
     chainId: ChainId,
     transactionHash: string
-  ): Promise<string | undefined> {
+  ): EverestResultPromise<string | undefined> {
     const { rpcProvider } = this.getConnectionFor(chainId);
     const receipt = await rpcProvider.waitForTransaction(transactionHash);
-    invariant(
-      !!receipt,
-      `Receipt not valid from tx with hash ${transactionHash}`
-    );
+    if (!receipt) {
+      return new EverestResultError(
+        `Receipt not valid from tx with hash ${transactionHash}`
+      );
+    }
     const blockHash = receipt.blockHash;
     const srcContract = ConnextRouter__factory.connect(
       CONNEXT_ROUTER_ADDRESS[chainId].value,
@@ -447,7 +455,7 @@ export class Sdk {
     )) {
       transferId = event.args[0];
     }
-    return transferId;
+    return new EverestResultSuccess(transferId);
   }
 
   /**
@@ -489,20 +497,27 @@ export class Sdk {
   async estimateRelayerFee(
     srcChainId: ChainId,
     destChainId: ChainId
-  ): Promise<BigNumber> {
+  ): EverestResultPromise<BigNumber> {
     const nxtp = await Nxtp.getOrCreate();
 
     const srcDomain = CHAIN[srcChainId].connextDomain;
     const destDomain = CHAIN[destChainId].connextDomain;
-    invariant(
-      srcDomain && destDomain,
-      'Estimaing fee for an unsupported by Connext chain!'
-    );
+    if (!srcDomain || !destDomain) {
+      return new EverestResultError(
+        'Estimaing fee for an unsupported by Connext chain!'
+      );
+    }
 
-    return nxtp.base.estimateRelayerFee({
-      originDomain: String(srcDomain),
-      destinationDomain: String(destDomain),
-    });
+    try {
+      const result = await nxtp.base.estimateRelayerFee({
+        originDomain: String(srcDomain),
+        destinationDomain: String(destDomain),
+      });
+      return new EverestResultSuccess(result);
+    } catch (e) {
+      const message = EverestError.messageFromUnknownError(e);
+      return new EverestResultError(message, EverestErrorCode.CONNEXT);
+    }
   }
 
   private _findVaultsByTokens(
