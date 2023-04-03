@@ -3,6 +3,7 @@ export * from './ChainConfig';
 export * from './ChainConnectionDetails';
 export * from './ChainTokenList';
 export * from './ChainVaultList';
+export * from './ConnextTxDetails';
 export * from './EverestResult';
 export * from './LendingProvider';
 export * from './MetaRoutingResult';
