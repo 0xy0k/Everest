@@ -179,8 +179,8 @@ export class Sdk {
   ): EverestResultPromise<BigNumber[]> {
     if (tokens.find((t) => t.chainId !== chainId)) {
       return new EverestResultError(
-        EverestErrorCode.SDK,
         'Token from a different chain!',
+        EverestErrorCode.SDK,
         {
           chainId,
         }
@@ -199,7 +199,7 @@ export class Sdk {
       return new EverestResultSuccess(result);
     } catch (e) {
       const message = EverestError.messageFromUnknownError(e);
-      return new EverestResultError(EverestErrorCode.MULTICALL, message, { chainId });
+      return new EverestResultError(message, EverestErrorCode.MULTICALL, { chainId });
     }
   }
 
@@ -241,10 +241,7 @@ export class Sdk {
   ): EverestResultPromise<VaultWithFinancials[]> {
     const chain = CHAIN[chainId];
     if (!chain.isDeployed) {
-      return new EverestResultError(
-        EverestErrorCode.SDK,
-        `${chain.name} not deployed`
-      );
+      return new EverestResultError(`${chain.name} not deployed`);
     }
     const vaults = VAULT_LIST[chainId].map((v) =>
       v.setConnection(this._configParams)
@@ -294,7 +291,7 @@ export class Sdk {
         ? `DefiLlama API call failed with a message: ${e.message}`
         : 'DefiLlama API call failed with an unexpected error!';
       console.error(message);
-      return new EverestResultError(EverestErrorCode.LLAMA, message);
+      return new EverestResultError(message, EverestErrorCode.LLAMA);
     }
   }
 
@@ -364,13 +361,9 @@ export class Sdk {
       permitAction.r = signature.r;
       permitAction.s = signature.s;
     } else if (permitAction && !signature) {
-      return new EverestResultError(
-        EverestErrorCode.SDK,
-        'You need to sign the permit action first!'
-      );
+      return new EverestResultError('You need to sign the permit action first!');
     } else if (!permitAction && signature) {
       return new EverestResultError(
-        EverestErrorCode.SDK,
         'No permit action although there is a signature!'
       );
     }
@@ -380,7 +373,7 @@ export class Sdk {
 
     const error = result.find((r): r is EverestResultError => !r.success);
     if (error)
-      return new EverestResultError(error.error.code, error.error.message);
+      return new EverestResultError(error.error.message, error.error.code);
 
     const args: string[] = (result as EverestResultSuccess<string>[]).map(
       (r) => r.data

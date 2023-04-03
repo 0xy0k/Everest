@@ -37,10 +37,7 @@ const getDetailsCalls = (
   oracle: EverestOracleMulticall
 ): EverestResult<Call<Detail>[]> => {
   if (!v.multicallContract) {
-    return new EverestResultError(
-      EverestErrorCode.SDK,
-      'BorrowingVault multicallContract not set!'
-    );
+    return new EverestResultError('BorrowingVault multicallContract not set!');
   }
 
   return new EverestResultSuccess([
@@ -66,10 +63,7 @@ const getDetailsCalls = (
 
 const getProvidersCalls = (v: BorrowingVault): EverestResult<Call<Rate>[]> => {
   if (!v.allProviders) {
-    return new EverestResultError(
-      EverestErrorCode.SDK,
-      'BorrowingVault allProviders not set!'
-    );
+    return new EverestResultError('BorrowingVault allProviders not set!');
   }
 
   return new EverestResultSuccess(
@@ -94,7 +88,6 @@ const setResults = (
 ): EverestResult<VaultWithFinancials> => {
   if (!v.activeProvider || !v.allProviders) {
     return new EverestResultError(
-      EverestErrorCode.SDK,
       'BorrowingVault activeProvider and allProviders not set!'
     );
   }
@@ -123,15 +116,17 @@ export async function batchLoad(
   chain: Chain
 ): EverestResultPromise<VaultWithFinancials[]> {
   if (!chain.connection) {
-    return new EverestResultError(EverestErrorCode.SDK, 'Chain connection not set!', {
+    return new EverestResultError('Chain connection not set!', EverestErrorCode.SDK, {
       chainId: chain.chainId,
     });
   }
   if (vaults.find((v) => v.chainId !== chain.chainId)) {
     return new EverestResultError(
-      EverestErrorCode.SDK,
       'Vault from a different chain!',
-      { chainId: chain.chainId }
+      EverestErrorCode.SDK,
+      {
+        chainId: chain.chainId,
+      }
     );
   }
   try {
@@ -143,7 +138,7 @@ export async function batchLoad(
     const batchResult = vaults.map((v) => getDetailsCalls(v, account, oracle));
     let error = batchResult.find((r): r is EverestResultError => !r.success);
     if (error)
-      return new EverestResultError(error.error.code, error.error.message);
+      return new EverestResultError(error.error.message, error.error.code);
 
     const detailsBatch = (
       batchResult as EverestResultSuccess<Call<Detail>[]>[]
@@ -166,7 +161,7 @@ export async function batchLoad(
     const ratesResult = vaults.map((v) => getProvidersCalls(v));
     error = ratesResult.find((r): r is EverestResultError => !r.success);
     if (error)
-      return new EverestResultError(error.error.code, error.error.message);
+      return new EverestResultError(error.error.message, error.error.code);
 
     const ratesBatch = (ratesResult as EverestResultSuccess<Call<Rate>[]>[]).map(
       (r) => r.data
@@ -201,7 +196,7 @@ export async function batchLoad(
     });
     error = result.find((r): r is EverestResultError => !r.success);
     if (error)
-      return new EverestResultError(error.error.code, error.error.message);
+      return new EverestResultError(error.error.message, error.error.code);
     const data = (result as EverestResultSuccess<VaultWithFinancials>[]).map(
       (r) => r.data
     );
@@ -209,6 +204,6 @@ export async function batchLoad(
     return new EverestResultSuccess(data);
   } catch (e: unknown) {
     const message = EverestError.messageFromUnknownError(e);
-    return new EverestResultError(EverestErrorCode.SDK, message);
+    return new EverestResultError(message);
   }
 }
