@@ -21,13 +21,14 @@ import {
   EverestResultError,
   EverestResultSuccess,
 } from './entities/EverestError';
-import { ChainId, ChainType, RouterAction } from './enums';
+import { ChainId, ChainType, ConnextTxStatus, RouterAction } from './enums';
 import { batchLoad, encodeActionArgs } from './functions';
 import { Nxtp } from './Nxtp';
 import { Previews } from './Previews';
 import {
   ChainConfig,
   ChainConnectionDetails,
+  ConnextTxDetails,
   EverestResult,
   EverestResultPromise,
   PermitParams,
@@ -485,6 +486,129 @@ export class Sdk {
 
       interval();
     });
+  }
+
+  /**
+   * Gets details for a cross-chain operation with Connext.
+   *
+   * @remarks
+   * The cross-chain operation is pending in the following cases and
+   * this method should be called again in a couple of seconds when
+   * returned status is `UNKNOWN` or `PENDING`.
+   *
+   * @param srcChainId - ID of the chain where the tx gets initiated.
+   * @param srcTxHash - hash of the tx on the source chain.
+   */
+  async getConnextTxDetails(
+    srcChainId: ChainId,
+    srcTxHash: string
+  ): EverestResultPromise<ConnextTxDetails> {
+    const nxtp = await Nxtp.getOrCreate();
+    const [connextTx] = await nxtp.utils
+      .getTransfers({ transactionHash: srcTxHash })
+      .catch((_) => []);
+
+    if (!connextTx) {
+      const transferId = await this.getTransferId(srcChainId, srcTxHash);
+      if (!transferId.success || transferId.data === undefined)
+        return new EverestResultError(
+          'Not cross-chain transaction',
+          EverestErrorCode.TX,
+          {
+            srcTxHash,
+          }
+        );
+      else
+        return new EverestResultSuccess({
+          status: ConnextTxStatus.UNKNOWN,
+          connextTransferId: transferId.data,
+        });
+    }
+
+    if (Number(connextTx.origin_chain) !== srcChainId) {
+      return new EverestResultError('Source chain mismatch', EverestErrorCode.SDK, {
+        paramSrcChainId: srcChainId,
+        connextSrcChainId: Number(connextTx.origin_chain),
+      });
+    }
+
+    const connextTransferId: string = connextTx.transfer_id;
+
+    if (connextTx.status === 'Reconciled' && connextTx.error_status) {
+      return new EverestResultError(
+        connextTx.error_status,
+        EverestErrorCode.CONNEXT,
+        { srcTxHash, connextTransferId }
+      );
+    }
+
+    const destTxHash: string | null = connextTx.execute_transaction_hash;
+    if (!destTxHash) {
+      return new EverestResultSuccess({
+        status: ConnextTxStatus.PENDING,
+        connextTransferId,
+      });
+    }
+
+    // check if XReceived was successful
+    const destChainId: ChainId = Number(connextTx.destination_chain);
+    const { rpcProvider } = this.getConnectionFor(destChainId);
+    const receipt = await rpcProvider.waitForTransaction(destTxHash);
+    if (!receipt)
+      return new EverestResultError('Receipt not valid', EverestErrorCode.TX, {
+        destTxHash,
+        connextTransferId,
+      });
+
+    // do operations (deposit, borrow, etc) on src chain and only transfer to dest chain
+    // in which case there's no calldata
+    if (connextTx.call_data === '0x') {
+      if (receipt.status === 1)
+        return new EverestResultSuccess({
+          status: ConnextTxStatus.EXECUTED,
+          connextTransferId,
+          destTxHash,
+        });
+      else
+        return new EverestResultError(
+          'Transaction reverted on destination chain',
+          EverestErrorCode.TX,
+          { destTxHash, connextTransferId }
+        );
+    }
+
+    // do operations on dest chain
+    const srcContract = ConnextRouter__factory.connect(
+      CONNEXT_ROUTER_ADDRESS[destChainId].value,
+      rpcProvider
+    );
+    const events = await srcContract.queryFilter(
+      srcContract.filters.XReceived(),
+      receipt.blockHash
+    );
+    const e = events.find((e) => e.transactionHash == destTxHash);
+
+    if (!e)
+      return new EverestResultError(
+        'Cannot find XReceived event',
+        EverestErrorCode.TX,
+        { destTxHash, connextTransferId }
+      );
+
+    // check if XReceived was successful
+    if (e?.args.success) {
+      return new EverestResultSuccess({
+        status: ConnextTxStatus.EXECUTED,
+        connextTransferId,
+        destTxHash,
+      });
+    } else {
+      return new EverestResultError(
+        'Transaction execution on destination chain failed',
+        EverestErrorCode.TX,
+        { destTxHash, connextTransferId }
+      );
+    }
   }
 
   /**
