@@ -510,10 +510,10 @@ export class Sdk {
 
     if (!connextTx) {
       const transferId = await this.getTransferId(srcChainId, srcTxHash);
-      if (!transferId)
+      if (!transferId.success || transferId.data === undefined)
         return new EverestResultError(
-          EverestErrorCode.TX,
           'Not cross-chain transaction',
+          EverestErrorCode.TX,
           {
             srcTxHash,
           }
@@ -521,12 +521,12 @@ export class Sdk {
       else
         return new EverestResultSuccess({
           status: ConnextTxStatus.UNKNOWN,
-          connextTransferId: transferId,
+          connextTransferId: transferId.data,
         });
     }
 
     if (Number(connextTx.origin_chain) !== srcChainId) {
-      return new EverestResultError(EverestErrorCode.SDK, 'Source chain mismatch', {
+      return new EverestResultError('Source chain mismatch', EverestErrorCode.SDK, {
         paramSrcChainId: srcChainId,
         connextSrcChainId: Number(connextTx.origin_chain),
       });
@@ -536,8 +536,8 @@ export class Sdk {
 
     if (connextTx.status === 'Reconciled' && connextTx.error_status) {
       return new EverestResultError(
-        EverestErrorCode.CONNEXT,
         connextTx.error_status,
+        EverestErrorCode.CONNEXT,
         { srcTxHash, connextTransferId }
       );
     }
@@ -555,7 +555,7 @@ export class Sdk {
     const { rpcProvider } = this.getConnectionFor(destChainId);
     const receipt = await rpcProvider.waitForTransaction(destTxHash);
     if (!receipt)
-      return new EverestResultError(EverestErrorCode.TX, 'Receipt not valid', {
+      return new EverestResultError('Receipt not valid', EverestErrorCode.TX, {
         destTxHash,
         connextTransferId,
       });
@@ -571,8 +571,8 @@ export class Sdk {
         });
       else
         return new EverestResultError(
-          EverestErrorCode.TX,
           'Transaction reverted on destination chain',
+          EverestErrorCode.TX,
           { destTxHash, connextTransferId }
         );
     }
@@ -590,8 +590,8 @@ export class Sdk {
 
     if (!e)
       return new EverestResultError(
-        EverestErrorCode.TX,
         'Cannot find XReceived event',
+        EverestErrorCode.TX,
         { destTxHash, connextTransferId }
       );
 
@@ -604,8 +604,8 @@ export class Sdk {
       });
     } else {
       return new EverestResultError(
-        EverestErrorCode.TX,
         'Transaction execution on destination chain failed',
+        EverestErrorCode.TX,
         { destTxHash, connextTransferId }
       );
     }
