@@ -1,7 +1,6 @@
 import { defaultAbiCoder } from '@ethersproject/abi';
 import { BigNumber } from 'ethers';
 
-import { EverestErrorCode } from '../constants';
 import { EverestResultError, EverestResultSuccess } from '../entities';
 import { RouterAction } from '../enums';
 import { EverestResult, RouterActionParams } from '../types';
@@ -41,10 +40,7 @@ export function encodeActionArgs(
     params.action === RouterAction.PERMIT_WITHDRAW
   ) {
     if (!(params.deadline && params.v && params.r && params.s)) {
-      return new EverestResultError(
-        EverestErrorCode.SDK,
-        'Missing args in PERMIT_BORROW!'
-      );
+      return new EverestResultError('Missing args in PERMIT_BORROW!');
     }
     result = defaultAbiCoder.encode(
       [
@@ -87,7 +83,7 @@ export function encodeActionArgs(
     const innerResult = params.innerActions.map(encodeActionArgs);
     const error = innerResult.find((r): r is EverestResultError => !r.success);
     if (error)
-      return new EverestResultError(error.error.code, error.error.message);
+      return new EverestResultError(error.error.message, error.error.code);
 
     const innerArgs: string[] = (
       innerResult as EverestResultSuccess<string>[]
@@ -108,7 +104,7 @@ export function encodeActionArgs(
       ]
     );
   } else {
-    return new EverestResultError(EverestErrorCode.SDK, 'Unsupported action!');
+    return new EverestResultError('Unsupported action!');
   }
 
   return new EverestResultSuccess(result);
