@@ -3,7 +3,6 @@ import { Signature } from '@ethersproject/bytes';
 import { TransactionRequest } from '@ethersproject/providers';
 import { Call } from '@hovoh/ethcall';
 import axios from 'axios';
-import invariant from 'tiny-invariant';
 
 import {
   CHAIN,
@@ -11,18 +10,27 @@ import {
   CONNEXT_ROUTER_ADDRESS,
   CONNEXT_URL,
   DEBT_LIST,
+  EverestErrorCode,
   URLS,
   VAULT_LIST,
 } from './constants';
 import { Address, Currency, Token } from './entities';
 import { BorrowingVault } from './entities/BorrowingVault';
-import { ChainId, ChainType, RouterAction } from './enums';
+import {
+  EverestError,
+  EverestResultError,
+  EverestResultSuccess,
+} from './entities/EverestError';
+import { ChainId, ChainType, ConnextTxStatus, RouterAction } from './enums';
 import { batchLoad, encodeActionArgs } from './functions';
 import { Nxtp } from './Nxtp';
 import { Previews } from './Previews';
 import {
   ChainConfig,
   ChainConnectionDetails,
+  ConnextTxDetails,
+  EverestResult,
+  EverestResultPromise,
   PermitParams,
   RouterActionParams,
   RoutingStepDetails,
@@ -164,24 +172,35 @@ export class Sdk {
    * @param account - user address, wrapped in {@link Address}
    * @param chainId - ID of the chain
    */
-  getTokenBalancesFor(
+  async getTokenBalancesFor(
     tokens: Token[],
     account: Address,
     chainId: ChainId
-  ): Promise<BigNumber[]> {
-    invariant(
-      !tokens.find((t) => t.chainId !== chainId),
-      'Token from a different chain!'
-    );
-    const { multicallRpcProvider } = this.getConnectionFor(chainId);
-    const balances = tokens
-      .map((token) => token.setConnection(this._configParams))
-      .map(
-        (token) =>
-          token.multicallContract?.balanceOf(account.value) as Call<BigNumber>
+  ): EverestResultPromise<BigNumber[]> {
+    if (tokens.find((t) => t.chainId !== chainId)) {
+      return new EverestResultError(
+        'Token from a different chain!',
+        EverestErrorCode.SDK,
+        {
+          chainId,
+        }
       );
+    }
+    try {
+      const { multicallRpcProvider } = this.getConnectionFor(chainId);
+      const balances = tokens
+        .map((token) => token.setConnection(this._configParams))
+        .map(
+          (token) =>
+            token.multicallContract?.balanceOf(account.value) as Call<BigNumber>
+        );
 
-    return multicallRpcProvider.all(balances);
+      const result = await multicallRpcProvider.all(balances);
+      return new EverestResultSuccess(result);
+    } catch (e) {
+      const message = EverestError.messageFromUnknownError(e);
+      return new EverestResultError(message, EverestErrorCode.MULTICALL, { chainId });
+    }
   }
 
   /**
@@ -213,28 +232,22 @@ export class Sdk {
    * This methods serves to pre-fetch and loads only partially the financials.
    * It's recommended to call afterwards "getLlamaFinancials()".
    *
+   * @param chainId - ID of the chain
    * @param account - {@link Address} for the user
-   * @param chainType - for type of chains: mainnet or testnet
    */
   async getBorrowingVaultsFinancials(
-    account?: Address,
-    chainType: ChainType = ChainType.MAINNET
-  ): Promise<VaultWithFinancials[]> {
-    const res: VaultWithFinancials[] = [];
-    const chains = Object.values(CHAIN)
-      .filter((c) => c.chainType === chainType && c.isDeployed)
-      .map((c) => c.setConnection(this._configParams));
-
-    for (const chain of chains) {
-      const chainId = chain.chainId;
-      const vaults = VAULT_LIST[chainId].map((v) =>
-        v.setConnection(this._configParams)
-      );
-      const v = await batchLoad(vaults, account, chain);
-      res.push(...v);
+    chainId: ChainId,
+    account?: Address
+  ): EverestResultPromise<VaultWithFinancials[]> {
+    const chain = CHAIN[chainId];
+    if (!chain.isDeployed) {
+      return new EverestResultError(`${chain.name} not deployed`);
     }
-
-    return res;
+    const vaults = VAULT_LIST[chainId].map((v) =>
+      v.setConnection(this._configParams)
+    );
+    const data = await batchLoad(vaults, account, chain);
+    return data;
   }
 
   /**
@@ -250,7 +263,7 @@ export class Sdk {
    */
   async getLlamaFinancials(
     vaults: VaultWithFinancials[]
-  ): Promise<VaultWithFinancials[]> {
+  ): EverestResultPromise<VaultWithFinancials[]> {
     // fetch from DefiLlama
     const { defillamaproxy } = this._configParams;
     const uri = {
@@ -269,18 +282,17 @@ export class Sdk {
           .then(({ data }) => data.data),
       ]);
 
-      return vaults.map((vault) =>
+      const data = vaults.map((vault) =>
         this._getFinancialsFor(vault, pools, borrows)
       );
+      return new EverestResultSuccess(data);
     } catch (e) {
-      if (axios.isAxiosError(e)) {
-        console.error(`DefiLlama API call failed with a message: ${e.message}`);
-      } else {
-        console.error('DefiLlama API call failed with an unexpected error!');
-      }
+      const message = axios.isAxiosError(e)
+        ? `DefiLlama API call failed with a message: ${e.message}`
+        : 'DefiLlama API call failed with an unexpected error!';
+      console.error(message);
+      return new EverestResultError(message, EverestErrorCode.LLAMA);
     }
-
-    return vaults;
   }
 
   /**
@@ -339,7 +351,7 @@ export class Sdk {
     srcChainId: ChainId,
     account: Address,
     signature?: Signature
-  ): TransactionRequest {
+  ): EverestResult<TransactionRequest> {
     // dummy copy actionParams because of the immutabiltiy of Immer
     const _actionParams = actionParams.map((a) => ({ ...a }));
     const permitAction = Sdk.findPermitAction(_actionParams);
@@ -349,25 +361,36 @@ export class Sdk {
       permitAction.r = signature.r;
       permitAction.s = signature.s;
     } else if (permitAction && !signature) {
-      invariant(true, 'You need to sign the permit action first!');
+      return new EverestResultError('You need to sign the permit action first!');
     } else if (!permitAction && signature) {
-      invariant(true, 'No permit action although there is a signature!');
+      return new EverestResultError(
+        'No permit action although there is a signature!'
+      );
     }
 
     const actions = _actionParams.map(({ action }) => BigNumber.from(action));
-    const args = _actionParams.map(encodeActionArgs);
+    const result = _actionParams.map(encodeActionArgs);
+
+    const error = result.find((r): r is EverestResultError => !r.success);
+    if (error)
+      return new EverestResultError(error.error.message, error.error.code);
+
+    const args: string[] = (result as EverestResultSuccess<string>[]).map(
+      (r) => r.data
+    );
+
     const callData =
       ConnextRouter__factory.createInterface().encodeFunctionData('xBundle', [
         actions,
         args,
       ]);
 
-    return {
+    return new EverestResultSuccess({
       from: account.value,
       to: CONNEXT_ROUTER_ADDRESS[srcChainId].value,
       data: callData,
       chainId: srcChainId,
-    };
+    });
   }
 
   /**
@@ -379,18 +402,26 @@ export class Sdk {
   async watchTxStatus(
     transactionHash: string,
     steps: RoutingStepDetails[]
-  ): Promise<RoutingStepDetails[]> {
+  ): EverestResultPromise<RoutingStepDetails[]> {
     const srcChainId = steps[0].chainId;
     const chainType = CHAIN[srcChainId].chainType;
-    const transferId = await this.getTransferId(srcChainId, transactionHash);
+    const transferIdResult = await this.getTransferId(
+      srcChainId,
+      transactionHash
+    );
+    if (!transferIdResult.success) {
+      return transferIdResult;
+    }
+    const transferId = transferIdResult.data;
 
     const srcTxHash = Promise.resolve(transactionHash);
     const destTxHash = this.getDestTxHash(transferId ?? '', chainType);
 
-    return steps.map((step) => ({
+    const data = steps.map((step) => ({
       ...step,
       txHash: step.chainId === srcChainId ? srcTxHash : destTxHash,
     }));
+    return new EverestResultSuccess(data);
   }
 
   /**
@@ -402,13 +433,14 @@ export class Sdk {
   async getTransferId(
     chainId: ChainId,
     transactionHash: string
-  ): Promise<string | undefined> {
+  ): EverestResultPromise<string | undefined> {
     const { rpcProvider } = this.getConnectionFor(chainId);
     const receipt = await rpcProvider.waitForTransaction(transactionHash);
-    invariant(
-      !!receipt,
-      `Receipt not valid from tx with hash ${transactionHash}`
-    );
+    if (!receipt) {
+      return new EverestResultError(
+        `Receipt not valid from tx with hash ${transactionHash}`
+      );
+    }
     const blockHash = receipt.blockHash;
     const srcContract = ConnextRouter__factory.connect(
       CONNEXT_ROUTER_ADDRESS[chainId].value,
@@ -424,7 +456,7 @@ export class Sdk {
     )) {
       transferId = event.args[0];
     }
-    return transferId;
+    return new EverestResultSuccess(transferId);
   }
 
   /**
@@ -457,6 +489,129 @@ export class Sdk {
   }
 
   /**
+   * Gets details for a cross-chain operation with Connext.
+   *
+   * @remarks
+   * The cross-chain operation is pending in the following cases and
+   * this method should be called again in a couple of seconds when
+   * returned status is `UNKNOWN` or `PENDING`.
+   *
+   * @param srcChainId - ID of the chain where the tx gets initiated.
+   * @param srcTxHash - hash of the tx on the source chain.
+   */
+  async getConnextTxDetails(
+    srcChainId: ChainId,
+    srcTxHash: string
+  ): EverestResultPromise<ConnextTxDetails> {
+    const nxtp = await Nxtp.getOrCreate();
+    const [connextTx] = await nxtp.utils
+      .getTransfers({ transactionHash: srcTxHash })
+      .catch((_) => []);
+
+    if (!connextTx) {
+      const transferId = await this.getTransferId(srcChainId, srcTxHash);
+      if (!transferId.success || transferId.data === undefined)
+        return new EverestResultError(
+          'Not cross-chain transaction',
+          EverestErrorCode.TX,
+          {
+            srcTxHash,
+          }
+        );
+      else
+        return new EverestResultSuccess({
+          status: ConnextTxStatus.UNKNOWN,
+          connextTransferId: transferId.data,
+        });
+    }
+
+    if (Number(connextTx.origin_chain) !== srcChainId) {
+      return new EverestResultError('Source chain mismatch', EverestErrorCode.SDK, {
+        paramSrcChainId: srcChainId,
+        connextSrcChainId: Number(connextTx.origin_chain),
+      });
+    }
+
+    const connextTransferId: string = connextTx.transfer_id;
+
+    if (connextTx.status === 'Reconciled' && connextTx.error_status) {
+      return new EverestResultError(
+        connextTx.error_status,
+        EverestErrorCode.CONNEXT,
+        { srcTxHash, connextTransferId }
+      );
+    }
+
+    const destTxHash: string | null = connextTx.execute_transaction_hash;
+    if (!destTxHash) {
+      return new EverestResultSuccess({
+        status: ConnextTxStatus.PENDING,
+        connextTransferId,
+      });
+    }
+
+    // check if XReceived was successful
+    const destChainId: ChainId = Number(connextTx.destination_chain);
+    const { rpcProvider } = this.getConnectionFor(destChainId);
+    const receipt = await rpcProvider.waitForTransaction(destTxHash);
+    if (!receipt)
+      return new EverestResultError('Receipt not valid', EverestErrorCode.TX, {
+        destTxHash,
+        connextTransferId,
+      });
+
+    // do operations (deposit, borrow, etc) on src chain and only transfer to dest chain
+    // in which case there's no calldata
+    if (connextTx.call_data === '0x') {
+      if (receipt.status === 1)
+        return new EverestResultSuccess({
+          status: ConnextTxStatus.EXECUTED,
+          connextTransferId,
+          destTxHash,
+        });
+      else
+        return new EverestResultError(
+          'Transaction reverted on destination chain',
+          EverestErrorCode.TX,
+          { destTxHash, connextTransferId }
+        );
+    }
+
+    // do operations on dest chain
+    const srcContract = ConnextRouter__factory.connect(
+      CONNEXT_ROUTER_ADDRESS[destChainId].value,
+      rpcProvider
+    );
+    const events = await srcContract.queryFilter(
+      srcContract.filters.XReceived(),
+      receipt.blockHash
+    );
+    const e = events.find((e) => e.transactionHash == destTxHash);
+
+    if (!e)
+      return new EverestResultError(
+        'Cannot find XReceived event',
+        EverestErrorCode.TX,
+        { destTxHash, connextTransferId }
+      );
+
+    // check if XReceived was successful
+    if (e?.args.success) {
+      return new EverestResultSuccess({
+        status: ConnextTxStatus.EXECUTED,
+        connextTransferId,
+        destTxHash,
+      });
+    } else {
+      return new EverestResultError(
+        'Transaction execution on destination chain failed',
+        EverestErrorCode.TX,
+        { destTxHash, connextTransferId }
+      );
+    }
+  }
+
+  /**
    * Estimates the fee to be paid to a destination chain relayer
    * for the tx to get settled.
    *
@@ -466,20 +621,27 @@ export class Sdk {
   async estimateRelayerFee(
     srcChainId: ChainId,
     destChainId: ChainId
-  ): Promise<BigNumber> {
+  ): EverestResultPromise<BigNumber> {
     const nxtp = await Nxtp.getOrCreate();
 
     const srcDomain = CHAIN[srcChainId].connextDomain;
     const destDomain = CHAIN[destChainId].connextDomain;
-    invariant(
-      srcDomain && destDomain,
-      'Estimaing fee for an unsupported by Connext chain!'
-    );
+    if (!srcDomain || !destDomain) {
+      return new EverestResultError(
+        'Estimaing fee for an unsupported by Connext chain!'
+      );
+    }
 
-    return nxtp.base.estimateRelayerFee({
-      originDomain: String(srcDomain),
-      destinationDomain: String(destDomain),
-    });
+    try {
+      const result = await nxtp.base.estimateRelayerFee({
+        originDomain: String(srcDomain),
+        destinationDomain: String(destDomain),
+      });
+      return new EverestResultSuccess(result);
+    } catch (e) {
+      const message = EverestError.messageFromUnknownError(e);
+      return new EverestResultError(message, EverestErrorCode.CONNEXT);
+    }
   }
 
   private _findVaultsByTokens(
