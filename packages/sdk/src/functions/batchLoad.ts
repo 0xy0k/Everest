@@ -4,7 +4,7 @@ import { formatUnits } from '@ethersproject/units';
 import { Call } from '@hovoh/ethcall';
 
 import { EverestErrorCode } from '../constants';
-import { EVEREST_ORACLE_ADDRESS } from '../constants/addresses';
+import { CHIEF_ADDRESS, EVEREST_ORACLE_ADDRESS } from '../constants/addresses';
 import { LENDING_PROVIDERS } from '../constants/lending-providers';
 import {
   Address,
@@ -16,13 +16,15 @@ import {
 import { Chain } from '../entities/Chain';
 import { EverestResult, EverestResultPromise, VaultWithFinancials } from '../types';
 import {
+  Chief__factory,
   EverestOracle__factory,
   ILendingProvider__factory,
 } from '../types/contracts';
+import { ChiefMulticall } from '../types/contracts/src/Chief';
 import { EverestOracleMulticall } from '../types/contracts/src/EverestOracle';
 
 // number of details calls per vault
-const N_CALLS = 9;
+const N_CALLS = 10;
 
 type Detail = BigNumber | string | string[];
 type Rate = BigNumber;
@@ -34,7 +36,8 @@ const rateToFloat = (n: BigNumber) =>
 const getDetailsCalls = (
   v: BorrowingVault,
   account: Address | undefined,
-  oracle: EverestOracleMulticall
+  oracle: EverestOracleMulticall,
+  chief: ChiefMulticall
 ): EverestResult<Call<Detail>[]> => {
   if (!v.multicallContract) {
     return new EverestResultError('BorrowingVault multicallContract not set!');
@@ -46,6 +49,7 @@ const getDetailsCalls = (
     v.multicallContract.name() as Call<string>,
     v.multicallContract.activeProvider() as Call<string>,
     v.multicallContract.getProviders() as Call<string[]>,
+    chief.vaultSafetyRating(v.address.value),
     v.multicallContract.balanceOfAsset(
       account?.value ?? AddressZero
     ) as Call<BigNumber>,
@@ -134,8 +138,11 @@ export async function batchLoad(
     const oracle = EverestOracle__factory.multicall(
       EVEREST_ORACLE_ADDRESS[chain.chainId].value
     );
+    const chief = Chief__factory.multicall(CHIEF_ADDRESS[chain.chainId].value);
 
-    const batchResult = vaults.map((v) => getDetailsCalls(v, account, oracle));
+    const batchResult = vaults.map((v) =>
+      getDetailsCalls(v, account, oracle, chief)
+    );
     let error = batchResult.find((r): r is EverestResultError => !r.success);
     if (error)
       return new EverestResultError(error.error.message, error.error.code);
@@ -155,7 +162,15 @@ export async function batchLoad(
       const name = detailsBatchResults[N_CALLS * i + 2] as string;
       const activeProvider = detailsBatchResults[N_CALLS * i + 3] as string;
       const allProviders = detailsBatchResults[N_CALLS * i + 4] as string[];
-      v.setPreLoads(maxLtv, liqRatio, name, activeProvider, allProviders);
+      const safetyRating = detailsBatchResults[N_CALLS * i + 5] as BigNumber;
+      v.setPreLoads(
+        maxLtv,
+        liqRatio,
+        safetyRating,
+        name,
+        activeProvider,
+        allProviders
+      );
     });
 
     const ratesResult = vaults.map((v) => getProvidersCalls(v));
