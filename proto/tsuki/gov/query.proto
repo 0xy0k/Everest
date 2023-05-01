@@ -9,6 +9,7 @@ import "tsuki/gov/role.proto";
 import "tsuki/gov/execution_fee.proto";
 import "tsuki/gov/network_properties.proto";
 import "tsuki/gov/proposal.proto";
+import "tsuki/gov/poll.proto";
 import "tsuki/gov/identity_registrar.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
@@ -125,27 +126,54 @@ service Query {
   rpc ProposalDuration(QueryProposalDuration) returns (QueryProposalDurationResponse) {
     option (google.api.http).get = "/tsuki/gov/proposal_duration/{proposal_type}";
   }
-  // QueryCouncilorslist - all councilors (waiting or not), including their corresponding statuses,
+  // Councilors - all councilors (waiting or not), including their corresponding statuses,
   // ranks & abstenation counters - add sub-query to search by specific TSUKI address
-  rpc QueryCouncilors(QueryCouncilors) returns (QueryCouncilorsResponse) {
+  rpc Councilors(QueryCouncilors) returns (QueryCouncilorsResponse) {
     option (google.api.http).get = "/tsuki/gov/councilors/{address}";
   }
-  // QueryNonCouncilors - list all governance members that are NOT Councilors
-  rpc QueryNonCouncilors(QueryNonCouncilors) returns (QueryNonCouncilorsResponse) {
+  // NonCouncilors - list all governance members that are NOT Councilors
+  rpc NonCouncilors(QueryNonCouncilors) returns (QueryNonCouncilorsResponse) {
     option (google.api.http).get = "/tsuki/gov/non_councilors";
   }
-  // QueryAddressesByWhitelistedPermission - list all TSUKI addresses by a specific whitelisted permission (address does NOT have to be a Councilor)
-  rpc QueryAddressesByWhitelistedPermission(QueryAddressesByWhitelistedPermission) returns (QueryAddressesByWhitelistedPermissionResponse) {
+  // AddressesByWhitelistedPermission - list all TSUKI addresses by a specific whitelisted permission (address does NOT have to be a Councilor)
+  rpc AddressesByWhitelistedPermission(QueryAddressesByWhitelistedPermission) returns (QueryAddressesByWhitelistedPermissionResponse) {
     option (google.api.http).get = "/tsuki/gov/addresses_by_whitelisted_permission/{permission}";
   }
-  // QueryAddressesByBlacklistedPermission - list all TSUKI addresses by a specific blacklisted permission (address does NOT have to be a Councilor)
-  rpc QueryAddressesByBlacklistedPermission(QueryAddressesByBlacklistedPermission) returns (QueryAddressesByBlacklistedPermissionResponse) {
+  // AddressesByBlacklistedPermission - list all TSUKI addresses by a specific blacklisted permission (address does NOT have to be a Councilor)
+  rpc AddressesByBlacklistedPermission(QueryAddressesByBlacklistedPermission) returns (QueryAddressesByBlacklistedPermissionResponse) {
     option (google.api.http).get = "/tsuki/gov/addresses_by_blacklisted_permission/{permission}";
   }
-  // QueryAddressesByWhitelistedRole - list all tsuki addresses by a specific whitelisted role (address does NOT have to be a Councilor)
-  rpc QueryAddressesByWhitelistedRole(QueryAddressesByWhitelistedRole) returns (QueryAddressesByWhitelistedRoleResponse) {
+  // AddressesByWhitelistedRole - list all tsuki addresses by a specific whitelisted role (address does NOT have to be a Councilor)
+  rpc AddressesByWhitelistedRole(QueryAddressesByWhitelistedRole) returns (QueryAddressesByWhitelistedRoleResponse) {
     option (google.api.http).get = "/tsuki/gov/addresses_by_whitelisted_role/{role}";
   }
+  //Query list of all polls by address
+  rpc PollsListByAddress(QueryPollsListByAddress) returns (QueryPollsListByAddressResponse) {
+    option (google.api.http).get = "/tsuki/gov/proposal_polls/{creator}";
+  }
+
+  rpc PollsVotesByPollId(QueryPollsVotesByPollId) returns (QueryPollsVotesByPollIdResponse) {
+    option (google.api.http).get = "/tsuki/gov/proposal_poll/votes/{poll_id}";
+  }
+}
+
+message QueryPollsVotesByPollId {
+  uint64 poll_id = 1;
+}
+
+message QueryPollsVotesByPollIdResponse {
+  repeated PollVote votes = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPollsListByAddress {
+  bytes creator = 1 [
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+}
+
+message QueryPollsListByAddressResponse {
+  repeated tsuki.gov.Poll polls = 1 [(gogoproto.nullable) = false];
 }
 
 message NetworkPropertiesRequest {}

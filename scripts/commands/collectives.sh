@@ -18,7 +18,7 @@ tsukid tx multistaking upsert-staking-pool tsukivaloper1ak6c3jl4svl5vw5y9xu3yrq4
 tsukid tx multistaking delegate tsukivaloper1ak6c3jl4svl5vw5y9xu3yrq4susvkckwurn4sc 10000000000000ukex --from=validator --keyring-backend=test --fees=100ukex --chain-id=testing -y --broadcast-mode=block
 
 ## create dynamic spending pool
-tsukid tx spending create-spending-pool --name="UserIncentivesPool" --claim-start=$(($(date -u +%s))) --claim-end=0 --rates=0.1ukex --vote-quorum="33" --vote-period="60" --vote-enactment="30" --owner-roles="" --owner-accounts=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --beneficiary-roles="1" --beneficiary-role-weights="1" --beneficiary-accounts="" --beneficiary-account-weights="" --dynamic-rate=true --dynamic-rate-period=43200 --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes  --broadcast-mode=block 
+tsukid tx spending create-spending-pool --name="UserIncentivesPool" --claim-start=$(($(date -u +%s))) --claim-end=0 --claim-expiry=43200 --rates=0.1ukex --vote-quorum="33" --vote-period="60" --vote-enactment="30" --owner-roles="" --owner-accounts=$(tsukid keys show -a validator --keyring-backend=test --home=$HOME/.tsukid) --beneficiary-roles="1" --beneficiary-role-weights="1" --beneficiary-accounts="" --beneficiary-account-weights="" --dynamic-rate=true --dynamic-rate-period=43200 --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes  --broadcast-mode=block 
 
 ## register as beneficiary
 tsukid tx spending register-spending-pool-beneficiary --name="UserIncentivesPool" --from=validator --chain-id=testing --fees=100ukex --keyring-backend=test --home=$HOME/.tsukid --yes --broadcast-mode=block 
