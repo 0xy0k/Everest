@@ -2,29 +2,29 @@
 pragma solidity 0.8.15;
 
 /**
- * @title RadiantArbitrum
+ * @title AaveV3Optimism
  *
  * @author Everest
  *
- * @notice This contract allows interaction with Radiant.
+ * @notice This contract allows interaction with AaveV3.
  */
 
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {IVault} from "../../interfaces/IVault.sol";
 import {ILendingProvider} from "../../interfaces/ILendingProvider.sol";
-import {IV2Pool} from "../../interfaces/aaveV2/IV2Pool.sol";
+import {IV3Pool} from "../../interfaces/aaveV3/IV3Pool.sol";
 
-contract RadiantArbitrum is ILendingProvider {
+contract AaveV3 is ILendingProvider {
   /**
-   * @dev Returns the {IV2Pool} pool to interact with Radiant.
+   * @dev Returns the {IV3Pool} pool to interact with AaveV3
    */
-  function _getPool() internal pure returns (IV2Pool) {
-    return IV2Pool(0xF4B1486DD74D07706052A33d31d7c0AAFD0659E1);
+  function _getPool() internal pure returns (IV3Pool) {
+    return IV3Pool(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
   }
 
   /// @inheritdoc ILendingProvider
   function providerName() public pure override returns (string memory) {
-    return "Radiant_V2_Arbitrum";
+    return "Aave_V3";
   }
 
   /// @inheritdoc ILendingProvider
@@ -43,44 +43,45 @@ contract RadiantArbitrum is ILendingProvider {
 
   /// @inheritdoc ILendingProvider
   function deposit(uint256 amount, IVault vault) external override returns (bool success) {
-    IV2Pool aave = _getPool();
-    aave.deposit(vault.asset(), amount, address(vault), 0);
-    // aave.setUserUseReserveAsCollateral(asset, true);
+    IV3Pool aave = _getPool();
+    address asset = vault.asset();
+    aave.supply(asset, amount, address(vault), 0);
+    aave.setUserUseReserveAsCollateral(asset, true);
     success = true;
   }
 
   /// @inheritdoc ILendingProvider
   function borrow(uint256 amount, IVault vault) external override returns (bool success) {
-    IV2Pool aave = _getPool();
+    IV3Pool aave = _getPool();
     aave.borrow(vault.debtAsset(), amount, 2, 0, address(vault));
     success = true;
   }
 
   /// @inheritdoc ILendingProvider
   function withdraw(uint256 amount, IVault vault) external override returns (bool success) {
-    IV2Pool aave = _getPool();
+    IV3Pool aave = _getPool();
     aave.withdraw(vault.asset(), amount, address(vault));
     success = true;
   }
 
   /// @inheritdoc ILendingProvider
   function payback(uint256 amount, IVault vault) external override returns (bool success) {
-    IV2Pool aave = _getPool();
+    IV3Pool aave = _getPool();
     aave.repay(vault.debtAsset(), amount, 2, address(vault));
     success = true;
   }
 
   /// @inheritdoc ILendingProvider
   function getDepositRateFor(IVault vault) external view override returns (uint256 rate) {
-    IV2Pool aaveData = _getPool();
-    IV2Pool.ReserveData memory rdata = aaveData.getReserveData(vault.asset());
+    IV3Pool aaveData = _getPool();
+    IV3Pool.ReserveData memory rdata = aaveData.getReserveData(vault.asset());
     rate = rdata.currentLiquidityRate;
   }
 
   /// @inheritdoc ILendingProvider
   function getBorrowRateFor(IVault vault) external view override returns (uint256 rate) {
-    IV2Pool aaveData = _getPool();
-    IV2Pool.ReserveData memory rdata = aaveData.getReserveData(vault.debtAsset());
+    IV3Pool aaveData = _getPool();
+    IV3Pool.ReserveData memory rdata = aaveData.getReserveData(vault.debtAsset());
     rate = rdata.currentVariableBorrowRate;
   }
 
@@ -94,8 +95,8 @@ contract RadiantArbitrum is ILendingProvider {
     override
     returns (uint256 balance)
   {
-    IV2Pool aaveData = _getPool();
-    IV2Pool.ReserveData memory rdata = aaveData.getReserveData(vault.asset());
+    IV3Pool aaveData = _getPool();
+    IV3Pool.ReserveData memory rdata = aaveData.getReserveData(vault.asset());
     balance = IERC20(rdata.aTokenAddress).balanceOf(user);
   }
 
@@ -109,8 +110,8 @@ contract RadiantArbitrum is ILendingProvider {
     override
     returns (uint256 balance)
   {
-    IV2Pool aaveData = _getPool();
-    IV2Pool.ReserveData memory rdata = aaveData.getReserveData(vault.debtAsset());
+    IV3Pool aaveData = _getPool();
+    IV3Pool.ReserveData memory rdata = aaveData.getReserveData(vault.debtAsset());
     balance = IERC20(rdata.variableDebtTokenAddress).balanceOf(user);
   }
 }
