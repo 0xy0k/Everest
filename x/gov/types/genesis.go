@@ -228,7 +228,7 @@ func DefaultGenesis() *GenesisState {
 				tsukitypes.MsgTypeBlacklistPermissions,
 				tsukitypes.MsgTypeCreateRole,
 				tsukitypes.MsgTypeAssignRole,
-				tsukitypes.MsgTypeRemoveRole,
+				tsukitypes.MsgTypeUnassignRole,
 				tsukitypes.MsgTypeWhitelistRolePermission,
 				tsukitypes.MsgTypeBlacklistRolePermission,
 				tsukitypes.MsgTypeRemoveWhitelistRolePermission,
