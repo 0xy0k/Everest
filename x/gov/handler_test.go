@@ -1944,7 +1944,7 @@ func TestHandler_SetProposalDurationsProposal(t *testing.T) {
 	})
 
 	proposal := types.NewSetProposalDurationsProposal(
-		[]string{tsukitypes.CreateRoleProposalType, tsukitypes.SetNetworkPropertyProposalType},
+		[]string{tsukitypes.ProposalTypeCreateRole, tsukitypes.ProposalTypeSetNetworkProperty},
 		[]uint64{1200, 2400}, // 20 min, 40min
 	)
 
@@ -1952,9 +1952,9 @@ func TestHandler_SetProposalDurationsProposal(t *testing.T) {
 	err := router.ApplyProposal(ctx, 1, proposal, sdk.ZeroDec())
 	require.NoError(t, err)
 
-	duration := app.CustomGovKeeper.GetProposalDuration(ctx, tsukitypes.CreateRoleProposalType)
+	duration := app.CustomGovKeeper.GetProposalDuration(ctx, tsukitypes.ProposalTypeCreateRole)
 	require.Equal(t, duration, uint64(1200))
 
-	duration = app.CustomGovKeeper.GetProposalDuration(ctx, tsukitypes.SetNetworkPropertyProposalType)
+	duration = app.CustomGovKeeper.GetProposalDuration(ctx, tsukitypes.ProposalTypeSetNetworkProperty)
 	require.Equal(t, duration, uint64(2400))
 }
