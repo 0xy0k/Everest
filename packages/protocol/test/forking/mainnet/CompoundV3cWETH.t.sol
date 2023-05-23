@@ -44,7 +44,7 @@ contract CompoundV3ForkingTest is Routines, ForkingSetup {
             debtAsset,
             address(oracle),
             address(chief),
-            'Everest-V2 WETH-USDC Vault Shares',
+            'Everest-V2 WSTETH-WETH Vault Shares',
             'fv2WETHUSDC',
             providers,
             DEFAULT_MAX_LTV,
