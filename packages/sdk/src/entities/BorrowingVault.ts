@@ -18,7 +18,7 @@ import {
 import { LENDING_PROVIDERS } from '../constants/lending-providers';
 import { ChainId, RouterAction } from '../enums';
 import {
-  AprStat,
+  AprResult,
   ChainConfig,
   ChainConnectionDetails,
   EverestResultPromise,
@@ -345,9 +345,7 @@ export class BorrowingVault {
    *
    * @param token - the collateral or the debt token of the vault {@link Token}
    */
-  async getProvidersStatsFor(
-    token: Token
-  ): EverestResultPromise<{ name: string; aprStats: AprStat[] }[]> {
+  async getProvidersStatsFor(token: Token): EverestResultPromise<AprResult[]> {
     if (token.equals(this.collateral) || token.equals(this.debt))
       return new EverestResultError('Wrong token');
 
