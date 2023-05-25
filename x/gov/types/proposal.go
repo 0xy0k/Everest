@@ -77,7 +77,7 @@ func NewWhitelistAccountPermissionProposal(
 
 // ProposalType returns proposal's type
 func (m *WhitelistAccountPermissionProposal) ProposalType() string {
-	return tsukitypes.WhitelistAccountPermissionProposalType
+	return tsukitypes.ProposalTypeWhitelistAccountPermission
 }
 
 // ValidateBasic returns basic validation
@@ -111,7 +111,7 @@ func NewBlacklistAccountPermissionProposal(
 
 // ProposalType returns proposal's type
 func (m *BlacklistAccountPermissionProposal) ProposalType() string {
-	return tsukitypes.BlacklistAccountPermissionProposalType
+	return tsukitypes.ProposalTypeBlacklistAccountPermission
 }
 
 // ValidateBasic returns basic validation
@@ -145,7 +145,7 @@ func NewRemoveWhitelistedAccountPermissionProposal(
 
 // ProposalType returns proposal's type
 func (m *RemoveWhitelistedAccountPermissionProposal) ProposalType() string {
-	return tsukitypes.RemoveWhitelistedAccountPermissionProposalType
+	return tsukitypes.ProposalTypeRemoveWhitelistedAccountPermission
 }
 
 // ValidateBasic returns basic validation
@@ -179,7 +179,7 @@ func NewRemoveBlacklistedAccountPermissionProposal(
 
 // ProposalType returns proposal's type
 func (m *RemoveBlacklistedAccountPermissionProposal) ProposalType() string {
-	return tsukitypes.RemoveBlacklistedAccountPermissionProposalType
+	return tsukitypes.ProposalTypeRemoveBlacklistedAccountPermission
 }
 
 // ValidateBasic returns basic validation
@@ -213,7 +213,7 @@ func NewAssignRoleToAccountProposal(
 
 // ProposalType returns proposal's type
 func (m *AssignRoleToAccountProposal) ProposalType() string {
-	return tsukitypes.AssignRoleToAccountProposalType
+	return tsukitypes.ProposalTypeAssignRoleToAccount
 }
 
 // ValidateBasic returns basic validation
@@ -245,7 +245,7 @@ func NewUnassignRoleFromAccountProposal(
 
 // ProposalType returns proposal's type
 func (m *UnassignRoleFromAccountProposal) ProposalType() string {
-	return tsukitypes.UnassignRoleFromAccountProposalType
+	return tsukitypes.ProposalTypeUnassignRoleFromAccount
 }
 
 // ValidateBasic returns basic validation
@@ -277,7 +277,7 @@ func NewSetNetworkPropertyProposal(
 
 // ProposalType returns proposal's type
 func (m *SetNetworkPropertyProposal) ProposalType() string {
-	return tsukitypes.SetNetworkPropertyProposalType
+	return tsukitypes.ProposalTypeSetNetworkProperty
 }
 
 func (m *SetNetworkPropertyProposal) ProposalPermission() PermValue {
@@ -350,7 +350,7 @@ func NewUpsertDataRegistryProposal(key, hash, reference, encoding string, size u
 }
 
 func (m *UpsertDataRegistryProposal) ProposalType() string {
-	return tsukitypes.UpsertDataRegistryProposalType
+	return tsukitypes.ProposalTypeUpsertDataRegistry
 }
 
 func (m *UpsertDataRegistryProposal) ProposalPermission() PermValue {
@@ -373,7 +373,7 @@ func NewSetPoorNetworkMessagesProposal(msgs []string) Content {
 }
 
 func (m *SetPoorNetworkMessagesProposal) ProposalType() string {
-	return tsukitypes.SetPoorNetworkMessagesProposalType
+	return tsukitypes.ProposalTypeSetPoorNetworkMessages
 }
 
 func (m *SetPoorNetworkMessagesProposal) ProposalPermission() PermValue {
@@ -399,7 +399,7 @@ func NewCreateRoleProposal(sid, description string, whitelist []PermValue, black
 }
 
 func (m *CreateRoleProposal) ProposalType() string {
-	return tsukitypes.CreateRoleProposalType
+	return tsukitypes.ProposalTypeCreateRole
 }
 
 func (m *CreateRoleProposal) ProposalPermission() PermValue {
@@ -429,7 +429,7 @@ func NewRemoveRoleProposal(roleIdentifier string) Content {
 }
 
 func (m *RemoveRoleProposal) ProposalType() string {
-	return tsukitypes.RemoveRoleProposalType
+	return tsukitypes.ProposalTypeRemoveRole
 }
 
 func (m *RemoveRoleProposal) ProposalPermission() PermValue {
@@ -456,7 +456,7 @@ func NewWhitelistRolePermissionProposal(roleIdentifier string, permission PermVa
 }
 
 func (m *WhitelistRolePermissionProposal) ProposalType() string {
-	return tsukitypes.WhitelistRolePermissionProposalType
+	return tsukitypes.ProposalTypeWhitelistRolePermission
 }
 
 func (m *WhitelistRolePermissionProposal) ProposalPermission() PermValue {
@@ -483,7 +483,7 @@ func NewBlacklistRolePermissionProposal(roleIdentifier string, permission PermVa
 }
 
 func (m *BlacklistRolePermissionProposal) ProposalType() string {
-	return tsukitypes.BlacklistRolePermissionProposalType
+	return tsukitypes.ProposalTypeBlacklistRolePermission
 }
 
 func (m *BlacklistRolePermissionProposal) ProposalPermission() PermValue {
@@ -510,7 +510,7 @@ func NewRemoveWhitelistedRolePermissionProposal(roleSid string, permission PermV
 }
 
 func (m *RemoveWhitelistedRolePermissionProposal) ProposalType() string {
-	return tsukitypes.RemoveWhitelistedRolePermissionProposalType
+	return tsukitypes.ProposalTypeRemoveWhitelistedRolePermission
 }
 
 func (m *RemoveWhitelistedRolePermissionProposal) ProposalPermission() PermValue {
@@ -537,7 +537,7 @@ func NewRemoveBlacklistedRolePermissionProposal(roleSid string, permission PermV
 }
 
 func (m *RemoveBlacklistedRolePermissionProposal) ProposalType() string {
-	return tsukitypes.RemoveBlacklistedRolePermissionProposalType
+	return tsukitypes.ProposalTypeRemoveBlacklistedRolePermission
 }
 
 func (m *RemoveBlacklistedRolePermissionProposal) ProposalPermission() PermValue {
@@ -565,7 +565,7 @@ func NewSetProposalDurationsProposal(typeofProposals []string, durations []uint6
 }
 
 func (m *SetProposalDurationsProposal) ProposalType() string {
-	return tsukitypes.SetProposalDurationsProposalType
+	return tsukitypes.ProposalTypeSetProposalDurations
 }
 
 func (m *SetProposalDurationsProposal) ProposalPermission() PermValue {
