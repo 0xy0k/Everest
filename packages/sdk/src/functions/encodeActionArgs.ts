@@ -4,10 +4,39 @@ import { BigNumber } from 'ethers';
 
 import { EverestResultError, EverestResultSuccess } from '../entities';
 import { RouterAction } from '../enums';
-import { EverestResult, RouterActionParams } from '../types';
+import { EverestResult, PermitParams, RouterActionParams } from '../types';
+
+const ZERO_BYTES32 =
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+function getZeroPermitEncodedArgs(params: PermitParams): string {
+  return defaultAbiCoder.encode(
+    [
+      'address',
+      'address',
+      'address',
+      'uint256',
+      'uint256',
+      'uint256',
+      'bytes32',
+      'bytes32',
+    ],
+    [
+      params.vault.value,
+      params.owner.value,
+      params.receiver.value,
+      params.amount.toString(),
+      '0',
+      '0',
+      ZERO_BYTES32,
+      ZERO_BYTES32,
+    ]
+  );
+}
 
 export function encodeActionArgs(
-  params: RouterActionParams
+  params: RouterActionParams,
+  replacePermitWithZero: boolean
 ): EverestResult<string> {
   let result = '';
   if (
@@ -40,31 +69,34 @@ export function encodeActionArgs(
     params.action === RouterAction.PERMIT_BORROW ||
     params.action === RouterAction.PERMIT_WITHDRAW
   ) {
-    if (!(params.deadline && params.v && params.r && params.s)) {
+    if (replacePermitWithZero) {
+      result = getZeroPermitEncodedArgs(params);
+    } else if (!(params.deadline && params.v && params.r && params.s)) {
       return new EverestResultError('Missing args in PERMIT_BORROW!');
+    } else {
+      result = defaultAbiCoder.encode(
+        [
+          'address',
+          'address',
+          'address',
+          'uint256',
+          'uint256',
+          'uint8',
+          'bytes32',
+          'bytes32',
+        ],
+        [
+          params.vault.value,
+          params.owner.value,
+          params.receiver.value,
+          params.amount.toString(),
+          params.deadline.toString(),
+          params.v.toString(),
+          params.r,
+          params.s,
+        ]
+      );
     }
-    result = defaultAbiCoder.encode(
-      [
-        'address',
-        'address',
-        'address',
-        'uint256',
-        'uint256',
-        'uint8',
-        'bytes32',
-        'bytes32',
-      ],
-      [
-        params.vault.value,
-        params.owner.value,
-        params.receiver.value,
-        params.amount.toString(),
-        params.deadline.toString(),
-        params.v.toString(),
-        params.r,
-        params.s,
-      ]
-    );
   } else if (params.action === RouterAction.X_TRANSFER) {
     result = defaultAbiCoder.encode(
       ['uint256', 'uint256', 'address', 'uint256', 'address', 'address'],
@@ -81,7 +113,9 @@ export function encodeActionArgs(
     const innerActions = params.innerActions.map(({ action }) =>
       BigNumber.from(action)
     );
-    const innerResult = params.innerActions.map(encodeActionArgs);
+    const innerResult = params.innerActions.map((p) =>
+      encodeActionArgs(p, replacePermitWithZero)
+    );
     const error = innerResult.find((r): r is EverestResultError => !r.success);
     if (error)
       return new EverestResultError(error.error.message, error.error.code);
