@@ -26,7 +26,7 @@ contract RunPolygon is ScriptPlus {
     setOrDeployChief(false);
     setOrDeployConnextRouter(false);
     setOrDeployEverestOracle(false);
-    setOrDeployBorrowingVaultFactory(false, false);
+    setOrDeployBorrowingVaultFactory2(false, false);
     setOrDeployAddrMapper(false);
 
     _setLendingProviders();
