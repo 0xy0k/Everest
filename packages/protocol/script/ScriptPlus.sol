@@ -109,6 +109,13 @@ contract ScriptPlus is ScriptUtilities, CoreRoles {
     } else {
       connextRouter = ConnextRouter(payable(getAddress("ConnextRouter")));
     }
+
+    address caller = readAddrFromConfig("EverestRelayer");
+    if (!connextRouter.isAllowedCaller(caller)) {
+      console.log("Allowing caller for ConnextRouter ...");
+      bytes memory data = abi.encodeWithSelector(connextRouter.allowCaller.selector, caller, true);
+      callWithTimelock(address(connextRouter), data);
+    }
   }
 
   function setOrDeployEverestOracle(bool deploy) internal {
