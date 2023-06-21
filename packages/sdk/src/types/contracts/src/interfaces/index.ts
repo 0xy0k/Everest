@@ -35,6 +35,7 @@ export type { IERC20Mintable } from "./IERC20Mintable";
 export type { IFlasher } from "./IFlasher";
 export type { IEverestOracle } from "./IEverestOracle";
 export type { ILendingProvider } from "./ILendingProvider";
+export type { ILiquidationManager } from "./ILiquidationManager";
 export type { IPausableVault } from "./IPausableVault";
 export type { IRebalancerManager } from "./IRebalancerManager";
 export type { IRouter } from "./IRouter";
