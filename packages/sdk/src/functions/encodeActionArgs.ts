@@ -2,7 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 
-import { EverestResultError, EverestResultSuccess } from '../entities';
+import { EverestResultError, EverestResultSuccess } from '../entities/EverestError';
 import { RouterAction } from '../enums';
 import { EverestResult, PermitParams, RouterActionParams } from '../types';
 

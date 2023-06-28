@@ -7,13 +7,13 @@ import { EverestErrorCode } from '../constants';
 import { CHIEF_ADDRESS, EVEREST_ORACLE_ADDRESS } from '../constants/addresses';
 import { LENDING_PROVIDERS } from '../constants/lending-providers';
 import {
-  AbstractVault,
   Address,
-  BorrowingVault,
   EverestError,
   EverestResultError,
   EverestResultSuccess,
 } from '../entities';
+import { AbstractVault } from '../entities/abstract/AbstractVault';
+import { BorrowingVault } from '../entities/BorrowingVault';
 import { Chain } from '../entities/Chain';
 import { VaultType } from '../enums';
 import { EverestResult, EverestResultPromise, VaultWithFinancials } from '../types';
