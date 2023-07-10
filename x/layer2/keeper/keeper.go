@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	govkeeper "github.com/TsukiCore/tsuki/x/gov/keeper"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/layer2/types"
@@ -30,7 +31,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc codec.BinaryCodec, bk types.BankKeeper
 
 // BondDenom returns the denom that is basically used for fee payment
 func (k Keeper) BondDenom(ctx sdk.Context) string {
-	return "ukex"
+	return appparams.BondDenom
 }
 
 func (k Keeper) CheckIfAllowedPermission(ctx sdk.Context, addr sdk.AccAddress, permValue govtypes.PermValue) bool {
