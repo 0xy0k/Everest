@@ -10,6 +10,7 @@ import (
 	"github.com/TsukiCore/tsuki/app"
 	functionmeta "github.com/TsukiCore/tsuki/function_meta"
 	genutilcli "github.com/TsukiCore/tsuki/x/genutil/client/cli"
+	genutiltypes "github.com/TsukiCore/tsuki/x/genutil/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	customstaking "github.com/TsukiCore/tsuki/x/staking/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -77,7 +78,30 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 
 			customAppTemplate, customAppConfig := initAppConfig()
 
-			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
+			err = server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
+			{
+				serverCtx := server.GetServerContextFromCmd(cmd)
+				config := serverCtx.Config
+
+				clientCtx := client.GetClientContextFromCmd(cmd)
+
+				config.SetRoot(clientCtx.HomeDir)
+
+				appState, _, err := genutiltypes.GenesisStateFromGenFile(config.GenesisFile())
+				if err != nil {
+					fmt.Println("error", err)
+				} else {
+					govGenState := govtypes.GetGenesisStateFromAppState(clientCtx.Codec, appState)
+					fmt.Println("govGenState.Bech32Prefix", govGenState.Bech32Prefix)
+					fmt.Println("govGenState.BondDenom", govGenState.BondDenom)
+					fmt.Println("govGenState.Roles", govGenState.Roles)
+				}
+
+				app.SetConfig()
+				cfg := sdk.GetConfig()
+				cfg.Seal()
+			}
+			return err
 		},
 	}
 
@@ -143,8 +167,6 @@ lru_size = 0`
 }
 
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
-	cfg := sdk.GetConfig()
-	cfg.Seal()
 
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
@@ -179,7 +201,6 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 }
 
 func main() {
-	app.SetConfig()
 	rootCmd, _ := NewRootCmd()
 
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
