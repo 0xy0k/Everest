@@ -102,7 +102,7 @@ const getDetailsCalls = (
 
 const getProvidersCalls = (v: AbstractVault): EverestResult<Call<Rate>[]> => {
   if (!v.allProviders) {
-    return new EverestResultError('BorrowingVault allProviders not set!');
+    return new EverestResultError('Vault allProviders not set!');
   }
 
   let rates;
@@ -263,6 +263,35 @@ const doBatchLoad = async (
   return new EverestResultSuccess(data);
 };
 
+export async function multiBatchLoad(
+  vaults: AbstractVault[],
+  account: Address | undefined
+): EverestResultPromise<VaultWithFinancials[]> {
+  try {
+    const results = await Promise.all(
+      vaults.map((vault) => batchLoad([vault], account, vault.chain))
+    );
+
+    // Use reduce to combine all results into a single array
+    const combinedResults: VaultWithFinancials[] = results.reduce(
+      (acc: VaultWithFinancials[], result) => {
+        if (result.success) {
+          return [...acc, ...result.data];
+        } else {
+          // Maybe we shouldn't just throw, instead skip and throw if there are no results
+          throw new Error(result.error.message);
+        }
+      },
+      []
+    );
+
+    return new EverestResultSuccess(combinedResults);
+  } catch (error) {
+    const message = EverestError.messageFromUnknownError(error);
+    return new EverestResultError(message);
+  }
+}
+
 export async function batchLoad(
   vaults: AbstractVault[],
   account: Address | undefined,
@@ -273,10 +302,13 @@ export async function batchLoad(
       chainId: chain.chainId,
     });
   }
-  // TODO: Check that type matches vaults?
-  if (vaults.find((v) => v.chainId !== chain.chainId)) {
+  if (
+    vaults.find(
+      (v) => v instanceof BorrowingVault && v.chainId !== chain.chainId
+    )
+  ) {
     return new EverestResultError(
-      'Vault from a different chain!',
+      'Borrowing vault from a different chain!',
       EverestErrorCode.SDK,
       {
         chainId: chain.chainId,
