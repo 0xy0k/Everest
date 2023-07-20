@@ -20,7 +20,7 @@ func NewApplyWhitelistAccountPermissionProposalHandler(keeper keeper.Keeper) *Ap
 }
 
 func (a ApplyWhitelistAccountPermissionProposalHandler) ProposalType() string {
-	return tsukitypes.WhitelistAccountPermissionProposalType
+	return tsukitypes.ProposalTypeWhitelistAccountPermission
 }
 
 func (a ApplyWhitelistAccountPermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -47,7 +47,7 @@ func NewApplyBlacklistAccountPermissionProposalHandler(keeper keeper.Keeper) *Ap
 }
 
 func (a ApplyBlacklistAccountPermissionProposalHandler) ProposalType() string {
-	return tsukitypes.BlacklistAccountPermissionProposalType
+	return tsukitypes.ProposalTypeBlacklistAccountPermission
 }
 
 func (a ApplyBlacklistAccountPermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -74,7 +74,7 @@ func NewApplyRemoveWhitelistedAccountPermissionProposalHandler(keeper keeper.Kee
 }
 
 func (a ApplyRemoveWhitelistedAccountPermissionProposalHandler) ProposalType() string {
-	return tsukitypes.RemoveWhitelistedAccountPermissionProposalType
+	return tsukitypes.ProposalTypeRemoveWhitelistedAccountPermission
 }
 
 func (a ApplyRemoveWhitelistedAccountPermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -101,7 +101,7 @@ func NewApplyRemoveBlacklistedAccountPermissionProposalHandler(keeper keeper.Kee
 }
 
 func (a ApplyRemoveBlacklistedAccountPermissionProposalHandler) ProposalType() string {
-	return tsukitypes.RemoveBlacklistedAccountPermissionProposalType
+	return tsukitypes.ProposalTypeRemoveBlacklistedAccountPermission
 }
 
 func (a ApplyRemoveBlacklistedAccountPermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -130,7 +130,7 @@ func NewApplyAssignRoleToAccountProposalHandler(keeper keeper.Keeper) *ApplyAssi
 }
 
 func (a ApplyAssignRoleToAccountProposalHandler) ProposalType() string {
-	return tsukitypes.AssignRoleToAccountProposalType
+	return tsukitypes.ProposalTypeAssignRoleToAccount
 }
 
 func (a ApplyAssignRoleToAccountProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -153,7 +153,7 @@ func NewApplyUnassignRoleFromAccountProposalHandler(keeper keeper.Keeper) *Apply
 }
 
 func (a ApplyUnassignRoleFromAccountProposalHandler) ProposalType() string {
-	return tsukitypes.UnassignRoleFromAccountProposalType
+	return tsukitypes.ProposalTypeUnassignRoleFromAccount
 }
 
 func (a ApplyUnassignRoleFromAccountProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -176,7 +176,7 @@ func NewApplySetNetworkPropertyProposalHandler(keeper keeper.Keeper) *ApplySetNe
 }
 
 func (a ApplySetNetworkPropertyProposalHandler) ProposalType() string {
-	return tsukitypes.SetNetworkPropertyProposalType
+	return tsukitypes.ProposalTypeSetNetworkProperty
 }
 
 func (a ApplySetNetworkPropertyProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -202,7 +202,7 @@ func NewApplyUpsertDataRegistryProposalHandler(keeper keeper.Keeper) *ApplyUpser
 }
 
 func (a ApplyUpsertDataRegistryProposalHandler) ProposalType() string {
-	return tsukitypes.UpsertDataRegistryProposalType
+	return tsukitypes.ProposalTypeUpsertDataRegistry
 }
 
 func (a ApplyUpsertDataRegistryProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -221,7 +221,7 @@ func NewApplySetPoorNetworkMessagesProposalHandler(keeper keeper.Keeper) *ApplyS
 }
 
 func (a ApplySetPoorNetworkMessagesProposalHandler) ProposalType() string {
-	return tsukitypes.SetPoorNetworkMessagesProposalType
+	return tsukitypes.ProposalTypeSetPoorNetworkMessages
 }
 
 func (a ApplySetPoorNetworkMessagesProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -240,7 +240,7 @@ func NewApplyCreateRoleProposalHandler(keeper keeper.Keeper) *CreateRoleProposal
 }
 
 func (c CreateRoleProposalHandler) ProposalType() string {
-	return tsukitypes.CreateRoleProposalType
+	return tsukitypes.ProposalTypeCreateRole
 }
 
 func (c CreateRoleProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -283,13 +283,25 @@ func NewApplyRemoveRoleProposalHandler(keeper keeper.Keeper) *ApplyRemoveRolePro
 }
 
 func (c ApplyRemoveRoleProposalHandler) ProposalType() string {
-	return tsukitypes.RemoveRoleProposalType
+	return tsukitypes.ProposalTypeRemoveRole
 }
 
 func (c ApplyRemoveRoleProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
 	p := proposal.(*types.RemoveRoleProposal)
-	_ = p
-	return fmt.Errorf("remove role proposal is not implemented!")
+
+	role, err := c.keeper.GetRoleBySid(ctx, p.RoleSid)
+	if err == nil {
+		return types.ErrRoleExist
+	}
+
+	c.keeper.DeleteRole(ctx, role)
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeRemoveRole,
+			sdk.NewAttribute(types.AttributeKeyRoleId, fmt.Sprintf("%d", role.Id)),
+		),
+	)
+	return nil
 }
 
 type ApplyWhitelistRolePermissionProposalHandler struct {
@@ -301,7 +313,7 @@ func NewApplyWhitelistRolePermissionProposalHandler(keeper keeper.Keeper) *Apply
 }
 
 func (c ApplyWhitelistRolePermissionProposalHandler) ProposalType() string {
-	return tsukitypes.WhitelistRolePermissionProposalType
+	return tsukitypes.ProposalTypeWhitelistRolePermission
 }
 
 func (c ApplyWhitelistRolePermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -324,7 +336,7 @@ func NewApplyBlacklistRolePermissionProposalHandler(keeper keeper.Keeper) *Apply
 }
 
 func (c ApplyBlacklistRolePermissionProposalHandler) ProposalType() string {
-	return tsukitypes.BlacklistRolePermissionProposalType
+	return tsukitypes.ProposalTypeBlacklistRolePermission
 }
 
 func (c ApplyBlacklistRolePermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -347,7 +359,7 @@ func NewApplyRemoveWhitelistedRolePermissionProposalHandler(keeper keeper.Keeper
 }
 
 func (c ApplyRemoveWhitelistedRolePermissionProposalHandler) ProposalType() string {
-	return tsukitypes.RemoveWhitelistedRolePermissionProposalType
+	return tsukitypes.ProposalTypeRemoveWhitelistedRolePermission
 }
 
 func (c ApplyRemoveWhitelistedRolePermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -370,7 +382,7 @@ func NewApplyRemoveBlacklistedRolePermissionProposalHandler(keeper keeper.Keeper
 }
 
 func (c ApplyRemoveBlacklistedRolePermissionProposalHandler) ProposalType() string {
-	return tsukitypes.RemoveBlacklistedRolePermissionProposalType
+	return tsukitypes.ProposalTypeRemoveBlacklistedRolePermission
 }
 
 func (c ApplyRemoveBlacklistedRolePermissionProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
@@ -393,7 +405,7 @@ func NewApplySetProposalDurationsProposalHandler(keeper keeper.Keeper) *SetPropo
 }
 
 func (c SetProposalDurationsProposalHandler) ProposalType() string {
-	return tsukitypes.SetProposalDurationsProposalType
+	return tsukitypes.ProposalTypeSetProposalDurations
 }
 
 func (c SetProposalDurationsProposalHandler) Apply(ctx sdk.Context, proposalID uint64, proposal types.Content, slash sdk.Dec) error {
