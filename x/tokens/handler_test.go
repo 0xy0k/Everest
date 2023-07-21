@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TsukiCore/tsuki/app"
 	simapp "github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/x/gov"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
@@ -23,7 +23,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	app.SetConfig()
+	appparams.SetConfig()
 	os.Exit(m.Run())
 }
 
