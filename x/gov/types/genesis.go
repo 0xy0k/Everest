@@ -3,16 +3,18 @@ package types
 import (
 	"encoding/json"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DefaultGenesis returns the default CustomGo genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		NextRoleId: 3,
+		DefaultDenom: appparams.DefaultDenom,
+		Bech32Prefix: appparams.AccountAddressPrefix,
+		NextRoleId:   3,
 		Roles: []Role{
 			{
 				Id:          uint32(RoleSudo),
@@ -271,11 +273,11 @@ func GetGenesisStateFromAppState(cdc codec.Codec, appState map[string]json.RawMe
 	return genesisState
 }
 
-func GetBech32PrefixAndBondDenomFromAppState(appState map[string]json.RawMessage) (string, string) {
+func GetBech32PrefixAndDefaultDenomFromAppState(appState map[string]json.RawMessage) (string, string) {
 	var genesisState map[string]interface{}
 	err := json.Unmarshal(appState[ModuleName], &genesisState)
 	if err != nil {
 		panic(err)
 	}
-	return genesisState["bech32_prefix"].(string), genesisState["bond_denom"].(string)
+	return genesisState["bech32_prefix"].(string), genesisState["default_denom"].(string)
 }

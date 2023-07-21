@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	collectivestypes "github.com/TsukiCore/tsuki/x/collectives/types"
 	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
@@ -21,7 +21,7 @@ import (
 )
 
 func init() {
-	app.SetConfig()
+	appparams.SetConfig()
 }
 
 func (suite *KeeperTestSuite) TestRegisterRecoverySecret() {

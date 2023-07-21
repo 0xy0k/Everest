@@ -4,7 +4,7 @@ rm -rf $HOME/.tsukid/
 
 cd $HOME
 
-tsukid init --bond-denom="ukex" --bech32-prefix="tsuki" --chain-id=testing testing --home=$HOME/.tsukid
+tsukid init --default-denom="ukex" --bech32-prefix="tsuki" --chain-id=testing testing --home=$HOME/.tsukid
 tsukid keys add validator --keyring-backend=test --home=$HOME/.tsukid
 tsukid add-genesis-account $(tsukid keys show validator -a --keyring-backend=test --home=$HOME/.tsukid) 1000000000000000ukex,1000000000ubtc,1000000000ueth,1000000000validatortoken,1000000000stake,10000000frozen,10000000samolean  --home=$HOME/.tsukid
 tsukid gentx-claim validator --keyring-backend=test --moniker="hello" --home=$HOME/.tsukid
