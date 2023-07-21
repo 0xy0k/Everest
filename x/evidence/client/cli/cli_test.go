@@ -8,6 +8,7 @@ import (
 
 	"github.com/TsukiCore/tsuki/app"
 	simapp "github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/evidence/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -25,7 +26,7 @@ type IntegrationTestSuite struct {
 }
 
 func (s *IntegrationTestSuite) SetupSuite() {
-	app.SetConfig()
+	appparams.SetConfig()
 	s.T().Log("setting up integration test suite")
 
 	cfg := network.DefaultConfig()
