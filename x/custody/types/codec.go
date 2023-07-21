@@ -9,13 +9,13 @@ import (
 
 // RegisterCodec register codec and metadata
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreteCustodyRecord{}, "tsukiHub/MsgCreteCustodyRecord", nil)
+	cdc.RegisterConcrete(&MsgCreateCustodyRecord{}, "tsukiHub/MsgCreateCustodyRecord", nil)
 }
 
 // RegisterInterfaces register Msg and structs
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreteCustodyRecord{},
+		&MsgCreateCustodyRecord{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
