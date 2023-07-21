@@ -3,7 +3,7 @@
 tsukid query bank balances $(tsukid keys show -a validator --keyring-backend=test)
 tsukid query customstaking validator --addr=$(tsukid keys show -a validator --keyring-backend=test)
 tsukid query multistaking pools
-tsukid query multistaking undelegations
+tsukid query multistaking undelegations "" ""
 tsukid query multistaking outstanding-rewards $(tsukid keys show -a validator --keyring-backend=test)
 tsukid query multistaking compound-info $(tsukid keys show -a validator --keyring-backend=test)
 
