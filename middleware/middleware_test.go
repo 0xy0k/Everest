@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/TsukiCore/tsuki/app"
 	simapp "github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/TsukiCore/tsuki/types"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
@@ -19,7 +19,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	app.SetConfig()
+	appparams.SetConfig()
 	os.Exit(m.Run())
 }
 

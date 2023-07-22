@@ -11,6 +11,10 @@ var (
 	ConsNodePubKeyPrefix   = "tsukivalconspub"
 )
 
+var (
+	DefaultDenom = "ukex"
+)
+
 func SetConfig() {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(AccountAddressPrefix, AccountPubKeyPrefix)

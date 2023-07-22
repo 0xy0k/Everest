@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/recovery/types"
@@ -27,7 +28,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-var RecoveryFee = sdk.Coins{sdk.NewInt64Coin("ukex", 1000_000_000)}
+var RecoveryFee = sdk.Coins{sdk.NewInt64Coin(appparams.DefaultDenom, 1000_000_000)}
 
 // allow ANY user to register or modify existing recovery secret & verify if the nonce is correct
 func (k msgServer) RegisterRecoverySecret(goCtx context.Context, msg *types.MsgRegisterRecoverySecret) (*types.MsgRegisterRecoverySecretResponse, error) {
@@ -530,7 +531,7 @@ func (k msgServer) IssueRecoveryTokens(goCtx context.Context, msg *types.MsgIssu
 	// KEX token spend
 	properties := k.gk.GetNetworkProperties(ctx)
 	amount := sdk.NewInt(int64(properties.ValidatorRecoveryBond)).Mul(sdk.NewInt(1000_000))
-	coins := sdk.NewCoins(sdk.NewCoin("ukex", amount))
+	coins := sdk.NewCoins(sdk.NewCoin(appparams.DefaultDenom, amount))
 	err = k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, coins)
 	if err != nil {
 		return nil, err

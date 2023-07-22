@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/require"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/TsukiCore/tsuki/app"
 	simapp "github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/x/gov/keeper"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 )
 
 func TestMain(m *testing.M) {
-	app.SetConfig()
+	appparams.SetConfig()
 	os.Exit(m.Run())
 }
 

@@ -3,6 +3,7 @@ package gov
 import (
 	"bytes"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/x/gov/keeper"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -117,6 +118,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) (data *types.GenesisState) 
 	proposals, _ := k.GetProposals(ctx)
 
 	return &types.GenesisState{
+		DefaultDenom:                appparams.DefaultDenom,
+		Bech32Prefix:                appparams.AccountAddressPrefix,
 		StartingProposalId:          k.GetNextProposalID(ctx),
 		NextRoleId:                  k.GetNextRoleId(ctx),
 		Roles:                       k.GetAllRoles(ctx),
