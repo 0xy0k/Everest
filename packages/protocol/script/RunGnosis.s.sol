@@ -19,7 +19,7 @@ contract RunGnosis is ScriptPlus {
     setOrDeployConnextRouter(false);
     setOrDeployEverestOracle(false);
     setOrDeployBorrowingVaultFactory(false, false);
-    setOrDeployYieldVaultFactory(false);
+    setOrDeployYieldVaultFactory(false, false);
     /*setOrDeployAddrMapper(false);*/
     setOrDeployFlasherBalancer(false);
     setOrDeployRebalancer(false);
