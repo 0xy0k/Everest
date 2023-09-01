@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"path/filepath"
 
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/TsukiCore/tsuki/x/genutil"
 	"github.com/TsukiCore/tsuki/x/genutil/types"

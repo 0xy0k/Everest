@@ -8,11 +8,11 @@ import (
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestQuerier_SigningInfo(t *testing.T) {

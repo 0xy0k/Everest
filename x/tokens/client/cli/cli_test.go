@@ -8,8 +8,8 @@ import (
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/stretchr/testify/suite"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"

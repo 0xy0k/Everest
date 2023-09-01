@@ -3,9 +3,9 @@ package staking
 import (
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 func ExportGenesis(ctx sdk.Context, keeper keeper.Keeper) *types.GenesisState {

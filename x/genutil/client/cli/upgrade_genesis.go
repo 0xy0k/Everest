@@ -9,15 +9,15 @@ import (
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	v03123upgradetypes "github.com/TsukiCore/tsuki/x/upgrade/legacy/v03123"
 	upgradetypes "github.com/TsukiCore/tsuki/x/upgrade/types"
+	tmjson "github.com/cometbft/cometbft/libs/json"
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	tmjson "github.com/tendermint/tendermint/libs/json"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 const (

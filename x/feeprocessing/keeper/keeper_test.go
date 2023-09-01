@@ -8,11 +8,11 @@ import (
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	tokenstypes "github.com/TsukiCore/tsuki/x/tokens/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestNewKeeper_SenderCoinsHistory(t *testing.T) {

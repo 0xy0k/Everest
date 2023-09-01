@@ -9,6 +9,7 @@ import (
 	custodykeeper "github.com/TsukiCore/tsuki/x/custody/keeper"
 	"github.com/TsukiCore/tsuki/x/custody/types"
 	custodytypes "github.com/TsukiCore/tsuki/x/custody/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -17,7 +18,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 var (

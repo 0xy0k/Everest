@@ -11,6 +11,7 @@ import (
 	"github.com/TsukiCore/tsuki/middleware"
 	"github.com/TsukiCore/tsuki/x/staking/keeper"
 	"github.com/TsukiCore/tsuki/x/staking/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -18,7 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/TsukiCore/tsuki/x/staking/client/cli"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"

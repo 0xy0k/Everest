@@ -11,11 +11,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	eviclient "github.com/TsukiCore/tsuki/x/evidence/client"
 	"github.com/TsukiCore/tsuki/x/evidence/client/cli"
-	"github.com/TsukiCore/tsuki/x/evidence/client/rest"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
 	"github.com/TsukiCore/tsuki/x/evidence/simulation"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
@@ -76,13 +75,6 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncod
 
 // RegisterRESTRoutes registers the evidence module's REST service handlers.
 func (a AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
-	evidenceRESTHandlers := make([]rest.EvidenceRESTHandler, len(a.evidenceHandlers))
-
-	for i, evidenceHandler := range a.evidenceHandlers {
-		evidenceRESTHandlers[i] = evidenceHandler.RESTHandler(clientCtx)
-	}
-
-	rest.RegisterRoutes(clientCtx, rtr, evidenceRESTHandlers)
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the evidence module.

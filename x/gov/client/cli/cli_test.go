@@ -8,11 +8,11 @@ import (
 	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/gov/types"
+	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/stretchr/testify/suite"
-	dbm "github.com/tendermint/tm-db"
 )
 
 type IntegrationTestSuite struct {

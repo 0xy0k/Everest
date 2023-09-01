@@ -7,7 +7,7 @@ import (
 	"github.com/TsukiCore/tsuki/x/evidence/types"
 
 	"github.com/TsukiCore/tsuki/app"
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 )
 
 const (
