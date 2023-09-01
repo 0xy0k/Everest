@@ -6,7 +6,6 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/TsukiCore/tsuki/middleware"
 	collectivescli "github.com/TsukiCore/tsuki/x/collectives/client/cli"
 	collectiveskeeper "github.com/TsukiCore/tsuki/x/collectives/keeper"
 	"github.com/TsukiCore/tsuki/x/collectives/types"
@@ -112,11 +111,6 @@ func (am AppModule) QuerierRoute() string {
 	return collectivestypes.QuerierRoute
 }
 
-// LegacyQuerierHandler returns the staking module sdk.Querier.
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
-}
-
 func (am AppModule) BeginBlock(clientCtx sdk.Context, req abci.RequestBeginBlock) {
 	am.collectivesKeeper.BeginBlocker(clientCtx)
 }
@@ -128,11 +122,6 @@ func (am AppModule) EndBlock(ctx sdk.Context, block abci.RequestEndBlock) []abci
 
 func (am AppModule) Name() string {
 	return collectivestypes.ModuleName
-}
-
-// Route returns the message routing key for the staking module.
-func (am AppModule) Route() sdk.Route {
-	return middleware.NewRoute(collectivestypes.ModuleName, NewHandler(am.collectivesKeeper))
 }
 
 // NewAppModule returns a new Custom Staking module.

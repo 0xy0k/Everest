@@ -69,9 +69,8 @@ func testEquivocationHandler(_ interface{}) types.Handler {
 type KeeperTestSuite struct {
 	suite.Suite
 
-	ctx     sdk.Context
-	querier sdk.Querier
-	app     *simapp.TsukiApp
+	ctx sdk.Context
+	app *simapp.TsukiApp
 
 	queryClient types.QueryClient
 	stakingHdl  sdk.Handler
