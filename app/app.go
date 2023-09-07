@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	customante "github.com/TsukiCore/tsuki/app/ante"
-	"github.com/TsukiCore/tsuki/middleware"
+	posthandler "github.com/TsukiCore/tsuki/app/posthandler"
 	"github.com/TsukiCore/tsuki/x/basket"
 	basketkeeper "github.com/TsukiCore/tsuki/x/basket/keeper"
 	baskettypes "github.com/TsukiCore/tsuki/x/basket/types"
@@ -529,9 +529,18 @@ func NewInitApp(
 		}
 	}
 
-	middleware.SetKeepers(app.CustomGovKeeper, app.FeeProcessingKeeper)
-
 	return app
+}
+
+func (app *TsukiApp) setPostHandler() {
+	postHandler, err := posthandler.NewPostHandler(
+		posthandler.HandlerOptions{},
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	app.SetPostHandler(postHandler)
 }
 
 // Name returns the name of the App
