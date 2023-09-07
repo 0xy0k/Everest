@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	stakingtypes "github.com/TsukiCore/tsuki/x/staking/types"
@@ -122,6 +123,14 @@ func (k Keeper) NetworkProperties(goCtx context.Context, request *types.NetworkP
 
 	networkProperties := k.GetNetworkProperties(ctx)
 	return &types.NetworkPropertiesResponse{Properties: networkProperties}, nil
+}
+
+// CustomPrefixes return default denom and bech32 prefix
+func (k Keeper) CustomPrefixes(goCtx context.Context, request *types.QueryCustomPrefixesRequest) (*types.QueryCustomPrefixesResponse, error) {
+	return &types.QueryCustomPrefixesResponse{
+		DefaultDenom: appparams.DefaultDenom,
+		Bech32Prefix: appparams.AccountAddressPrefix,
+	}, nil
 }
 
 func (k Keeper) Role(goCtx context.Context, request *types.RoleRequest) (*types.RoleResponse, error) {
