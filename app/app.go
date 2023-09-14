@@ -516,9 +516,12 @@ func NewInitApp(
 			app.FeeProcessingKeeper,
 			app.AccountKeeper,
 			app.BankKeeper,
+			app.CustodyKeeper,
+			nil,
+			nil,
 			ante.DefaultSigVerificationGasConsumer,
 			encodingConfig.TxConfig.SignModeHandler(),
-			app.CustodyKeeper,
+			nil,
 		),
 	)
 	app.SetEndBlocker(app.EndBlocker)
@@ -681,6 +684,10 @@ func (app *TsukiApp) RegisterTendermintService(clientCtx client.Context) {
 		app.interfaceRegistry,
 		app.Query,
 	)
+}
+
+func (app *TsukiApp) RegisterNodeService(clientCtx client.Context) {
+	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

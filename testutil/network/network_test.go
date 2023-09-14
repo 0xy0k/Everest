@@ -4,9 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/stretchr/testify/suite"
-
-	"github.com/cosmos/cosmos-sdk/testutil/network"
 )
 
 type IntegrationTestSuite struct {
