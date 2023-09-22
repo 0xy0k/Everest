@@ -6,6 +6,7 @@ import (
 	"time"
 
 	simapp "github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/keeper"
 	"github.com/TsukiCore/tsuki/x/evidence/types"
@@ -34,7 +35,7 @@ var (
 	}
 
 	initAmt   = sdk.TokensFromConsensusPower(200, sdk.DefaultPowerReduction)
-	initCoins = sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, initAmt))
+	initCoins = sdk.NewCoins(sdk.NewCoin(appparams.DefaultDenom, initAmt))
 )
 
 func newPubKey(pk string) (res cryptotypes.PubKey) {
