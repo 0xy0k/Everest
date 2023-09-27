@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -22,9 +23,9 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.LegacyAmino, govkeeper types.Go
 	return Keeper{storeKey: storeKey, cdc: cdc, govkeeper: govkeeper}
 }
 
-// BondDenom returns the denom that is basically used for fee payment
-func (k Keeper) BondDenom(ctx sdk.Context) string {
-	return "ukex"
+// DefaultDenom returns the denom that is basically used for fee payment
+func (k Keeper) DefaultDenom(ctx sdk.Context) string {
+	return appparams.DefaultDenom
 }
 
 // Set the validator hooks

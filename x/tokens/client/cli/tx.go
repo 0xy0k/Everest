@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	govtypes "github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/TsukiCore/tsuki/x/tokens/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -236,7 +237,7 @@ func GetTxProposalUpsertTokenRatesCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("invalid denom")
 			}
-			if denom == "ukex" {
+			if denom == appparams.DefaultDenom {
 				return fmt.Errorf("bond denom rate is read-only")
 			}
 
@@ -355,7 +356,7 @@ func GetTxUpsertTokenRateCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("invalid denom")
 			}
-			if denom == "ukex" {
+			if denom == appparams.DefaultDenom {
 				return fmt.Errorf("bond denom rate is read-only")
 			}
 

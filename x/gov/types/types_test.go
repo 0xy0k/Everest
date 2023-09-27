@@ -4,13 +4,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/TsukiCore/tsuki/app"
+	appparams "github.com/TsukiCore/tsuki/app/params"
 	"github.com/TsukiCore/tsuki/x/gov/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
-	app.SetConfig()
+	appparams.SetConfig()
 	os.Exit(m.Run())
 }
 
