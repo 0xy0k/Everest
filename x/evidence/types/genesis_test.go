@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	tmbytes "github.com/cometbft/cometbft/libs/bytes"
 	"github.com/stretchr/testify/require"
-	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 
 	"github.com/TsukiCore/tsuki/x/evidence/exported"
 	"github.com/TsukiCore/tsuki/x/evidence/types"

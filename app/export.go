@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	customstaking "github.com/TsukiCore/tsuki/x/staking"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 // ExportAppStateAndValidators export the state of Tsuki for a genesis file

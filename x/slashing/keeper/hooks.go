@@ -3,7 +3,7 @@ package keeper
 import (
 	"time"
 
-	"github.com/tendermint/tendermint/crypto"
+	"github.com/cometbft/cometbft/crypto"
 
 	"github.com/TsukiCore/tsuki/x/slashing/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
+	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/suite"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/TsukiCore/tsuki/testutil/network"
 	"github.com/TsukiCore/tsuki/x/slashing/client/cli"

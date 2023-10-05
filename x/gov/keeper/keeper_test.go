@@ -7,7 +7,7 @@ import (
 
 	simapp "github.com/TsukiCore/tsuki/app"
 	"github.com/TsukiCore/tsuki/x/gov/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 func TestKeeper_SetNetworkProperty(t *testing.T) {
