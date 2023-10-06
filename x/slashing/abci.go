@@ -3,7 +3,7 @@ package slashing
 import (
 	"time"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/TsukiCore/tsuki/x/slashing/keeper"
 	"github.com/TsukiCore/tsuki/x/slashing/types"

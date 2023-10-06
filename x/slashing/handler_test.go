@@ -12,11 +12,11 @@ import (
 	"github.com/TsukiCore/tsuki/x/slashing"
 	"github.com/TsukiCore/tsuki/x/slashing/keeper"
 	"github.com/TsukiCore/tsuki/x/slashing/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestMain(m *testing.M) {

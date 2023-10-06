@@ -5,8 +5,8 @@ import (
 
 	simapp "github.com/TsukiCore/tsuki/app"
 	tsukitypes "github.com/TsukiCore/tsuki/types"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestProposalDurationSetGet(t *testing.T) {
