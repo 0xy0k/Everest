@@ -252,7 +252,7 @@ func DefaultGenesis() *GenesisState {
 				tsukitypes.MsgTypePause,
 				tsukitypes.MsgTypeUnpause,
 				tsukitypes.MsgTypeRegisterIdentityRecords,
-				tsukitypes.MsgTypeEditIdentityRecord,
+				tsukitypes.MsgTypeDeleteIdentityRecord,
 				tsukitypes.MsgTypeRequestIdentityRecordsVerify,
 				tsukitypes.MsgTypeHandleIdentityRecordsVerifyRequest,
 				tsukitypes.MsgTypeCancelIdentityRecordsVerifyRequest,
