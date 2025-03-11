@@ -1,5 +1,5 @@
 {
-  "name": "@x-everest/sdk",
+  "name": "@everest/sdk",
   "version": "0.1.0",
   "author": "Everest",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "test": "jest --silent",
     "lint": "eslint . --fix",
     "prepare": "yarn build",
-    "export-abis": "yarn workspace @x-everest/protocol hardhat export-abi",
+    "export-abis": "yarn workspace @everest/protocol hardhat export-abi",
     "generate-types": "typechain --target ../../node_modules/@hovoh/typechain-ethers-multicall --out-dir src/types/contracts '../protocol/abis/**/*.json'"
   },
   "dependencies": {

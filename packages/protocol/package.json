@@ -1,7 +1,7 @@
 {
-  "name": "@x-everest/protocol",
+  "name": "@everest/protocol",
   "version": "1.0.0",
-  "description": "X-Everest smart contracts",
+  "description": "Everest smart contracts",
   "scripts": {
     "forge:install": "forge install",
     "build": "forge build",
